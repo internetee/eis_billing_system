@@ -23,6 +23,12 @@ module EisBillingSystem
   class Application < Rails::Application
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 6.1
+    config.autoloader = :zeitwerk
+    config.autoload_paths += Dir[Rails.root.join('app', 'controllers', 'interactions', '**/')]
+    config.autoload_paths += %W(#{config.root}/lib)
+    config.autoload_paths += %W(#{config.root}/lib/error)
+    config.autoload_paths += %W(#{config.root}/services)
+    config.eager_load_paths << Rails.root.join('lib')
 
     # Configuration for the application, engines, and railties goes here.
     #

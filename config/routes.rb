@@ -1,3 +1,16 @@
 Rails.application.routes.draw do
-  # For details on the DSL available within this file, see https://guides.rubyonrails.org/routing.html
+  namespace :api, defaults: { format: :json } do
+    namespace :v1 do
+
+      namespace :invoice_generator do
+        resources :invoice_generator, only: [:create, :show]
+      end
+
+      namespace :callback_handler do
+        # post 'callback_handler/callback'
+        match '/callback', via: %i[get], to: 'callback_handler#callback', as: :callback
+      end
+
+    end
+  end
 end

@@ -1,0 +1,3 @@
+class GlobalVariable
+  INVOICE_SECRET_WORD = 'CREATE_PLEASE_INVOICE'
+end

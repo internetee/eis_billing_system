@@ -14,7 +14,7 @@ gem 'puma', '~> 5.0'
 # Use Redis adapter to run Action Cable in production
 # gem 'redis', '~> 4.0'
 # Use Active Model has_secure_password
-# gem 'bcrypt', '~> 3.1.7'
+gem 'bcrypt', '~> 3.1.7'
 
 # Use Active Storage variant
 # gem 'image_processing', '~> 1.2'
@@ -28,6 +28,10 @@ gem 'bootsnap', '>= 1.4.4', require: false
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]
+  gem 'rspec-rails'
+  gem 'factory_bot_rails'
+  gem 'database_cleaner'
+  gem 'simplecov', '0.17.1', require: false
 end
 
 group :development do
@@ -38,3 +42,18 @@ end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
+# gem 'wicked_pdf' # Need to install wkhtmltopdf https://wkhtmltopdf.org/downloads.html
+gem 'wkhtmltopdf-binary'
+gem 'pdfkit'
+
+gem 'money'
+
+#payment features
+gem 'e_invoice', github: 'internetee/e_invoice', branch: :master
+gem 'directo', github: 'internetee/directo', branch: 'master'
+
+#experimental gem
+gem 'everypay_v4_wrapper', github: 'OlegPhenomenon/everypay_v4_wrapper', branch: :master
+
+# database handlers nd profiles
+gem 'strong_migrations'
