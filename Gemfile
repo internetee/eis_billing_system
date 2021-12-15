@@ -51,6 +51,7 @@ gem 'money'
 #payment features
 gem 'e_invoice', github: 'internetee/e_invoice', branch: :master
 gem 'directo', github: 'internetee/directo', branch: 'master'
+gem 'lhv', github: 'internetee/lhv', branch: 'master'
 
 #experimental gem
 gem 'everypay_v4_wrapper', github: 'OlegPhenomenon/everypay_v4_wrapper', branch: :master

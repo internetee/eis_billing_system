@@ -29,6 +29,15 @@ GIT
       nokogiri
       savon
 
+GIT
+  remote: https://github.com/internetee/lhv.git
+  revision: 1fb07818369425510a0172ad53bc86e85b6f83cc
+  branch: master
+  specs:
+    lhv (0.1.0)
+      logger
+      nokogiri
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -131,6 +140,7 @@ GEM
     listen (3.7.0)
       rb-fsevent (~> 0.10, >= 0.10.3)
       rb-inotify (~> 0.9, >= 0.9.10)
+    logger (1.4.4)
     loofah (2.12.0)
       crass (~> 1.0.2)
       nokogiri (>= 1.5.9)
@@ -252,6 +262,7 @@ DEPENDENCIES
   e_invoice!
   everypay_v4_wrapper!
   factory_bot_rails
+  lhv!
   listen (~> 3.3)
   money
   pdfkit

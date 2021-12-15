@@ -6,17 +6,17 @@ module InvoiceGenerator
   LINKPAY_TOKEN = 'k5t5xq'
   LINKPAY_QR = true
 
-  def generate_pdf(params)
-    @params = params
+  def generate_pdf(reference_number)
+    invoice = Invoice.find_by(reference_number: reference_number)
 
     @everypay_params = {
-      transaction_amount:  translate_money(@params[:sum]),
-      order_reference: 5.times.map { rand(10) }.join, # Temporary solution
-      customer_name: @params[:name],
-      customer_email: 'oleg.hasjanov@internet.ee',
-      custom_field_1: @params[:description],
-      linkpay_token: LINKPAY_TOKEN,
-      invoice_number: @params[:invoice_number]
+      transaction_amount: invoice.transaction_amount,
+      order_reference: invoice.order_reference,
+      customer_name: invoice.customer_name,
+      customer_email: invoice.customer_email,
+      custom_field_1: invoice.description,
+      invoice_number: invoice.invoice_number,
+      linkpay_token: LINKPAY_TOKEN
     }
 
     generate_it
@@ -29,11 +29,6 @@ module InvoiceGenerator
     linker.build_link
   end
 
-  def translate_money(sum)
-      money = Money.new(sum, 'EUR')
-      money&.format(symbol: nil, thousands_separator: false, decimal_mark: '.')
-  end
-
   def generate_it
     pdf_template.to_file("tmp/#{filename}")
   end
@@ -41,16 +36,16 @@ module InvoiceGenerator
   def pdf_template
     PDFKit.new(
       <<-HTML
-      <h1>#{@params[:invoice_number]}</h1>
-      <h2>#{@params[:name]}</h2>
-      <p>Your sum is #{translate_money(@params[:sum])}</p>
-      <p>Your description is #{@params[:description]}</p>
+      <h1>#{@everypay_params[:invoice_number]}</h1>
+      <h2>#{@everypay_params[:customer_name]}</h2>
+      <p>Your sum is #{@everypay_params[:transaction_amount]}</p>
+      <p>Your description is #{@everypay_params[:description]}</p>
       <p>You can pay <a href="#{generate_link}">here</a></p>
     HTML
     )
   end
 
   def filename
-    "#{@params[:invoice_number]}.pdf"
+    "#{@everypay_params[:invoice_number]}.pdf"
   end
 end

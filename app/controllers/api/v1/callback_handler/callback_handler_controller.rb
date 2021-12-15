@@ -11,14 +11,13 @@ class Api::V1::CallbackHandler::CallbackHandlerController < Api::V1::CallbackHan
     # https://igw-demo.every-pay.com/api/v3/payments/payment_reference?api_username=7a40xxxb9b13d
 
     payment_reference = params[:payment_reference]
-    # order_reference = params[:order_reference]
 
     url = generate_url(payment_reference: payment_reference, api_username: API_USERNAME)
     response = base_request(url: url, api_username: API_USERNAME, api_secret: KEY)
 
     ParseResponse.call(response)
 
-    render json: {'message' => 'Callback comes', status: :ok}
+    render json: { 'message' => 'Callback comes', status: :ok }
   end
 
   private

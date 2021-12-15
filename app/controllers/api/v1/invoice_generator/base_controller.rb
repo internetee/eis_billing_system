@@ -16,9 +16,8 @@ class Api::V1::InvoiceGenerator::BaseController < ApplicationController
     return true if data === GlobalVariable::INVOICE_SECRET_WORD
 
     head :forbidden
-
-    rescue ActiveSupport::MessageEncryptor::InvalidMessage
-      head :forbidden
+  rescue ActiveSupport::MessageEncryptor::InvalidMessage
+    head :forbidden
   end
 
   private
