@@ -9,11 +9,15 @@ module InvoiceGenerator
   def generate_pdf(reference_number)
     invoice = Invoice.find_by(reference_number: reference_number)
 
+    p "++++++++++"
+    p invoice
+    p "++++++++++"
+
     @everypay_params = {
       transaction_amount: invoice.transaction_amount,
       order_reference: invoice.order_reference,
-      customer_name: invoice.customer_name,
-      customer_email: invoice.customer_email,
+      customer_name: invoice.buyer_name,
+      customer_email: invoice.buyer_email,
       custom_field_1: invoice.description,
       invoice_number: invoice.invoice_number,
       linkpay_token: LINKPAY_TOKEN

@@ -1,4 +1,7 @@
 class PaymentLhvConnectJob < ApplicationJob
+  REGEXP = /\A\d{2,20}\z/
+  MULTI_REGEXP = /(\d{2,20})/
+
   def perform
     test_payment
   end
@@ -38,15 +41,15 @@ class PaymentLhvConnectJob < ApplicationJob
   end
 
   def test_payment
-    # registrar = Invoice.last.buyer
+    user = OpenStruct.new(id: 1, name: "Oleg Hasjanov", reference_no: "12345")
 
-    registrar = OpenStruct.new(id: 1, name: "Oleg Hasjanov", reference_no: "12345")
+    return make_some_action_if_user_is_nil if user.nil?
 
     transactions = [OpenStruct.new(amount: 0.1,
                                    currency: 'EUR',
                                    date: Time.zone.today,
-                                   payment_reference_number: registrar.reference_no,
-                                   payment_description: "description #{registrar.reference_no}")]
+                                   payment_reference_number: user.reference_number,
+                                   payment_description: "description #{user.reference_number}")]
     process_transactions(transactions)
     puts 'Last registrar invoice is'
   end
@@ -64,7 +67,7 @@ class PaymentLhvConnectJob < ApplicationJob
       # bank_statement = BankStatement.new(bank_code: Setting.registry_bank_code,
       #                                    iban: Setting.registry_iban)
       bank_statement = BankStatement.new(bank_code: '689',
-                                           iban: 'EE557700771000598731')
+                                         iban: 'EE557700771000598731')
 
       ActiveRecord::Base.transaction do
         bank_statement.save!
@@ -77,20 +80,54 @@ class PaymentLhvConnectJob < ApplicationJob
                                      description: incoming_transaction.payment_description }
           transaction = bank_statement.bank_transactions.create!(transaction_attributes)
 
-          p "+++++++++++++"
-          p transaction
-          p "+++++++++++++"
-
-          # next if transaction.registrar.blank?
-
-          # unless transaction.non_canceled?
-          #   Invoice.create_from_transaction!(transaction) unless transaction.autobindable?
-          #   transaction.autobind_invoice
-          # end
+          search_and_update_invoice(transaction)
         end
       end
     else
       log 'Got no incoming transactions parsed, aborting'
     end
+  end
+
+  def search_and_update_invoice(transaction)
+    ref_number = parsed_ref_number(transaction)
+    invoice = Invoice.find_by(invoice_number: ref_number, transaction_amount: transaction.sum)
+
+    return make_some_action_if_invoice_not_found(transaction) if invoice.nil?
+
+    invoice.update(status: :paid)
+  end
+
+  def parsed_ref_number(transaction)
+    transaction.reference_no || ref_number_from_description(transaction)
+  end
+
+  def ref_number_from_description(transaction)
+    matches = transaction.description.to_s.scan(MULTI_REGEXP).flatten
+    matches.detect { |m| break m if m.length == 7 || valid_ref_no?(m) }
+  end
+
+  def make_some_action_if_user_is_nil
+    p '++++++++++++=USER NOT FOUND BRO!!!+++++++++++'
+  end
+
+  def make_some_action_if_invoice_not_found(transaction)
+    puts '+++++++++++INVOICE NOT FOUND++++++++++++'
+    puts 'So, I will create it by myself then !!!! =========='
+
+    ref_number = parsed_ref_number(transaction)
+    user = User.find_by(reference_number: ref_number)
+
+    make_some_action_if_user_is_nil if user.nil?
+
+    Invoice.create(
+      invoice_number: '000',
+      description: 'Direct top-up via bank transfer',
+      transaction_amount: transaction.sum,
+      customer_name: user.name,
+      customer_email: user.email,
+      order_reference: nil,
+      reference_number: ref_number,
+      status: 3
+    )
   end
 end

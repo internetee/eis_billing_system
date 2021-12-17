@@ -5,7 +5,7 @@ class PaymentResponseModelWrapper
   end
 
   def update(response)
-    update_invoice_state(order_reference: response[:order_reference], payment_state: response[:payment_state])
+    update_invoice_state(order_reference: response[:order_reference], payment_state: response[:payment_state], transaction_time: response[:transaction_time])
 
     @response = OpenStruct.new(response: response)
     display
@@ -19,12 +19,16 @@ class PaymentResponseModelWrapper
 
   private
 
-  def update_invoice_state(order_reference:, payment_state:)
+  def update_invoice_state(order_reference:, payment_state:, transaction_time:)
     invoice = Invoice.find_by(order_reference: order_reference)
 
     return if invoice.nil?
-    
-    invoice.update(status: :paid)
+
+    if payment_state == 'settled'
+      invoice.update(status: :paid, paid_at: transaction_time)
+    else
+      invoice.update(status: :failed)
+    end
 
     p "++++++ UPDATED INVOICE +++++"
     p invoice
