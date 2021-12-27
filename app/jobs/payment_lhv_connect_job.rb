@@ -2,8 +2,15 @@ class PaymentLhvConnectJob < ApplicationJob
   REGEXP = /\A\d{2,20}\z/
   MULTI_REGEXP = /(\d{2,20})/
 
-  def perform
-    test_payment
+  REFERENCE_NUMBER_TEST_VALUE = '34443'.freeze
+  TRANSACTION_SUM_TEST_VALUE = 100
+
+  def perform(test: true)
+    if test
+      test_payment(name: 'Oleg', reference_no: REFERENCE_NUMBER_TEST_VALUE, transaction_amount: TRANSACTION_SUM_TEST_VALUE)
+    else
+      payment_preocess
+    end
   end
 
   private
@@ -40,16 +47,17 @@ class PaymentLhvConnectJob < ApplicationJob
     puts "Transactions processed: #{incoming_transactions.size}"
   end
 
-  def test_payment
-    user = OpenStruct.new(id: 1, name: "Oleg Hasjanov", reference_no: "12345")
+  def test_payment(name:, reference_no:, transaction_amount:)
+    user = OpenStruct.new(id: 1, name: name, reference_number: reference_no)
 
     return make_some_action_if_user_is_nil if user.nil?
 
-    transactions = [OpenStruct.new(amount: 0.1,
+    transactions = [OpenStruct.new(amount: transaction_amount,
                                    currency: 'EUR',
                                    date: Time.zone.today,
                                    payment_reference_number: user.reference_number,
                                    payment_description: "description #{user.reference_number}")]
+
     process_transactions(transactions)
     puts 'Last registrar invoice is'
   end
@@ -90,7 +98,7 @@ class PaymentLhvConnectJob < ApplicationJob
 
   def search_and_update_invoice(transaction)
     ref_number = parsed_ref_number(transaction)
-    invoice = Invoice.find_by(invoice_number: ref_number, transaction_amount: transaction.sum)
+    invoice = Invoice.find_by(reference_number: ref_number, transaction_amount: transaction.sum.to_i)
 
     return make_some_action_if_invoice_not_found(transaction) if invoice.nil?
 
@@ -117,7 +125,7 @@ class PaymentLhvConnectJob < ApplicationJob
     ref_number = parsed_ref_number(transaction)
     user = User.find_by(reference_number: ref_number)
 
-    make_some_action_if_user_is_nil if user.nil?
+    return make_some_action_if_user_is_nil if user.nil?
 
     Invoice.create(
       invoice_number: '000',

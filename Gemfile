@@ -32,6 +32,7 @@ group :development, :test do
   gem 'factory_bot_rails'
   gem 'database_cleaner'
   gem 'simplecov', '0.17.1', require: false
+  gem 'rubocop-rails', require: false
 end
 
 group :development do
@@ -47,6 +48,7 @@ gem 'wkhtmltopdf-binary'
 gem 'pdfkit'
 
 gem 'money'
+gem 'countries', :require => 'countries/global'
 
 #payment features
 gem 'e_invoice', github: 'internetee/e_invoice', branch: :master

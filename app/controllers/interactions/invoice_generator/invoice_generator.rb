@@ -9,13 +9,9 @@ module InvoiceGenerator
   def generate_pdf(reference_number)
     invoice = Invoice.find_by(reference_number: reference_number)
 
-    p "++++++++++"
-    p invoice
-    p "++++++++++"
-
     @everypay_params = {
       transaction_amount: invoice.transaction_amount,
-      order_reference: invoice.order_reference,
+      # order_reference: invoice.order_reference,
       customer_name: invoice.buyer_name,
       customer_email: invoice.buyer_email,
       custom_field_1: invoice.description,
@@ -29,6 +25,8 @@ module InvoiceGenerator
   private
 
   def generate_link
+    p @everypay_params
+
     linker = EverypayV4Wrapper::LinkBuilder.new(key: KEY, params: @everypay_params)
     linker.build_link
   end
@@ -43,7 +41,7 @@ module InvoiceGenerator
       <h1>#{@everypay_params[:invoice_number]}</h1>
       <h2>#{@everypay_params[:customer_name]}</h2>
       <p>Your sum is #{@everypay_params[:transaction_amount]}</p>
-      <p>Your description is #{@everypay_params[:description]}</p>
+      <p>Your description is #{@everypay_params[:custom_field_1]}</p>
       <p>You can pay <a href="#{generate_link}">here</a></p>
     HTML
     )

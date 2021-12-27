@@ -5,10 +5,10 @@ module GenerateInvoiceInstance
     @params = params
 
     @user_params = {
-      name: @params[:name],
+      name: @params[:buyer_name],
       reference_number: @params[:reference_number],
-      email: @params[:email],
-      code: @params[:code],
+      email: @params[:buyer_email],
+      code: @params[:buyer_reg_no], # maybe need to add buyer_code???
       role: @params[:role]
     }
 
@@ -44,7 +44,8 @@ module GenerateInvoiceInstance
       buyer_phone: @params[:buyer_phone],
       buyer_url: @params[:buyer_url],
       buyer_email: @params[:buyer_email],
-      vat_rate: @params[:vat_rate]
+      vat_rate: @params[:vat_rate],
+      reference_number: @params[:reference_number]
     }
 
     generate_invoice
@@ -57,7 +58,7 @@ module GenerateInvoiceInstance
 
     return user unless user.nil?
 
-    User.create(@user_params)
+    User.create!(@user_params)
   end
 
   def generate_invoice

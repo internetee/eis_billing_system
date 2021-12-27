@@ -2,10 +2,6 @@ class Api::V1::InvoiceGenerator::InvoiceGeneratorController < Api::V1::InvoiceGe
   def create
     return render json: { 'message' => 'Parameters missing', status: :error } unless compare_params(params)
 
-    # Temporary solution
-    params[:order_reference] = 5.times.map { rand(10) }.join
-    params[:reference_number] = 5.times.map { rand(10) }.join
-
     GenerateInvoiceInstance.process(params)
     InvoiceGenerator.generate_pdf(params[:reference_number])
 
@@ -29,7 +25,7 @@ class Api::V1::InvoiceGenerator::InvoiceGeneratorController < Api::V1::InvoiceGe
 
   def params_template
     {
-      # reference_number: '',
+      reference_number: '',
 
       description: '',
       currency: '',
@@ -61,7 +57,9 @@ class Api::V1::InvoiceGenerator::InvoiceGeneratorController < Api::V1::InvoiceGe
       buyer_url: '',
       buyer_email: '',
       vat_rate: '',
-      role: ''
+      role: '',
+      buyer_vat_no: '',
+      buyer_iban: ''
     }
   end
 
@@ -99,7 +97,10 @@ class Api::V1::InvoiceGenerator::InvoiceGeneratorController < Api::V1::InvoiceGe
       :buyer_email,
       :vat_rate,
       :items_attributes,
-      :role
+      :role,
+      :buyer_iban,
+      :buyer_vat_no,
+      :reference_number,
     )
   end
 end

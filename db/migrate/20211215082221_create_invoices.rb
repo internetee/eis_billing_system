@@ -3,6 +3,9 @@ class CreateInvoices < ActiveRecord::Migration[6.1]
     create_table :invoices do |t|
       t.datetime :issue_date
       t.datetime :due_date
+      t.datetime :e_invoice_sent_at
+      t.datetime :cancelled_at
+
       t.string :description
       t.string :currency
       t.string :invoice_number
@@ -29,6 +32,7 @@ class CreateInvoices < ActiveRecord::Migration[6.1]
       t.references :user, index: true
       t.string :buyer_name
       t.string :buyer_reg_no
+      t.string :buyer_vat_no # !
       t.string :buyer_country_code
       t.string :buyer_state
       t.string :buyer_street
@@ -37,6 +41,7 @@ class CreateInvoices < ActiveRecord::Migration[6.1]
       t.string :buyer_phone
       t.string :buyer_url
       t.string :buyer_email
+      t.string :buyer_iban # !
 
       t.string :vat_rate
       t.jsonb :items_attributes

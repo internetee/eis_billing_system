@@ -1,5 +1,11 @@
 require 'rails_helper'
 
 RSpec.describe User, type: :model do
-  pending "add some examples to (or delete) #{__FILE__}"
+  describe "EInvoice" do
+    let (:invoice) { build(:invoice) }
+
+    it "should generate EInvoice format data" do
+      p invoice.to_e_invoice
+    end
+  end
 end
