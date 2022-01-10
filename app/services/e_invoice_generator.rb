@@ -38,25 +38,25 @@ class EInvoiceGenerator
     buyer_legal_address.country = invoice.buyer_country
     buyer.legal_address = buyer_legal_address
 
-    # e_invoice_invoice_items = []
-    # invoice.each do |invoice_item|
-    #   e_invoice_invoice_item = EInvoice::InvoiceItem.new.tap do |i|
-    #     i.description = invoice_item.description
-    #     i.price = invoice_item.price
-    #     i.quantity = invoice_item.quantity
-    #     i.unit = invoice_item.unit
-    #     i.subtotal = invoice_item.subtotal
-    #     i.vat_rate = invoice_item.vat_rate
-    #     i.vat_amount = invoice_item.vat_amount
-    #     i.total = invoice_item.total
-    #   end
-    #   e_invoice_invoice_items << e_invoice_invoice_item
-    # end
+    e_invoice_invoice_items = []
+    invoice.invoice_items.each do |invoice_item|
+      e_invoice_invoice_item = EInvoice::InvoiceItem.new.tap do |i|
+        i.description = invoice_item[:description]
+        i.price = invoice_item[:price]
+        i.quantity = invoice_item[:quantity]
+        i.unit = invoice_item[:unit]
+        i.subtotal = invoice_item[:subtotal]
+        i.vat_rate = invoice_item[:vat_rate]
+        i.vat_amount = invoice_item[:vat_amount]
+        i.total = invoice_item[:total]
+      end
+      e_invoice_invoice_items << e_invoice_invoice_item
+    end
 
     e_invoice_invoice = EInvoice::Invoice.new.tap do |i|
       i.seller = seller
       i.buyer = buyer
-      # i.items = e_invoice_invoice_items
+      i.items = e_invoice_invoice_items
       i.number = invoice.invoice_number
       i.date = invoice.issue_date
       i.recipient_id_code = invoice.buyer_reg_no
@@ -65,9 +65,9 @@ class EInvoiceGenerator
       i.beneficiary_name = invoice.seller_name
       i.beneficiary_account_number = invoice.seller_iban
       i.payer_name = invoice.buyer_name
-      # i.subtotal = invoice.subtotal
-      # i.vat_amount = invoice.vat_amount
-      # i.total = invoice.total
+      i.subtotal = invoice.subtotal
+      i.vat_amount = invoice.vat_amount
+      i.total = invoice.total
       i.currency = invoice.currency
       i.delivery_channel = %i[internet_bank portal]
       i.payable = payable

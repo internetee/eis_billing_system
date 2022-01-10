@@ -115,12 +115,12 @@ class PaymentLhvConnectJob < ApplicationJob
   end
 
   def make_some_action_if_user_is_nil
-    p '++++++++++++=USER NOT FOUND BRO!!!+++++++++++'
+    log 'USER NOT FOUND BRO'
   end
 
   def make_some_action_if_invoice_not_found(transaction)
-    puts '+++++++++++INVOICE NOT FOUND++++++++++++'
-    puts 'So, I will create it by myself then !!!! =========='
+    log 'INVOICE NOT FOUND'
+    log 'So, I will create it by myself then !!!!'
 
     ref_number = parsed_ref_number(transaction)
     user = User.find_by(reference_number: ref_number)

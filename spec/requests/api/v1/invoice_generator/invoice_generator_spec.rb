@@ -81,7 +81,28 @@ RSpec.describe "Api::V1::InvoiceGenerator::InvoiceGenerators", type: :request do
       vat_rate: '20',
       role: 'private_user',
       buyer_vat_no: '23323',
-      buyer_iban: '4454322423432'
+      buyer_iban: '4454322423432',
+      invoice_items: [{
+                        description: 'some_some',
+                        price: '1233',
+                        quantity: '2',
+                        unit: '3',
+                        subtotal: '5',
+                        vat_rate: '10',
+                        vat_amount: '23',
+                        total: '44'
+                      },
+                      {
+                        description: 'some_some_some',
+                        price: '12',
+                        quantity: '1',
+                        unit: '2',
+                        subtotal: '3',
+                        vat_rate: '5',
+                        vat_amount: '10',
+                        total: '22'
+                      },
+      ]
     }
   end
 

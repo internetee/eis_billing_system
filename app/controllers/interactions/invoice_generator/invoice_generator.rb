@@ -25,17 +25,22 @@ module InvoiceGenerator
   private
 
   def generate_link
-    p @everypay_params
+    @everypay_params
 
     linker = EverypayV4Wrapper::LinkBuilder.new(key: KEY, params: @everypay_params)
     linker.build_link
   end
 
   def generate_it
-    pdf_template.to_file("tmp/#{filename}")
+    pdf_template.to_file(filename)
   end
 
   def pdf_template
+    p "+++++++ generate link "
+    a = generate_link
+    p a
+    p "===================="
+
     PDFKit.new(
       <<-HTML
       <h1>#{@everypay_params[:invoice_number]}</h1>

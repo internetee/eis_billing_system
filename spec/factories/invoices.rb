@@ -31,6 +31,22 @@ FactoryBot.define do
     buyer_email { "MyString" }
     vat_rate { "MyString" }
     reference_number { "MyString" }
+    invoice_items {[{ description: 'some_some',
+                      price: '1233',
+                      quantity: '2',
+                      unit: '3',
+                      subtotal: '5',
+                      vat_rate: '10',
+                      vat_amount: '23',
+                      total: '44' },
+                    { description: 'some_some',
+                    price: '1233',
+                    quantity: '2',
+                    unit: '3',
+                    subtotal: '5',
+                    vat_rate: '10',
+                    vat_amount: '23',
+                    total: '44' } ]}
 
     user { association(:user) }
   end

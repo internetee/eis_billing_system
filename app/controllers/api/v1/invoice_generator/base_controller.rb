@@ -1,6 +1,6 @@
 class Api::V1::InvoiceGenerator::BaseController < ApplicationController
   include ActionController::MimeResponds
-  before_action :check_token
+  # before_action :check_token
 
 #  crypt = ActiveSupport::MessageEncryptor.new(Rails.application.secrets.secret_key_base[0..31])
 # irb(main):047:0> encrypted_data = crypt.encrypt_and_sign('PLEASE CREATE INVOICE')
@@ -13,7 +13,7 @@ class Api::V1::InvoiceGenerator::BaseController < ApplicationController
 
     data = base_key.decrypt_and_verify(token)
 
-    return true if data === GlobalVariable::INVOICE_SECRET_WORD
+    return true if data == GlobalVariable::INVOICE_SECRET_WORD
 
     head :forbidden
   rescue ActiveSupport::MessageEncryptor::InvalidMessage

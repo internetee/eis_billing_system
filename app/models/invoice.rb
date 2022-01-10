@@ -31,4 +31,19 @@ class Invoice < ApplicationRecord
     Country.new(buyer_country_code)
   end
 
+  def vat_amount
+    subtotal * vat_rate.to_f / 100
+  end
+
+  def subtotal
+    invoice_items.map { |i| item_sum_without_vat(item_price: i["price"], item_quantity: i["quantity"])}.reduce(:+)
+  end
+
+  def total
+    (subtotal + vat_amount).round(3)
+  end
+
+  def item_sum_without_vat(item_price:, item_quantity:)
+    (item_price.to_f * item_quantity.to_f).round(3)
+  end
 end
