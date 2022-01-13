@@ -1,0 +1,158 @@
+<h1>Invoice no. <%= @invoice.invoice_number %></h1>
+
+<hr>
+
+<h2>Details</h2>
+
+<hr>
+
+<table>
+  <tr>
+    <th><b>Issue date</b></th>
+    <td><%= @invoice.issue_date %></td>
+  </tr>
+  <tr>
+    <th><b>Due date</b></th>
+    <td><%= @invoice.due_date %></td>
+  </tr>
+  <tr>
+    <th><b>Invoice no.</b></th>
+    <td><%= @invoice.invoice_number %></td>
+  </tr>
+  <tr>
+    <th><b>Reference number</b></th>
+    <td><%= @invoice.reference_number %></td>
+  </tr>
+</table>
+
+<hr>
+
+<h2>Seller</h2>
+<table>
+  <tr>
+    <th><b>Name</b></th>
+    <td><%= @invoice.seller_name %></td>
+  </tr>
+  <tr>
+    <th><b>Reg no</b></th>
+    <td><%= @invoice.seller_reg_no %></td>
+  </tr>
+  <tr>
+    <th><b>IBAN</b></th>
+    <td><%= @invoice.seller_iban %></td>
+  </tr>
+  <tr>
+    <th><b>Bank</b></th>
+    <td><%= @invoice.seller_bank %></td>
+  </tr>
+  <tr>
+    <th><b>Swift</b></th>
+    <td><%= @invoice.seller_swift %></td>
+  </tr>
+  <tr>
+    <th><b>VAT number</b></th>
+    <td><%= @invoice.seller_vat_no %></td>
+  </tr>
+  <tr>
+    <th><b>Address</b></th>
+    <td><%= @invoice.seller_street %>, <%= @invoice.seller_city %>, <%= @invoice.seller_state %>, <%= @invoice.seller_zip %></td>
+  </tr>
+  <tr>
+    <th><b>Country</b></th>
+    <td><%= @invoice.seller_country_code %></td>
+  </tr>
+  <tr>
+    <th><b>Phone</b></th>
+    <td><%= @invoice.seller_phone %></td>
+  </tr>
+  <tr>
+    <th><b>URL</b></th>
+    <td><%= @invoice.seller_url %></td>
+  </tr>
+  <tr>
+    <th><b>E-mail</b></th>
+    <td><%= @invoice.seller_email %></td>
+  </tr>
+  <tr>
+    <th><b>Issuer</b></th>
+    <td><%= @invoice.seller_contact_name %></td>
+  </tr>
+</table>
+
+<hr>
+
+<h2>Buyer</h2>
+<table>
+  <tr>
+    <th><b>Name</b></th>
+    <td><%= @invoice.buyer_name %></td>
+  </tr>
+  <tr>
+    <th><b>Reg no</b></th>
+    <td><%= @invoice.buyer_reg_no %></td>
+  </tr>
+  <tr>
+    <th><b>Address</b></th>
+    <td><%= @invoice.buyer_street %>, <%= @invoice.buyer_city %>, <%= @invoice.buyer_state %>, <%= @invoice.buyer_zip %></td>
+  </tr>
+  <tr>
+    <th><b>Country</b></th>
+    <td><%= @invoice.buyer_country_code %></td>
+  </tr>
+  <tr>
+    <th><b>Phone</b></th>
+    <td><%= @invoice.buyer_phone %></td>
+  </tr>
+  <tr>
+    <th><b>URL</b></th>
+    <td><%= @invoice.buyer_url %></td>
+  </tr>
+  <tr>
+    <th><b>E-mail</b></th>
+    <td><%= @invoice.buyer_email %></td>
+  </tr>
+</table>
+
+<hr>
+
+<h2>Items</h2>
+<table>
+  <thead>
+    <tr>
+      <th>Description</th>
+      <th>Unit</th>
+      <th>Quantity</th>
+      <th>Price</th>
+      <th>Total</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @invoice.invoice_items.each do |i| %>
+      <tr>
+        <td><%= i["description"] %></td>
+        <td><%= i["unit"] %></td>
+        <td><%= i["quantity"] %></td>
+        <td><%= i["price"] %></td>
+        <td><%= (i["price"].to_f * i["quantity"].to_f).round(3) %></td>
+      </tr>
+    <% end %>
+  </tbody>
+  <tfoot>
+    <tr>
+      <th>Subtotal</th>
+      <td><%= @invoice.subtotal %></td>
+    </tr>
+    <tr>
+      <th>VAT <%= number_to_percentage(@invoice.vat_rate, precision: 1) %></th>
+      <td><%= number_to_currency @invoice.vat_amount %></td>
+    </tr>
+    <tr>
+      <th>Total</th>
+      <td><%= number_to_currency @invoice.total %></td>
+    </tr>
+  </tfoot>
+</table>
+
+<hr>
+
+<a href=<%= @link %>><h2>Everypay link</h2></a>

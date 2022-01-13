@@ -20,7 +20,7 @@ class PaymentResponseModelWrapper
   private
 
   def update_invoice_state(order_reference:, payment_state:, transaction_time:)
-    invoice = Invoice.find_by(order_reference: order_reference)
+    invoice = Invoice.find_by(invoice_number: order_reference)
 
     return if invoice.nil?
 

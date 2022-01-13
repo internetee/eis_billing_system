@@ -2,6 +2,8 @@ Rails.application.routes.draw do
   namespace :api, defaults: { format: :json } do
     namespace :v1 do
 
+      get 'get_invoice_payment_link/show'
+
       namespace :invoice_generator do
         resources :invoice_generator, only: [:create, :show]
       end

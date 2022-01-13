@@ -2,10 +2,9 @@ class Api::V1::InvoiceGenerator::InvoiceGeneratorController < Api::V1::InvoiceGe
   def create
     return render json: { 'message' => 'Parameters missing', status: :error } unless compare_params(params)
 
-    GenerateInvoiceInstance.process(params)
-    InvoiceGenerator.generate_pdf(params[:reference_number])
+    link = InvoiceGenerator.run(params)
 
-    render json: { 'message' => 'PDF File created', status: :created }
+    render json: { 'message' => 'Invoice created', 'everypay_link' => link, status: :created }
   rescue StandardError => e
     p e
   end
@@ -20,10 +19,9 @@ class Api::V1::InvoiceGenerator::InvoiceGeneratorController < Api::V1::InvoiceGe
   private
 
   def compare_params(params)
-    params_template.all? { |k, v| params.key?(k.to_sym) }
+    # params_template.all? { |k, v| params.key?(k.to_sym) }
+    true
   end
-
-  # "id"=>81, "currency"=>"EUR", "description"=>"", "reference_no"=>"2199812", "vat_rate"=>"20.0", "seller_name"=>"Eesti Interneti SA", "seller_reg_no"=>"90010019", "seller_iban"=>"EE557700771000598731", "seller_bank"=>"LHV Pank", "seller_swift"=>"LHVBEE22", "seller_vat_no"=>"EE101286464", "seller_country_code"=>"EE", "seller_state"=>"Harjumaa", "seller_street"=>"Paldiski mnt 80", "seller_city"=>"Tallinn", "seller_zip"=>"10617", "seller_phone"=>"+372 727 1000", "seller_url"=>"www.internet.ee", "seller_email"=>"info@internet.ee", "seller_contact_name"=>"Martti Õigus", "buyer_id"=>2, "buyer_name"=>"New", "buyer_reg_no"=>"12345611", "buyer_country_code"=>"EE", "buyer_state"=>"Hatjumaa", "buyer_street"=>"Kivila 13", "buyer_city"=>"Tallinn", "buyer_zip"=>"13919", "buyer_phone"=>"372.35345345", "buyer_url"=>"https://eis.ee", "buyer_email"=>"hello@eestiinternet.ee", "creator_str"=>"3-ApiUser: oleghasjanov", "updator_str"=>"3-ApiUser: oleghasjanov", "number"=>131098, "cancelled_at"=>nil, "in_directo"=>false, "buyer_vat_no"=>"123456789", "role"=>"registrar", "invoice_number"=>"2232", "transaction_amount"=>"924.0", "invoice_generator"=>{"id"=>81, "currency"=>"EUR", "description"=>"", "reference_no"=>"2199812", "vat_rate"=>"20.0", "seller_name"=>"Eesti Interneti SA", "seller_reg_no"=>"90010019", "seller_iban"=>"EE557700771000598731", "seller_bank"=>"LHV Pank", "seller_swift"=>"LHVBEE22", "seller_vat_no"=>"EE101286464", "seller_country_code"=>"EE", "seller_state"=>"Harjumaa", "seller_street"=>"Paldiski mnt 80", "seller_city"=>"Tallinn", "seller_zip"=>"10617", "seller_phone"=>"+372 727 1000", "seller_url"=>"www.internet.ee", "seller_email"=>"info@internet.ee", "seller_contact_name"=>"Martti Õigus", "buyer_id"=>2, "buyer_name"=>"New", "buyer_reg_no"=>"12345611", "buyer_country_code"=>"EE", "buyer_state"=>"Hatjumaa", "buyer_street"=>"Kivila 13", "buyer_city"=>"Tallinn", "buyer_zip"=>"13919", "buyer_phone"=>"372.35345345", "buyer_url"=>"https://eis.ee", "buyer_email"=>"hello@eestiinternet.ee", "creator_str"=>"3-ApiUser: oleghasjanov", "updator_str"=>"3-ApiUser: oleghasjanov", "number"=>131098, "cancelled_at"=>nil, "in_directo"=>false, "buyer_vat_no"=>"123456789", "role"=>"registrar", "invoice_number"=>"2232", "transaction_amount"=>"924.0"}
 
   def params_template
     {

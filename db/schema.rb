@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_12_28_124601) do
+ActiveRecord::Schema.define(version: 2022_01_13_094643) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -85,6 +85,8 @@ ActiveRecord::Schema.define(version: 2021_12_28_124601) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.jsonb "invoice_items"
+    t.datetime "paid_at"
+    t.string "payment_link"
     t.index ["user_id"], name: "index_invoices_on_user_id"
   end
 

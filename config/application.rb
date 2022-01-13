@@ -42,5 +42,28 @@ module EisBillingSystem
     # Middleware like session, flash, cookies can be added back manually.
     # Skip views, helpers and assets when generating a new resource.
     config.api_only = true
+
+    config.action_mailer.default_url_options = { protocol: ENV['action_mailer_default_protocol'],
+                                                 host: ENV['action_mailer_default_host'],
+                                                 port: ENV['action_mailer_default_port'] }
+
+    config.action_mailer.delivery_method = :smtp
+    config.action_mailer.perform_deliveries = true
+    config.action_mailer.raise_delivery_errors = true
+
+    config.secret_key_base = Figaro.env.secret_key_base
+
+    config.action_mailer.smtp_settings = {
+      address:              ENV['smtp_address'],
+      port:                 ENV['smtp_port'],
+      enable_starttls_auto: ENV['smtp_enable_starttls_auto'] == 'true',
+      user_name:            ENV['smtp_user_name'],
+      password:             ENV['smtp_password'],
+      authentication:       ENV['smtp_authentication'],
+      domain:               ENV['smtp_domain'],
+      openssl_verify_mode:  ENV['smtp_openssl_verify_mode']
+    }
+
+    config.action_dispatch.trusted_proxies = %w(127.0.0.1/32).map { |proxy| IPAddr.new(proxy) }
   end
 end

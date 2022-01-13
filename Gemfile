@@ -60,3 +60,6 @@ gem 'everypay_v4_wrapper', github: 'OlegPhenomenon/everypay_v4_wrapper', branch:
 
 # database handlers nd profiles
 gem 'strong_migrations'
+
+# application config file
+gem 'figaro'

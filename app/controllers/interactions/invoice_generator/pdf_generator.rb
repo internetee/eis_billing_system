@@ -1,22 +1,15 @@
-module InvoiceGenerator
+module PdfGenerator
   extend self
 
-  KEY = 'c05fa8dae730cc0cf57fe445861953fa'
-  LINKPAY_PREFIX = 'https://igw-demo.every-pay.com/lp'
-  LINKPAY_TOKEN = 'k5t5xq'
-  LINKPAY_QR = true
-
-  def generate_pdf(reference_number)
-    invoice = Invoice.find_by(reference_number: reference_number)
-
+  def generate(invoice:)
     @everypay_params = {
       transaction_amount: invoice.transaction_amount,
-      # order_reference: invoice.order_reference,
+      order_reference: invoice.invoice_number,
       customer_name: invoice.buyer_name,
       customer_email: invoice.buyer_email,
       custom_field_1: invoice.description,
       invoice_number: invoice.invoice_number,
-      linkpay_token: LINKPAY_TOKEN
+      linkpay_token: GlobalVariable::LINKPAY_TOKEN
     }
 
     generate_it
@@ -25,9 +18,7 @@ module InvoiceGenerator
   private
 
   def generate_link
-    @everypay_params
-
-    linker = EverypayV4Wrapper::LinkBuilder.new(key: KEY, params: @everypay_params)
+    linker = EverypayV4Wrapper::LinkBuilder.new(key: GlobalVariable::KEY, params: @everypay_params)
     linker.build_link
   end
 
@@ -36,11 +27,6 @@ module InvoiceGenerator
   end
 
   def pdf_template
-    p "+++++++ generate link "
-    a = generate_link
-    p a
-    p "===================="
-
     PDFKit.new(
       <<-HTML
       <h1>#{@everypay_params[:invoice_number]}</h1>
