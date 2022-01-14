@@ -18,7 +18,8 @@ module GenerateInvoiceInstance
       description: @params[:description], #
       currency: @params[:currency], #
       invoice_number: @params[:number], #
-      transaction_amount: translate_money(@params[:transaction_amount]),
+      # transaction_amount: translate_money(@params[:transaction_amount]),
+      transaction_amount: @params[:transaction_amount],
       seller_name: @params[:seller_name], #
       seller_reg_no: @params[:seller_reg_no], #
       seller_iban: @params[:seller_iban], #
