@@ -18,7 +18,7 @@ class Notify
   end
 
   def base_request(params:)
-    uri = URI(update_payment_url)
+    uri = URI.parse(update_payment_url)
     http = Net::HTTP.new(uri.host, uri.port)
     headers = {
       'Authorization'=>'Bearer foobar',
