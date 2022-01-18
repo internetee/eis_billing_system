@@ -12,9 +12,6 @@ class PaymentResponseModelWrapper
   end
 
   def display
-    p "Payment Response Model Wrapper ========="
-    p @response
-    p "========================================"
   end
 
   private
@@ -29,9 +26,5 @@ class PaymentResponseModelWrapper
     else
       invoice.update(status: :failed)
     end
-
-    p "++++++ UPDATED INVOICE +++++"
-    p invoice
-    p "++++++++++++++++++++++++++++"
   end
 end

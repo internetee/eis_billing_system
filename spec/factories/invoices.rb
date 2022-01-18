@@ -2,8 +2,8 @@ FactoryBot.define do
   factory :invoice do
     description { "MyString" }
     currency { "MyString" }
-    invoice_number { "MyString" }
-    transaction_amount { "MyString" }
+    invoice_number { 2323 }
+    transaction_amount { "112" }
     seller_name { "MyString" }
     seller_reg_no { "MyString" }
     seller_iban { "MyString" }
@@ -31,22 +31,15 @@ FactoryBot.define do
     buyer_email { "MyString" }
     vat_rate { "MyString" }
     reference_number { "MyString" }
-    invoice_items {[{ description: 'some_some',
-                      price: '1233',
-                      quantity: '2',
-                      unit: '3',
-                      subtotal: '5',
-                      vat_rate: '10',
-                      vat_amount: '23',
-                      total: '44' },
-                    { description: 'some_some',
-                    price: '1233',
-                    quantity: '2',
-                    unit: '3',
-                    subtotal: '5',
-                    vat_rate: '10',
-                    vat_amount: '23',
-                    total: '44' } ]}
+
+    invoice_items {[{ description: 'prepayment',
+                      price: 123,
+                      quantity: 2,
+                      unit: 'piece' },
+                    { description: 'prepayment',
+                      price: 13,
+                      quantity: 1,
+                      unit: 'piece' } ]}
 
     user { association(:user) }
   end

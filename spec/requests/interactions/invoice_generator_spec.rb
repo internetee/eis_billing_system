@@ -8,5 +8,5 @@ RSpec.describe "InvoiceGenerators" do
     invoice_number: '12221'
   }
 
-  it_behaves_like 'Invoice generator', params
+  # it_behaves_like 'Invoice generator', params
 end

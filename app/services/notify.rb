@@ -10,9 +10,9 @@ class Notify
   end
 
   def display
-    p "++++ response eis billing +++"
-    p @response
-    p "+++++++++++++++++++++++++++++"
+    # p "++++ response eis billing +++"
+    # p @response
+    # p "+++++++++++++++++++++++++++++"
 
     base_request(params: @response)
   end
@@ -31,6 +31,6 @@ class Notify
   end
 
   def update_payment_url
-    "https://registry:3000/eis_billing/payment_status"
+    ENV['update_payment_url']
   end
 end

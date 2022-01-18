@@ -1,0 +1,37 @@
+# Add configuration values here, as shown below.
+#
+# pusher_app_id: "2954"
+# pusher_key: 7381a978f7dd7f9a1117
+# pusher_secret: abdc3b896a0ffb85d373
+# stripe_api_key: sk_test_2J0l093xOyW72XUYJHE4Dv2r
+# stripe_publishable_key: pk_test_ro9jV5SNwGb1yYlQfzG17LHK
+#
+# production:
+#   stripe_api_key: sk_live_EeHnL644i6zo4Iyq4v1KdV9H
+#   stripe_publishable_key: pk_live_9lcthxpSIHbGwmdO941O1XVU
+
+action_mailer_default_protocol: 'https' # default: http
+action_mailer_default_host: 'registry.test'
+action_mailer_default_port: 80 #default: no port (80)
+action_mailer_default_from: 'no-reply@example.com'
+action_mailer_force_delete_from: # `From` header for `DomainDeleteMailer#forced` email
+
+smtp_address: '172.17.0.1'
+smtp_port: '1025' # 587, 465
+smtp_user_name: ''
+smtp_password: ''
+# If you need to specify a HELO domain, you can do it here.
+smtp_domain: '' # 'domain for HELO checking'
+# Use "none" only when for a self-signed and/or wildcard certificate
+smtp_openssl_verify_mode: 'none' # 'none', 'peer', 'client_once','fail_if_no_peer_cert'
+# Detects if STARTTLS is enabled in your SMTP server and starts to use it. Defaults to true.
+# Set this to false if there is a problem with your server certificate that you cannot resolve.
+smtp_enable_starttls_auto: 'false' # 'false'
+# If your mail server requires authentication, please change.
+smtp_authentication: 'plain' # 'plain', 'login', 'cram_md5'
+
+everypay_key: ""
+linkpay_prefix: 'https://igw-demo.every-pay.com/lp'
+linkpay_token: ''
+
+update_payment_url: "https://registry:3000/eis_billing/payment_status"
