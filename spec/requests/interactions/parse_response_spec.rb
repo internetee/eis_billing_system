@@ -31,6 +31,13 @@ RSpec.describe "ParseResponse" do
       "transaction_time" => "#{Time.zone.now - 1.hour}",
     }
 
+    uri_object = OpenStruct.new
+    uri_object.host = 'http://endpoint/get'
+    uri_object.port = '3000'
+
+    allow(URI).to receive(:parse).and_return(uri_object)
+    expect_any_instance_of(Net::HTTP).to receive(:put).and_return('200 - ok')
+
     ParseResponse.call(response)
   end
 

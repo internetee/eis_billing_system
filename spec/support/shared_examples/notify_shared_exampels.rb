@@ -2,6 +2,10 @@ RSpec.shared_examples 'should notify initiator' do
   let(:invoice) { create(:invoice) }
   let(:user) { create(:user) }
 
+  before(:each) do
+    stub_const('ENV', {'update_payment_url' => 'http://endpoint:3000/get'})
+  end
+
   it 'should notify registrar that response was receive in callback handler' do
     response = {
       account_name: 'EUR',
@@ -27,6 +31,12 @@ RSpec.shared_examples 'should notify initiator' do
       transaction_time: Time.zone.now - 1.hour
     }
 
+    # Создать Struct для URI
+    uri_object = OpenStruct.new
+    uri_object.host = 'http://endpoint/get'
+    uri_object.port = '3000'
+
+    allow(URI).to receive(:parse).and_return(uri_object)
     expect_any_instance_of(Net::HTTP).to receive(:put).and_return('200 - ok')
 
     notifier = Notify.new
