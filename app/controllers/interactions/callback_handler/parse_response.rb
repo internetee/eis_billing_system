@@ -3,17 +3,17 @@ module ParseResponse
 
   def call(response)
     @response = parse_response(response)
-    invoice_reference_number = Invoice.find_by(invoice_number: @response[:order_reference])
-    @response[:reference_number] = invoice_reference_number.reference_number
+    # invoice_reference_number = Invoice.find_by(invoice_number: @response[:order_reference])
+    # @response[:reference_number] = invoice_reference_number.reference_number
 
     # Subject
     concrete_subject = ConcreteSubject.new(@response)
 
     # Observers
-    payment_response_model_wrapper = PaymentResponseModelWrapper.new
+    # payment_response_model_wrapper = PaymentResponseModelWrapper.new
     notification = Notify.new
 
-    concrete_subject.attach(payment_response_model_wrapper)
+    # concrete_subject.attach(payment_response_model_wrapper)
     concrete_subject.attach(notification)
 
     concrete_subject.notify

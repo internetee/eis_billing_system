@@ -1,25 +1,22 @@
 module EverypayLinkGenerator
   extend self
 
-  def create(invoice:)
-    everypay_params = everypay_params(invoice)
+  def create(params:)
+    everypay_params = everypay_params(params)
     linker = EverypayV4Wrapper::LinkBuilder.new(key: GlobalVariable::KEY, params: everypay_params)
-    link = linker.build_link
 
-    invoice.payment_link = link
-    invoice.save
-
-    link
+    linker.build_link
   end
 
-  def everypay_params(invoice)
+  def everypay_params(params)
     {
-      transaction_amount: invoice.transaction_amount,
-      order_reference: invoice.invoice_number,
-      customer_name: invoice.buyer_name,
-      customer_email: invoice.buyer_email,
-      custom_field_1: invoice.description,
-      invoice_number: invoice.invoice_number,
+      transaction_amount: params[:transaction_amount].to_s,
+      order_reference: params[:invoice_number].to_s,
+      customer_name: params[:customer_name].to_s, # buyer_name
+      customer_email: params[:customer_email].to_s, # buyer_email
+      custom_field_1: params[:custom_field_1].to_s,
+      custom_field_2: params[:custom_field_2].to_s,
+      invoice_number: params[:invoice_number].to_s,
       linkpay_token: GlobalVariable::LINKPAY_TOKEN
     }
   end

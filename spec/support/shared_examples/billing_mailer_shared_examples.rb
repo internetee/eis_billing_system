@@ -19,3 +19,4 @@ RSpec.shared_examples 'send billing mail' do
     expect(mail.subject).to eq('Invoice generated')
   end
 end
+  
