@@ -15,6 +15,10 @@ class Api::V1::CallbackHandler::CallbackHandlerController < Api::V1::CallbackHan
     url = generate_url(payment_reference: payment_reference, api_username: API_USERNAME)
     response = base_request(url: url, api_username: API_USERNAME, api_secret: KEY)
 
+    p "++++++++++ RESPONSE FROM EVERYPAY"
+    p response
+    p "+++++++++++++++++++++++++++++++++"
+
     ParseResponse.call(response)
 
     render status: 200, json: { status: 'ok' }

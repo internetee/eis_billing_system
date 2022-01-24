@@ -34,4 +34,6 @@ everypay_key: ""
 linkpay_prefix: 'https://igw-demo.every-pay.com/lp'
 linkpay_token: ''
 
-update_payment_url: "https://registry:3000/eis_billing/payment_status"
+registry_update_payment_url: "https://registry:3000/eis_billing/payment_status"
+auction_update_payment_url: "https://auction:3000/eis_billing/payment_status"
+

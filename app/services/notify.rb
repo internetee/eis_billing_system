@@ -31,6 +31,6 @@ class Notify
   end
 
   def update_payment_url
-    ENV['update_payment_url']
+    ENV['registry_update_payment_url']
   end
 end
