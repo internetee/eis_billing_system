@@ -7,6 +7,7 @@
 # Ignore bundler config.
 /.bundle
 /.idea
+/eestiInternetiSa
 
 # Ignore all logfiles and tempfiles.
 /log/*
@@ -29,3 +30,7 @@
 
 # Ignore application configuration
 /config/application.yml
+keystore.p12
+lhv_cer.cer
+lhv_staging.cer
+LHV_test_rootca2011.cer

@@ -19,7 +19,7 @@ class Api::V1::CallbackHandler::CallbackHandlerController < Api::V1::CallbackHan
     p response
     p "+++++++++++++++++++++++++++++++++"
 
-    ParseResponse.call(response)
+    Notify.call(response)
 
     render status: 200, json: { status: 'ok' }
   end
