@@ -10,18 +10,27 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_01_25_090240) do
+ActiveRecord::Schema.define(version: 2022_01_26_120655) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
   create_table "invoices", force: :cascade do |t|
-    t.string "invoice_number"
+    t.integer "invoice_number"
     t.string "initiator"
     t.string "payment_reference"
     t.string "transaction_amount"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.index ["invoice_number"], name: "index_invoices_on_invoice_number", unique: true
+  end
+
+  create_table "references", force: :cascade do |t|
+    t.integer "reference_number"
+    t.string "initiator"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["reference_number"], name: "index_references_on_reference_number", unique: true
   end
 
 end

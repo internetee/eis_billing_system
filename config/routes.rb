@@ -4,8 +4,15 @@ Rails.application.routes.draw do
 
       get 'get_invoice_payment_link/show'
 
+      namespace :import_data do
+        resources :reference_data, only: [:create]
+        resources :invoice_data, only: [:create]
+      end
+
       namespace :invoice_generator do
         resources :invoice_generator, only: [:create, :show]
+        resources :invoice_number_generator, only: [:create]
+        resources :reference_number_generator, only: [:create]
       end
 
       namespace :callback_handler do

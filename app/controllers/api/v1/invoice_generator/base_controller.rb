@@ -4,9 +4,9 @@ class Api::V1::InvoiceGenerator::BaseController < ApplicationController
 
 #  crypt = ActiveSupport::MessageEncryptor.new(Rails.application.secrets.secret_key_base[0..31])
 # irb(main):047:0> encrypted_data = crypt.encrypt_and_sign('PLEASE CREATE INVOICE')
-# => "HFW8ADSIrjyD9cbH4H5Rk3MY/ZfhV85IlnGl7YI2CQ==--OvlWMMiTLLotgdfT--/ffejEDaIGFfz7FzzNSlYA=="
+# => 
 # irb(main):048:0> decrypted_back = crypt.decrypt_and_verify(encrypted_data)
-# => "PLEASE CREATE INVOICE"
+# => 
 
   def check_token
     token = request.headers['Authorization'].split(' ')[1] if request

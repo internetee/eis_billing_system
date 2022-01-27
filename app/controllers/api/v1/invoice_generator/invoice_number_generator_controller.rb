@@ -1,0 +1,28 @@
+class Api::V1::InvoiceGenerator::InvoiceNumberGeneratorController < ApplicationController
+  INVOICE_NUMBER_MIN = 150005
+  INVOICE_NUMBER_MAX = 199999
+
+  def create
+    invoice_number = invoice_number_generate
+
+    return render json: { 'message' => 'Link created', 'error' => invoice_number, status: :error } if invoice_number == 'out of range'
+
+    render json: { 'message' => 'Link created', 'invoice_number' => invoice_number, status: :created }
+  end
+
+  private
+
+  def invoice_number_generate
+    last_no = Invoice.order(invoice_number: :desc).limit(1).pick(:invoice_number)
+
+    if last_no && last_no >= INVOICE_NUMBER_MIN
+      number = last_no.to_i + 1
+    else
+      number = INVOICE_NUMBER_MIN
+    end
+
+    return number if number <= INVOICE_NUMBER_MAX
+
+    'out of range'
+  end
+end
