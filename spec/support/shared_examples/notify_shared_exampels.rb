@@ -1,37 +1,14 @@
-RSpec.shared_examples 'should notify initiator' do
+RSpec.shared_examples 'should notify initiator' do |response_everypay|
   let(:invoice) { create(:invoice) }
-  let(:user) { create(:user) }
 
   before(:each) do
     stub_const('ENV', {'update_payment_url' => 'http://endpoint:3000/get'})
   end
 
   it 'should notify registrar that response was receive in callback handler' do
-    response = {
-      account_name: 'EUR',
-      order_reference: invoice.invoice_number,
-      email: user.email,
-      customer_ip: '12.32.12.12',
-      customer_url: 'http://eis.ee',
-      payment_created_at: Time.zone.now - 10.hours,
-      initial_amount: 123.32,
-      standing_amount: 123.32,
-      payment_reference: '234343423423423asd',
-      payment_link: 'http://everypay.link',
-      api_username: 'some-api',
-      warnings: [],
-      stan: 'stab',
-      fraud_score: 'fraud_score',
-      payment_state: 'settled',
-      payment_method: 'everypay',
-      ob_details: 'ob_details',
-      creditor_iban: '23323123323123',
-      ob_payment_reference: '213123123',
-      ob_payment_state: '213123123',
-      transaction_time: Time.zone.now - 1.hour
-    }
+    invoice.save
+    expect(invoice.initiator).to eq('registry')
 
-    # Создать Struct для URI
     uri_object = OpenStruct.new
     uri_object.host = 'http://endpoint/get'
     uri_object.port = '3000'
@@ -39,9 +16,10 @@ RSpec.shared_examples 'should notify initiator' do
     allow(URI).to receive(:parse).and_return(uri_object)
     expect_any_instance_of(Net::HTTP).to receive(:put).and_return('200 - ok')
 
-    notifier = Notify.new
-    res = notifier.update(response)
+    res = Notify.call(JSON.parse(response_everypay.to_json))
+    # allow(Notify).to receive(:update_payment_url).with(initiator: 'registry').and_return('registry')
 
+    # expect(Notify.update_payment_url).to eq('registry')
     expect(res).to match('200 - ok')
   end
 end

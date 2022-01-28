@@ -6,7 +6,7 @@ class Api::V1::ImportData::ReferenceDataController < ApplicationController
       initiator = data["initiator"]
 
       next unless Reference.find_by(reference_number: reference_number).nil?
-     
+
       log_request(reference_number: reference_number, initiator: initiator)
 
       Reference.create!(reference_number: reference_number, initiator: initiator)

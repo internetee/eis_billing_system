@@ -4,14 +4,16 @@ module Notify
   def call(response)
     parsed_response = parse_response(response)
 
-    invoice = Invoice.find_by(invoice_number: parsed_response[:order_reference], transaction_amount:  parsed_response[:standing_amount])
+    invoice = Invoice.find_by(invoice_number: parsed_response[:order_reference],
+                              transaction_amount: parsed_response[:standing_amount])
+
     invoice.update(payment_reference: parsed_response[:payment_reference])
 
     logger.info "Invoice not found\n Yout response #{parsed_response}" if invoice.nil?
 
     url = update_payment_url(initiator: invoice.initiator)
 
-    logger.info "Not found initiator. Inititor #{invoice.initiator}" if url.nil? 
+    logger.info "Not found initiator. Inititor #{invoice.initiator}" if url.nil?
 
     base_request(params: parsed_response, url: url)
   end
@@ -20,26 +22,24 @@ module Notify
     uri = URI.parse(url)
     http = Net::HTTP.new(uri.host, uri.port)
     headers = {
-      'Authorization'=>'Bearer foobar',
-      'Content-Type' =>'application/json'
+      'Authorization' => 'Bearer foobar',
+      'Content-Type' => 'application/json'
       # 'Accept'=> TOKEN
     }
 
-    res = http.put(url, params.to_json, headers)
-    res
+    http.put(url, params.to_json, headers)
   end
 
   def update_payment_url(initiator:)
+    p initiator
     if initiator == 'registry'
       ENV['registry_update_payment_url']
     elsif initiator == 'auction'
       ENV['auction_update_payment_url']
-    else
-      nil
     end
   end
 
-    def parse_response(response)
+  def parse_response(response)
     {
       account_name: response['account_name'],
       order_reference: response['order_reference'],

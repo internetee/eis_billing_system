@@ -1,3 +1,1 @@
-class Api::V1::CallbackHandler::BaseController < ActionController::API
-
-end
+class Api::V1::CallbackHandler::BaseController < ActionController::API; end

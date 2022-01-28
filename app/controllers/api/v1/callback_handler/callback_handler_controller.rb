@@ -5,23 +5,20 @@ class Api::V1::CallbackHandler::CallbackHandlerController < Api::V1::CallbackHan
   LINKPAY_QR = true
   API_USERNAME = 'ca8d6336dd750ddb'
 
+  # byebug
+
   def callback
     # https://support.every-pay.com/merchant-support/integrate-linkpay-callbacks/
     # /api/v1/callback_handler/callback
     # https://igw-demo.every-pay.com/api/v3/payments/payment_reference?api_username=7a40xxxb9b13d
-
     payment_reference = params[:payment_reference]
 
     url = generate_url(payment_reference: payment_reference, api_username: API_USERNAME)
     response = base_request(url: url, api_username: API_USERNAME, api_secret: KEY)
 
-    p "++++++++++ RESPONSE FROM EVERYPAY"
-    p response
-    p "+++++++++++++++++++++++++++++++++"
-
     Notify.call(response)
 
-    render status: 200, json: { status: 'ok' }
+    render json: { message: response, status: :success }
   end
 
   private

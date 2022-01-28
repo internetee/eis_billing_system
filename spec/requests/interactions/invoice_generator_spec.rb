@@ -2,11 +2,10 @@ require 'rails_helper'
 
 RSpec.describe "InvoiceGenerators" do
   params = {
-    sum:  '1234',
-    name: 'oleg hasjanov',
-    description: 'this_is_description',
-    invoice_number: '12221'
+    invoice_number: "125",
+    custom_field_2: "registry",
+    transaction_amount: "23.30"
   }
 
-  # it_behaves_like 'Invoice generator', params
+  it_behaves_like 'invoice generator', params
 end

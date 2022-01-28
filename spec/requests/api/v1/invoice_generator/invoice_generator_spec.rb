@@ -1,8 +1,19 @@
 require 'rails_helper'
 
 RSpec.describe "Api::V1::InvoiceGenerator::InvoiceGenerators", type: :request do
-  let(:user) { create(:user) }
+  params = {
+    invoice_number: "125",
+    custom_field_2: "registry",
+    transaction_amount: "23.30"
+  }
 
-  it_should_behave_like 'everypay link generator'
-  it_should_behave_like 'send billing mail'
+  it_behaves_like 'invoice generator', params
+
+  describe "POST /create" do
+    it "should return success response" do
+      post api_v1_invoice_generator_invoice_generator_index_url, params: params
+
+      expect(response).to have_http_status(:success)
+    end
+  end
 end
