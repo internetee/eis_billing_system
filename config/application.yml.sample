@@ -34,6 +34,17 @@ everypay_key: ""
 linkpay_prefix: 'https://igw-demo.every-pay.com/lp'
 linkpay_token: ''
 
+base_registry: "https://registry:3000"
 registry_update_payment_url: "https://registry:3000/eis_billing/payment_status"
 auction_update_payment_url: "https://auction:3000/eis_billing/payment_status"
+
+lhv_keystore: './eestiInternetiSa/eestiInternetiSa.p12'
+lhv_keystore_password: 'changeit'
+lhv_keystore_alias: 'eestiinternetisa_connect0021'
+lhv_ca_file: # Needed only in dev mode
+lhv_dev_mode: 'true'
+
+invoice_secret_word: 'CREATE_PLEASE_INVOICE'
+
+directo_invoice_url: 'https://domain/ddddd.asp'
 

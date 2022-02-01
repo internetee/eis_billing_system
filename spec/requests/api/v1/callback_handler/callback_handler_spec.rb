@@ -31,6 +31,7 @@ RSpec.describe "Api::V1::CallbackHandler::CallbackHandlers", type: :request do
 
   describe "GET /callback" do
     it "should return 200 ok response" do
+      FakeWeb.register_uri(:put, "http://registry:3000/eis_billing/payment_status", body: 'ok')
       invoice.payment_reference = 'some'
       invoice.save
 

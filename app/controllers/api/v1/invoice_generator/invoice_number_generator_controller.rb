@@ -1,6 +1,6 @@
 class Api::V1::InvoiceGenerator::InvoiceNumberGeneratorController < ApplicationController
-  INVOICE_NUMBER_MIN = 150005
-  INVOICE_NUMBER_MAX = 199999
+  INVOICE_NUMBER_MIN = Setting.invoice_number_min || 150005
+  INVOICE_NUMBER_MAX = Setting.invoice_number_max || 199999
 
   def create
     invoice_number = invoice_number_generate

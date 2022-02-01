@@ -1,8 +1,17 @@
 Rails.application.routes.draw do
+  namespace :api do
+    namespace :v1 do
+
+    end
+  end
   namespace :api, defaults: { format: :json } do
     namespace :v1 do
 
       get 'get_invoice_payment_link/show'
+
+      namespace :directo do
+        resources :directo, only: [:create]
+      end
 
       namespace :import_data do
         resources :reference_data, only: [:create]
