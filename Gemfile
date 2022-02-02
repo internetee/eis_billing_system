@@ -33,7 +33,6 @@ group :development, :test do
   gem 'database_cleaner'
   gem 'simplecov', '0.17.1', require: false
   gem 'rubocop-rails', require: false
-  gem "fakeweb", "~> 1.3"
 end
 
 group :development do

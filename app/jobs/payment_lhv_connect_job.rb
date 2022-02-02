@@ -23,7 +23,7 @@ class PaymentLhvConnectJob < ApplicationJob
     api = Lhv::ConnectApi.new
     api.cert = cert
     api.key = key
-    api.ca_file = ENV['lhv_ca_file']
+    # api.ca_file = ENV['lhv_ca_file']
     api.dev_mode = ENV['lhv_dev_mode'] == 'true'
 
     incoming_transactions = []
@@ -42,7 +42,18 @@ class PaymentLhvConnectJob < ApplicationJob
       end
     end
 
-    send_transactions_to_registry(params: incoming_transactions)
+    sorted_by_ref_number = incoming_transactions.group_by { |x| x[:payment_reference_number] }
+    sorted_by_ref_number.each do |s|
+      reference_initiator = Reference.find_by(reference_number: s[0])
+      if reference_initiator.initiator == 'registry'
+        send_transactions_to_registry(params: s[1])
+      else
+        p reference_initiator.initiator
+        p s[1]
+      end
+    end
+
+    # send_transactions_to_registry(params: incoming_transactions)
     puts "Transactions processed: #{incoming_transactions.size}"
   end
 
@@ -68,8 +79,8 @@ class PaymentLhvConnectJob < ApplicationJob
     OpenStruct.new(amount: 0.1,
                    currency: 'EUR',
                    date: Time.zone.today,
-                   payment_reference_number: '2199812',
-                   payment_description: "description 2199812")
+                   payment_reference_number: '7366488',
+                   payment_description: "description 7366488")
   end
 
   def log(msg)

@@ -71,13 +71,13 @@ RSpec.shared_examples 'should send invoices to directo' do |_params|
   ]
 
   describe '#perform - send_receipts' do
-    it 'DirectoResponseSender should get respose' do
-      FakeWeb.allow_net_connect = false
-      FakeWeb.register_uri(:post, ENV['directo_invoice_url'], body: response)
+    # it 'DirectoResponseSender should get respose' do
+    #   FakeWeb.allow_net_connect = false
+    #   FakeWeb.register_uri(:post, ENV['directo_invoice_url'], body: response)
 
-      expect(DirectoResponseSender).to receive(:send_request).with(response: response, xml_data: xml_invoice_schema).and_return('ok')
+    #   expect(DirectoResponseSender).to receive(:send_request).with(response: response, xml_data: xml_invoice_schema).and_return('ok')
 
-      DirectoInvoiceForwardJob.perform_now(invoice_data: directo_invoice_json, initiator: 'registry')
-    end
+    #   DirectoInvoiceForwardJob.perform_now(invoice_data: directo_invoice_json, initiator: 'registry')
+    # end
   end
 end
