@@ -1,43 +1,36 @@
 class SendEInvoiceJob < ApplicationJob
   # discard_on HTTPClient::TimeoutError
 
-  def perform(invoice_id, payable: true)
-    logger.info "Started to process e-invoice for invoice_id #{invoice_id}"
-    invoice = Invoice.find_by(id: invoice_id)
-    return unless need_to_process_invoice?(invoice: invoice, payable: payable)
+  def perform(e_invoice_data)
+    logger.info "Started to process e-invoice for invoice_id #{e_invoice_data[:invoice_data][:id]}"
 
-    process(invoice: invoice, payable: payable)
+    process(e_invoice_data)
   rescue StandardError => e
-    log_error(invoice: invoice, error: e)
+    log_error(invoice: e_invoice_data[:invoice_data][:id], error: e)
     raise e
   end
 
   private
 
-  def need_to_process_invoice?(invoice:, payable:)
-    logger.info "Checking if need to process e-invoice #{invoice}, payable: #{payable}"
-    return false if invoice.blank?
-    return false if invoice.do_not_send_e_invoice? && payable
+  def process(e_invoice_data)
+    e_invoice_instance = EInvoiceGenerator.new(e_invoice_data)
+    e_invoice_instance.generate.deliver unless Rails.env.development?
 
-    true
+    # TODO: send back date of e invoice sent
+    # invoice.update(e_invoice_sent_at: Time.zone.now)
+
+    EInvoiceResponseSender.send_request(initiator: e_invoice_data[:initiator], invoice_number: e_invoice_data[:invoice_data][:number])
+    log_success(e_invoice_data)
   end
 
-  def process(invoice:, payable:)
-    invoice.to_e_invoice(payable: payable).deliver unless Rails.env.development?
-    invoice.update(e_invoice_sent_at: Time.zone.now)
-    log_success(invoice)
-  end
-
-  def log_success(invoice)
-    id = invoice.try(:id) || invoice
-    message = "E-Invoice for an invoice with ID # #{id} was sent successfully"
+  def log_success(e_invoice_data)
+    message = "E-Invoice for an invoice with ID # #{e_invoice_data[:invoice_data][:id]} was sent successfully"
     logger.info message
   end
 
   def log_error(invoice:, error:)
-    id = invoice.try(:id) || invoice
     message = <<~TEXT.squish
-      There was an error sending e-invoice for invoice with ID # #{id}.
+      There was an error sending e-invoice for invoice with ID # #{invoice}.
       The error message was the following: #{error}
       This job will retry.
     TEXT

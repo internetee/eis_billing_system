@@ -1,9 +1,4 @@
 Rails.application.routes.draw do
-  namespace :api do
-    namespace :v1 do
-
-    end
-  end
   namespace :api, defaults: { format: :json } do
     namespace :v1 do
 
@@ -11,6 +6,10 @@ Rails.application.routes.draw do
 
       namespace :directo do
         resources :directo, only: [:create]
+      end
+
+      namespace :e_invoice do
+        resources :e_invoice, only: [:create]
       end
 
       namespace :import_data do
