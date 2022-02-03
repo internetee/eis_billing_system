@@ -12,11 +12,9 @@ class PaymentLhvConnectJob < ApplicationJob
   private
 
   def payment_process(test:)
-    registry_bank_account_iban = "EE177700771001155322"
-    lhv_keystore_password = ENV['lhv_keystore_password']
+    registry_bank_account_iban = Setting.registry_bank_account_iban_lhv
 
-    keystore = OpenSSL::PKCS12.new(File.read(ENV['lhv_keystore']), lhv_keystore_password)
-
+    keystore = open_ssl_keystore
     key = keystore.key
     cert = keystore.certificate
 
@@ -36,6 +34,8 @@ class PaymentLhvConnectJob < ApplicationJob
       api.credit_debit_notification_messages.each do |message|
         next unless message.bank_account_iban == registry_bank_account_iban
 
+        next if message.credit_transactions.empty?
+
         message.credit_transactions.each do |credit_transaction|
           incoming_transactions << credit_transaction
         end
@@ -45,6 +45,7 @@ class PaymentLhvConnectJob < ApplicationJob
     sorted_by_ref_number = incoming_transactions.group_by { |x| x[:payment_reference_number] }
     sorted_by_ref_number.each do |s|
       reference_initiator = Reference.find_by(reference_number: s[0])
+
       if reference_initiator.initiator == 'registry'
         send_transactions_to_registry(params: s[1])
       else
@@ -55,6 +56,12 @@ class PaymentLhvConnectJob < ApplicationJob
 
     # send_transactions_to_registry(params: incoming_transactions)
     puts "Transactions processed: #{incoming_transactions.size}"
+  end
+
+  def open_ssl_keystore
+    lhv_keystore_password = ENV['lhv_keystore_password']
+    keystore_file = File.read(ENV['lhv_keystore'])
+    OpenSSL::PKCS12.new(keystore_file, lhv_keystore_password)
   end
 
   # https://registry.test/eis_billing/lhv_connect_transactions

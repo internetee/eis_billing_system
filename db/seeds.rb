@@ -33,4 +33,5 @@ ActiveRecord::Base.transaction do
   SettingEntry.create(code: 'registry_zip', value: '10617', format: 'string', group: 'contacts')
   SettingEntry.create(code: 'registry_juridical_name', value: 'Eesti Interneti SA', format: 'string', group: 'contacts')
   SettingEntry.create(code: 'directo_monthly_number_last', value: '309901', format: 'integer', group: 'billing')
+  SettingEntry.create(code: 'registry_bank_account_iban_lhv', value: 'EE177700771001155322', format: 'string', group: 'billing')
 end

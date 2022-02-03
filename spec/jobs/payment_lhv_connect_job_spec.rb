@@ -5,7 +5,8 @@ RSpec.describe "PaymentLhvConnectJob", type: :job do
     ActiveJob::Base.queue_adapter = :test
   end
 
-  let (:invoice) { build(:invoice) }
+  let(:invoice) { build(:invoice) }
+  let(:reference) { build(:reference) }
 
   describe "#perform later" do
     it "get transactions" do
@@ -17,11 +18,52 @@ RSpec.describe "PaymentLhvConnectJob", type: :job do
   end
 
   describe "notify about status of transactions" do
-    it "should notify if user not exists" do
-      # instance = spy('PaymentLhvConnectJob')
-      # PaymentLhvConnectJob.perform_now(test: true)
+    it "should notify initiator about incoming payments" do
+      Reference.create(reference_number: 2, initiator: 'registry')
 
-      # expect(instance).to have_receive(:make_some_action_if_user_is_nil)
+      date = Time.zone.now - 4.hours
+      params_for_sending = OpenStruct.new(amount: "10.0", currency: "EUR", date: date, payment_reference_number: "2", payment_description: "Money comes from 1")
+
+      Lhv::ConnectApi.class_eval do
+        define_method :credit_debit_notification_messages do
+          transaction = OpenStruct.new(amount: '10.0',
+                                       currency: 'EUR',
+                                       date: date,
+                                       payment_reference_number: "2",
+                                       payment_description: "Money comes from 1")
+          message = OpenStruct.new(bank_account_iban: Setting.registry_bank_account_iban_lhv,
+                                   credit_transactions: [transaction])
+          [message]
+        end
+      end
+      openssl_struct = OpenStruct.new(key: 'key', certificate: 'certificate')
+
+      uri_object = OpenStruct.new
+      uri_object.host = 'http://endpoint/get'
+      uri_object.port = '3000'
+      allow(URI).to receive(:parse).and_return(uri_object)
+      # allow(OpenSSL::PKCS12).to receive(:new).and_return('path_to_file')
+
+      allow_any_instance_of(Net::HTTP).to receive(:post).and_return('200 - ok')
+      allow_any_instance_of(PaymentLhvConnectJob).to receive(:open_ssl_keystore).and_return(openssl_struct)
+
+      expect_any_instance_of(PaymentLhvConnectJob).to receive(:send_transactions_to_registry).with(params: [params_for_sending])
+      PaymentLhvConnectJob.perform_now(test: false)
+    end
+
+    it "should send nothing if no any incoming transactions were made" do
+
+      Lhv::ConnectApi.class_eval do
+        define_method :credit_debit_notification_messages do
+          []
+        end
+      end
+
+      openssl_struct = OpenStruct.new(key: 'key', certificate: 'certificate')
+      allow_any_instance_of(PaymentLhvConnectJob).to receive(:open_ssl_keystore).and_return(openssl_struct)
+
+      expect_any_instance_of(PaymentLhvConnectJob).not_to receive(:send_transactions_to_registry).with(params: [])
+      PaymentLhvConnectJob.perform_now(test: false)
     end
   end
 end
