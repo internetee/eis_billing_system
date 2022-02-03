@@ -59,7 +59,7 @@ gem 'lhv', github: 'internetee/lhv', branch: 'master'
 gem 'everypay_v4_wrapper', github: 'OlegPhenomenon/everypay_v4_wrapper', branch: :master
 
 # database handlers nd profiles
-gem 'strong_migrations'
+# gem 'strong_migrations'
 
 # application config file
 gem 'figaro'

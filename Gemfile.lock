@@ -267,8 +267,6 @@ GEM
       actionpack (>= 5.2)
       activesupport (>= 5.2)
       sprockets (>= 3.0.0)
-    strong_migrations (0.7.9)
-      activerecord (>= 5)
     thor (1.2.1)
     tzinfo (2.0.4)
       concurrent-ruby (~> 1.0)
@@ -308,7 +306,6 @@ DEPENDENCIES
   rubocop-rails
   simplecov (= 0.17.1)
   spring
-  strong_migrations
   tzinfo-data
   wkhtmltopdf-binary
 
