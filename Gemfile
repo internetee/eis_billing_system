@@ -59,7 +59,13 @@ gem 'lhv', github: 'internetee/lhv', branch: 'master'
 gem 'everypay_v4_wrapper', github: 'OlegPhenomenon/everypay_v4_wrapper', branch: :master
 
 # database handlers nd profiles
-# gem 'strong_migrations'
+gem 'strong_migrations'
 
 # application config file
 gem 'figaro'
+
+# deploy
+gem 'capistrano', '~> 3.11'
+gem 'capistrano-rails', '~> 1.4'
+gem 'capistrano-passenger', '~> 0.2.0'
+gem 'capistrano-rbenv', '~> 2.1', '>= 2.1.4'
