@@ -7,6 +7,7 @@ class Api::V1::InvoiceGenerator::BaseController < ApplicationController
 # => 
 # irb(main):048:0> decrypted_back = crypt.decrypt_and_verify(encrypted_data)
 # => 
+# Rails.application.credentials.dig(:secret_key_base)
 
   def check_token
     token = request.headers['Authorization'].split(' ')[1] if request
@@ -23,6 +24,6 @@ class Api::V1::InvoiceGenerator::BaseController < ApplicationController
   private
 
   def base_key
-    ActiveSupport::MessageEncryptor.new(Rails.application.secrets.secret_key_base[0..31], Rails.application.secrets.secret_key_base)
+    ActiveSupport::MessageEncryptor.new(Rails.application.credentials.dig(:secret_key_base)[0..31], Rails.application.credentials.dig(:secret_key_base))
   end
 end
