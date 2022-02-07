@@ -7,6 +7,8 @@ module Notify
     invoice = Invoice.find_by(invoice_number: parsed_response[:order_reference],
                               transaction_amount: parsed_response[:standing_amount])
 
+    return false if invoice.nil?
+
     invoice.update(payment_reference: parsed_response[:payment_reference])
 
     logger.info "Invoice not found\n Yout response #{parsed_response}" if invoice.nil?
