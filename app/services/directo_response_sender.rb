@@ -21,6 +21,8 @@ class DirectoResponseSender
   end
 
   def self.invoice_generator_url
-    "#{ENV['base_registry']}/eis_billing/directo_response"
+    return "#{ENV['base_registry_dev']}/eis_billing/directo_response" if Rails.env.development?
+
+    "#{ENV['base_registry_staging']}/eis_billing/directo_response"
   end
 end

@@ -35,7 +35,9 @@ module Notify
   def update_payment_url(initiator:)
     p initiator
     if initiator == 'registry'
-      ENV['registry_update_payment_url']
+      return ENV['registry_update_payment_url_dev'] if Rails.env.development?
+
+      ENV['registry_update_payment_url_staging']
     elsif initiator == 'auction'
       ENV['auction_update_payment_url']
     end

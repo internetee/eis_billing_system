@@ -79,7 +79,9 @@ class PaymentLhvConnectJob < ApplicationJob
   end
 
   def url_transaction
-    "#{ENV['base_registry']}/eis_billing/lhv_connect_transactions"
+    return "#{ENV['base_registry_dev']}/eis_billing/lhv_connect_transactions" if Rails.env.development?
+
+    "#{ENV['base_registry_staging']}/eis_billing/lhv_connect_transactions"
   end
 
   def test_transactions

@@ -27,6 +27,8 @@ class EInvoiceResponseSender
   end
 
   def self.invoice_generator_url
-    "#{ENV['base_registry']}/eis_billing/payment_status"
+    return "#{ENV['base_registry_dev']}/eis_billing/payment_status" if Rails.env.development?
+
+    "#{ENV['base_registry_staging']}/eis_billing/payment_status"
   end
 end

@@ -34,7 +34,8 @@ everypay_key: ""
 linkpay_prefix: 'https://igw-demo.every-pay.com/lp'
 linkpay_token: ''
 
-base_registry: "https://registry:3000"
+base_registry_dev: "https://registry:3000"
+base_registry_staging: "https://st-adm.infra.tld.ee"
 registry_update_payment_url: "https://registry:3000/eis_billing/payment_status"
 auction_update_payment_url: "https://auction:3000/eis_billing/payment_status"
 
@@ -47,4 +48,3 @@ lhv_dev_mode: 'true'
 invoice_secret_word: 'CREATE_PLEASE_INVOICE'
 
 directo_invoice_url: 'https://domain/ddddd.asp'
-
