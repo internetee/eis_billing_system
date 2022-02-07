@@ -13,7 +13,7 @@ class Api::V1::InvoiceGenerator::InvoiceNumberGeneratorController < ApplicationC
   private
 
   def invoice_number_generate
-    last_no = Invoice.order(invoice_number: :desc).limit(1).pick(:invoice_number)
+    last_no = Invoice.all.where(invoice_number: INVOICE_NUMBER_MIN...INVOICE_NUMBER_MAX).order(invoice_number: :desc).limit(1).pick(:invoice_number)
 
     if last_no && last_no >= INVOICE_NUMBER_MIN
       number = last_no.to_i + 1
