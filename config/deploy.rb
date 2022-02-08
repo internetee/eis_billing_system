@@ -42,3 +42,11 @@ set :assets_dependencies, %w(Gemfile.lock config/routes.rb)
 
 # Uncomment the following to require manually verifying the host key before first deploy.
 # set :ssh_options, verify_host_key: :secure
+namespace :deploy do
+  task :symlink_config do
+    on roles(:app) do
+      execute "ln -nfs #{shared_path}/config/application.yml #{release_path}/config/application.yml"
+    end
+  end
+end
+# after "deploy:symlink_config"

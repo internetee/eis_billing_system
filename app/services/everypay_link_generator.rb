@@ -13,13 +13,17 @@ module EverypayLinkGenerator
     Rails.logger.info params[:invoice_number]
     Rails.logger.info "+++++++++++++"
 
+    Rails.logger.info "+++++++++ EVERYPAY PARAMS"
+    Rails.logger.info everypay_params(params)
+
+    Rails.logger.info "!!!!!!!!!!!!!!!!"
     everypay_params = everypay_params(params)
     linker = EverypayV4Wrapper::LinkBuilder.new(key: GlobalVariable::KEY, params: everypay_params)
 
+    Rails.logger.info "+++++++++ EVERYPAY RESULT"
     res = linker.build_link
-    p "+++++++++ EVERYPAY RESULT"
-    p res
-    p "+++++++++++++++++++++++++"
+    Rails.logger.info res
+    Rails.logger.info "+++++++++++++++++++++++++"
 
     res
   end

@@ -18,9 +18,9 @@ class Api::V1::CallbackHandler::CallbackHandlerController < Api::V1::CallbackHan
 
     result = Notify.call(response)
 
-    return render json: { message: "Data no found", status: :no_found }
+    # return render json: { message: "Data no found", status: :no_found }
 
-    render json: { message: response, status: :success }
+    render json: { message: result, status: :success }
   end
 
   private

@@ -4,6 +4,9 @@ module Notify
   def call(response)
     parsed_response = parse_response(response)
 
+    Rails.logger.info "+++++++++ parsed response"
+    Rails.logger.info parsed_response
+
     invoice = Invoice.find_by(invoice_number: parsed_response[:order_reference],
                               transaction_amount: parsed_response[:standing_amount])
 
@@ -24,16 +27,20 @@ module Notify
     uri = URI.parse(url)
     http = Net::HTTP.new(uri.host, uri.port)
     headers = {
-      'Authorization' => 'Bearer foobar',
+      # 'Authorization' => 'Bearer foobar',
       'Content-Type' => 'application/json'
       # 'Accept'=> TOKEN
     }
+
+    unless Rails.env.development?
+      http.use_ssl = true
+      http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+    end
 
     http.put(url, params.to_json, headers)
   end
 
   def update_payment_url(initiator:)
-    p initiator
     if initiator == 'registry'
       return ENV['registry_update_payment_url_dev'] if Rails.env.development?
 
