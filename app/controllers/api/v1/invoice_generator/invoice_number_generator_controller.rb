@@ -1,4 +1,4 @@
-class Api::V1::InvoiceGenerator::InvoiceNumberGeneratorController < ApplicationController
+class Api::V1::InvoiceGenerator::InvoiceNumberGeneratorController < Api::V1::InvoiceGenerator::BaseController
   INVOICE_NUMBER_MIN = Setting.invoice_number_min || 150005
   INVOICE_NUMBER_MAX = Setting.invoice_number_max || 199999
 

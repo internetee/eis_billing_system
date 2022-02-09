@@ -162,6 +162,7 @@ GEM
     i18n_data (0.15.0)
       simple_po_parser (~> 1.1)
     json (2.6.1)
+    jwt (2.3.0)
     listen (3.7.1)
       rb-fsevent (~> 0.10, >= 0.10.3)
       rb-inotify (~> 0.9, >= 0.9.10)
@@ -324,6 +325,7 @@ DEPENDENCIES
   everypay_v4_wrapper!
   factory_bot_rails
   figaro
+  jwt
   lhv!
   listen (~> 3.3)
   money
