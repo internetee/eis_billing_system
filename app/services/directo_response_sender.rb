@@ -11,11 +11,6 @@ class DirectoResponseSender
 
     uri = URI(invoice_generator_url)
     http = Net::HTTP.new(uri.host, uri.port)
-    headers = {
-      'Authorization' => 'Bearer foobar',
-      'Content-Type' => 'application/json',
-      # 'Accept' => TOKEN
-    }
 
     http.put(invoice_generator_url, response_data.to_json, headers)
   end
@@ -24,5 +19,20 @@ class DirectoResponseSender
     return "#{ENV['base_registry_dev']}/eis_billing/directo_response" if Rails.env.development?
 
     "#{ENV['base_registry_staging']}/eis_billing/directo_response"
+  end
+
+  def self.generate_token
+    JWT.encode(payload, ENV['secret_word'])
+  end
+
+  def self.payload
+    { data: GlobalVariable::SECRET_WORD }
+  end
+
+  def self.headers 
+    {
+    'Authorization' => "Bearer #{generate_token}",
+    'Content-Type' => 'application/json',
+    }
   end
 end

@@ -2,30 +2,10 @@ module EverypayLinkGenerator
   extend self
 
   def create(params:)
-    Rails.logger.info "+++++++++++++ everypay"
-    Rails.logger.info params
-    Rails.logger.info params[:transaction_amount]
-    Rails.logger.info params[:invoice_number]
-    Rails.logger.info params[:customer_name]
-    Rails.logger.info params[:customer_email]
-    Rails.logger.info params[:custom_field_1]
-    Rails.logger.info params[:custom_field_2]
-    Rails.logger.info params[:invoice_number]
-    Rails.logger.info "+++++++++++++"
-
-    Rails.logger.info "+++++++++ EVERYPAY PARAMS"
-    Rails.logger.info everypay_params(params)
-
-    Rails.logger.info "!!!!!!!!!!!!!!!!"
     everypay_params = everypay_params(params)
     linker = EverypayV4Wrapper::LinkBuilder.new(key: GlobalVariable::KEY, params: everypay_params)
 
-    Rails.logger.info "+++++++++ EVERYPAY RESULT"
-    res = linker.build_link
-    Rails.logger.info res
-    Rails.logger.info "+++++++++++++++++++++++++"
-
-    res
+    linker.build_link
   end
 
   def everypay_params(params)

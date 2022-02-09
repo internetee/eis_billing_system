@@ -26,11 +26,6 @@ module Notify
   def base_request(params:, url:)
     uri = URI.parse(url)
     http = Net::HTTP.new(uri.host, uri.port)
-    headers = {
-      # 'Authorization' => 'Bearer foobar',
-      'Content-Type' => 'application/json'
-      # 'Accept'=> TOKEN
-    }
 
     unless Rails.env.development?
       http.use_ssl = true
@@ -73,6 +68,21 @@ module Notify
       ob_payment_reference: response['ob_payment_reference'],
       ob_payment_state: response['ob_payment_state'],
       transaction_time: response['transaction_time']
+    }
+  end
+
+  def generate_token
+    JWT.encode(payload, ENV['secret_word'])
+  end
+
+  def payload
+    { data: GlobalVariable::SECRET_WORD }
+  end
+
+  def headers 
+    {
+    'Authorization' => "Bearer #{generate_token}",
+    'Content-Type' => 'application/json',
     }
   end
 

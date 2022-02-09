@@ -5,12 +5,7 @@ class Api::V1::CallbackHandler::CallbackHandlerController < Api::V1::CallbackHan
   LINKPAY_QR = true
   API_USERNAME = 'ca8d6336dd750ddb'
 
-  # byebug
-
   def callback
-    # https://support.every-pay.com/merchant-support/integrate-linkpay-callbacks/
-    # /api/v1/callback_handler/callback
-    # https://igw-demo.every-pay.com/api/v3/payments/payment_reference?api_username=7a40xxxb9b13d
     payment_reference = params[:payment_reference]
 
     url = generate_url(payment_reference: payment_reference, api_username: API_USERNAME)

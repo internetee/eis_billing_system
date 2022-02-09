@@ -17,11 +17,6 @@ class EInvoiceResponseSender
 
     uri = URI(url)
     http = Net::HTTP.new(uri.host, uri.port)
-    headers = {
-      'Authorization' => 'Bearer foobar',
-      'Content-Type' => 'application/json',
-      # 'Accept' => TOKEN
-    }
 
     http.put(url, response_data.to_json, headers)
   end
@@ -30,5 +25,20 @@ class EInvoiceResponseSender
     return "#{ENV['base_registry_dev']}/eis_billing/payment_status" if Rails.env.development?
 
     "#{ENV['base_registry_staging']}/eis_billing/payment_status"
+  end
+
+  def self.generate_token
+    JWT.encode(payload, ENV['secret_word'])
+  end
+
+  def self.payload
+    { data: GlobalVariable::SECRET_WORD }
+  end
+
+  def self.headers 
+    {
+    'Authorization' => "Bearer #{generate_token}",
+    'Content-Type' => 'application/json',
+    }
   end
 end

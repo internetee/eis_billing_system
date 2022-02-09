@@ -12,7 +12,6 @@ class ApplicationController < ActionController::API
 
   def decoded_token
     if auth_header
-      p auth_header.split(' ')[1]
       token = auth_header.split(' ')[1]
       # header: { 'Authorization': 'Bearer <token>' }
       begin
