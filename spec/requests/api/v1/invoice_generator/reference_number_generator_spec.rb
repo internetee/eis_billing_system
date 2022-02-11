@@ -4,6 +4,8 @@ RSpec.describe "Api::V1::InvoiceGenerator::ReferenceNumberGenerators", type: :re
   let(:reference) { build(:reference) }
 
   describe "POST /create" do
+    before { allow_any_instance_of(ApplicationController).to receive(:authorized).and_return(true) }
+
     it "should return reference number" do
       allow(Billing::ReferenceNo).to receive(:generate).and_return('001')
 

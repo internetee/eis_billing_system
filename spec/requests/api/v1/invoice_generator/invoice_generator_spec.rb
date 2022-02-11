@@ -10,6 +10,8 @@ RSpec.describe "Api::V1::InvoiceGenerator::InvoiceGenerators", type: :request do
   it_behaves_like 'invoice generator', params
 
   describe "POST /create" do
+    before { allow_any_instance_of(ApplicationController).to receive(:authorized).and_return(true) }
+
     it "should return success response" do
       post api_v1_invoice_generator_invoice_generator_index_url, params: params
 

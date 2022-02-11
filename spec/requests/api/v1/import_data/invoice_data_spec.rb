@@ -2,6 +2,8 @@ require 'rails_helper'
 
 RSpec.describe 'Api::V1::ImportData::InvoiceData', type: :request do
   describe 'POST /create' do
+    before { allow_any_instance_of(ApplicationController).to receive(:authorized).and_return(true) }
+
     it 'should import invoice data from registry' do
       invoice_data = { '_json' => [{
         'invoice_number' => '001',

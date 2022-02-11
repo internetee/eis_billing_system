@@ -2,6 +2,8 @@ require 'rails_helper'
 
 RSpec.describe "Api::V1::ImportData::ReferenceData", type: :request do
   describe 'POST /create' do
+    before { allow_any_instance_of(ApplicationController).to receive(:authorized).and_return(true) }
+
     it 'should import reference data from registry' do
       reference_data = { '_json' => [{
         'reference_number' => '323',

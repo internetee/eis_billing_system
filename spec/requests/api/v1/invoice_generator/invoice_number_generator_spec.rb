@@ -3,6 +3,8 @@ require 'rails_helper'
 RSpec.describe "Api::V1::InvoiceGenerator::InvoiceNumberGenerators", type: :request do
   let(:invoice) { build(:invoice)}
   describe "POST /create" do
+    before { allow_any_instance_of(ApplicationController).to receive(:authorized).and_return(true) }
+
     it "should generate number for invoice" do
       expect_any_instance_of(Api::V1::InvoiceGenerator::InvoiceNumberGeneratorController).to receive(:invoice_number_generate).and_return('2323')
       post api_v1_invoice_generator_invoice_number_generator_index_url

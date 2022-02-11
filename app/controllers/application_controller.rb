@@ -33,7 +33,7 @@ class ApplicationController < ActionController::API
   end
 
   def authorized
-    render json: { message: 'Access denied' }, status: :unauthorized unless logged_in?
+    render json: { message: 'Access denied', code: '403' }, status: :unauthorized unless logged_in?
   end
 
   def logger
