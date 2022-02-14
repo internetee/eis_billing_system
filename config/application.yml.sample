@@ -45,6 +45,9 @@ lhv_keystore_alias: 'eestiinternetisa_connect0021'
 lhv_ca_file: # Needed only in dev mode
 lhv_dev_mode: 'true'
 
-invoice_secret_word: 'CREATE_PLEASE_INVOICE'
-
 directo_invoice_url: 'https://domain/ddddd.asp'
+
+secret_access_word: ''
+secret_word: ''
+
+e_invoice_provider_test_mode: 'true'

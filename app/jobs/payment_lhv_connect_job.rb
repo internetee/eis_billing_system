@@ -32,6 +32,8 @@ class PaymentLhvConnectJob < ApplicationJob
       end
     else
       api.credit_debit_notification_messages.each do |message|
+        Rails.logger.info message
+
         next unless message.bank_account_iban == registry_bank_account_iban
 
         next if message.credit_transactions.empty?

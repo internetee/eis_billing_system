@@ -22,9 +22,9 @@ class EInvoiceResponseSender
   end
 
   def self.invoice_generator_url
-    return "#{ENV['base_registry_dev']}/eis_billing/payment_status" if Rails.env.development?
+    return "#{ENV['base_registry_dev']}/eis_billing/e_invoice_response" if Rails.env.development?
 
-    "#{ENV['base_registry_staging']}/eis_billing/payment_status"
+    "#{ENV['base_registry_staging']}/eis_billing/e_invoice_response"
   end
 
   def self.generate_token
@@ -35,10 +35,10 @@ class EInvoiceResponseSender
     { data: GlobalVariable::SECRET_WORD }
   end
 
-  def self.headers 
+  def self.headers
     {
     'Authorization' => "Bearer #{generate_token}",
-    'Content-Type' => 'application/json',
+    'Content-Type' => 'application/json'
     }
   end
 end
