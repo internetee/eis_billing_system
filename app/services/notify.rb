@@ -7,8 +7,8 @@ module Notify
     Rails.logger.info "+++++++++ parsed response"
     Rails.logger.info parsed_response
 
-    invoice = Invoice.find_by(invoice_number: parsed_response[:order_reference],
-                              transaction_amount: parsed_response[:standing_amount])
+    invoice = Invoice.find_by(invoice_number: parsed_response[:order_reference])
+                              # transaction_amount: parsed_response[:standing_amount])
 
     return false if invoice.nil?
 
@@ -41,6 +41,7 @@ module Notify
 
       ENV['registry_update_payment_url_staging']
     elsif initiator == 'auction'
+
       ENV['auction_update_payment_url']
     end
   end

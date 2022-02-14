@@ -14,10 +14,7 @@ class SendEInvoiceJob < ApplicationJob
 
   def process(e_invoice_data)
     e_invoice_instance = EInvoiceGenerator.new(e_invoice_data)
-    e_invoice_instance.generate.deliver unless Rails.env.development?
-
-    # TODO: send back date of e invoice sent
-    # invoice.update(e_invoice_sent_at: Time.zone.now)
+    e_invoice_instance.generate.deliver
 
     EInvoiceResponseSender.send_request(initiator: e_invoice_data[:initiator], invoice_number: e_invoice_data[:invoice_data][:number])
     log_success(e_invoice_data)

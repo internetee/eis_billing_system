@@ -1,6 +1,6 @@
 class EInvoiceGenerator
   attr_reader :e_invoice_data
-  attr_reader :invoice, :payable, :items, :buyer_billing_email, :buyer_e_invoice_iban, :seller_country, :buyer_country, :invoice_subtotal, :invoice_vat_amount
+  attr_reader :invoice, :payable, :items, :buyer_billing_email, :buyer_e_invoice_iban, :invoice_subtotal, :invoice_vat_amount, :seller_country_code, :buyer_country_code
 
   def initialize(e_invoice_data)
     @invoice = e_invoice_data[:invoice_data]
@@ -10,8 +10,8 @@ class EInvoiceGenerator
     @items = e_invoice_data[:invoice_items]
     @buyer_billing_email = e_invoice_data[:buyer_billing_email]
     @buyer_e_invoice_iban = e_invoice_data[:buyer_e_invoice_iban]
-    @buyer_country = e_invoice_data[:buyer_country]
-    @seller_country = e_invoice_data[:seller_country]
+    @seller_country_code = e_invoice_data[:seller_country_code]
+    @buyer_country_code = e_invoice_data[:buyer_country_code]
   end
 
   def generate
@@ -25,7 +25,7 @@ class EInvoiceGenerator
     seller_legal_address.line2 = invoice[:seller_state]
     seller_legal_address.postal_code = invoice[:seller_zip]
     seller_legal_address.city = invoice[:seller_city]
-    seller_legal_address.country = seller_country
+    seller_legal_address.country = Country.new(seller_country_code)
     seller.legal_address = seller_legal_address
 
     buyer = EInvoice::Buyer.new
@@ -43,7 +43,7 @@ class EInvoiceGenerator
     buyer_legal_address.line2 = invoice[:buyer_state]
     buyer_legal_address.postal_code = invoice[:buyer_zip]
     buyer_legal_address.city = invoice[:buyer_city]
-    buyer_legal_address.country = buyer_country
+    buyer_legal_address.country = Country.new(buyer_country_code)
     buyer.legal_address = buyer_legal_address
 
     e_invoice_invoice_items = []
@@ -81,9 +81,6 @@ class EInvoiceGenerator
       i.payable = payable
     end
 
-    # byebug
-
     EInvoice::EInvoice.new(date: Time.zone.today, invoice: e_invoice_invoice)
   end
 end
-
