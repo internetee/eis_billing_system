@@ -5,14 +5,14 @@ class PaymentLhvConnectJob < ApplicationJob
   REFERENCE_NUMBER_TEST_VALUE = '34443'.freeze
   TRANSACTION_SUM_TEST_VALUE = 100
 
-  def perform(test: true)
-    payment_process(test: test)
+  def perform
+    payment_process
   end
 
   private
 
-  def payment_process(test:)
-    registry_bank_account_iban = Setting.registry_bank_account_iban_lhv
+  def payment_process
+    registry_bank_account_iban = Setting.registry_bank_account_iban_lhv || 'EE177700771001155322'
 
     keystore = open_ssl_keystore
     key = keystore.key
@@ -26,21 +26,15 @@ class PaymentLhvConnectJob < ApplicationJob
 
     incoming_transactions = []
 
-    if test
-      3.times do
-        incoming_transactions << test_transactions
-      end
-    else
-      api.credit_debit_notification_messages.each do |message|
-        Rails.logger.info message
+    api.credit_debit_notification_messages.each do |message|
+      Rails.logger.info message
 
-        next unless message.bank_account_iban == registry_bank_account_iban
+      next unless message.bank_account_iban == registry_bank_account_iban
 
-        next if message.credit_transactions.empty?
+      next if message.credit_transactions.empty?
 
-        message.credit_transactions.each do |credit_transaction|
-          incoming_transactions << credit_transaction
-        end
+      message.credit_transactions.each do |credit_transaction|
+        incoming_transactions << credit_transaction
       end
     end
 
@@ -70,14 +64,25 @@ class PaymentLhvConnectJob < ApplicationJob
   def send_transactions_to_registry(params:)
     uri = URI.parse(url_transaction)
     http = Net::HTTP.new(uri.host, uri.port)
-    headers = {
-      'Authorization'=>'Bearer foobar',
-      'Content-Type' =>'application/json'
-      # 'Accept'=> TOKEN
-    }
 
     res = http.post(url_transaction, params.to_json, headers)
+
     res
+  end
+
+  def generate_token
+    JWT.encode(payload, ENV['secret_word'])
+  end
+
+  def payload
+    { data: GlobalVariable::SECRET_WORD }
+  end
+
+  def headers 
+    {
+    'Authorization' => "Bearer #{generate_token}",
+    'Content-Type' => 'application/json',
+    }
   end
 
   def url_transaction

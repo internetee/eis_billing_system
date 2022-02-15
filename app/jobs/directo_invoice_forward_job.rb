@@ -45,7 +45,8 @@ class DirectoInvoiceForwardJob < ApplicationJob
 
     res = @client.invoices.deliver(ssl_verify: false)
 
-    DirectoResponseSender.send_request(response: res.body, xml_data: @client.invoices.as_xml)
+    respon = DirectoResponseSender.send_request(response: res.body, xml_data: @client.invoices.as_xml)
+
     update_number(@client.invoices.as_xml)
   rescue SocketError, Errno::ECONNREFUSED, Timeout::Error, Errno::EINVAL, Errno::ECONNRESET,
          EOFError, Net::HTTPBadResponse, Net::HTTPHeaderSyntaxError, Net::ProtocolError
