@@ -18,7 +18,11 @@ class DirectoInvoiceForwardJob < ApplicationJob
 
   def send_receipts
     @invoice_data.each do |invoice|
-      @client.invoices.add_with_schema(invoice: invoice, schema: 'prepayment')
+      if @initiator == 'auction'
+        @client.invoices.add_with_schema(invoice: invoice, schema: 'auction')
+      else
+        @client.invoices.add_with_schema(invoice: invoice, schema: 'prepayment')
+      end
     end
 
     sync_with_directo
@@ -45,7 +49,7 @@ class DirectoInvoiceForwardJob < ApplicationJob
 
     res = @client.invoices.deliver(ssl_verify: false)
 
-    respon = DirectoResponseSender.send_request(response: res.body, xml_data: @client.invoices.as_xml)
+    DirectoResponseSender.send_request(response: res.body, xml_data: @client.invoices.as_xml, initiator: @initiator)
 
     update_number(@client.invoices.as_xml)
   rescue SocketError, Errno::ECONNREFUSED, Timeout::Error, Errno::EINVAL, Errno::ECONNRESET,

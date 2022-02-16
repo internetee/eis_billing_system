@@ -11,10 +11,6 @@ class Api::V1::CallbackHandler::CallbackHandlerController < Api::V1::CallbackHan
     url = generate_url(payment_reference: payment_reference, api_username: API_USERNAME)
     response = base_request(url: url, api_username: API_USERNAME, api_secret: KEY)
 
-    p "!!!!!!!!!"
-    p response
-    p "!!!!!!!!!"
-
     result = Notify.call(response)
 
     # return render json: { message: "Data no found", status: :no_found }

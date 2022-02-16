@@ -31,7 +31,7 @@ RSpec.describe "PaymentLhvConnectJob", type: :job do
                                        date: date,
                                        payment_reference_number: "2",
                                        payment_description: "Money comes from 1")
-          message = OpenStruct.new(bank_account_iban: Setting.registry_bank_account_iban_lhv,
+          message = OpenStruct.new(bank_account_iban: Setting.registry_bank_account_iban_lhv || 'EE177700771001155322',
                                    credit_transactions: [transaction])
           [message]
         end
@@ -48,7 +48,7 @@ RSpec.describe "PaymentLhvConnectJob", type: :job do
       allow_any_instance_of(PaymentLhvConnectJob).to receive(:open_ssl_keystore).and_return(openssl_struct)
 
       expect_any_instance_of(PaymentLhvConnectJob).to receive(:send_transactions_to_registry).with(params: [params_for_sending])
-      PaymentLhvConnectJob.perform_now(test: false)
+      PaymentLhvConnectJob.perform_now
     end
 
     it "should send nothing if no any incoming transactions were made" do
@@ -63,7 +63,7 @@ RSpec.describe "PaymentLhvConnectJob", type: :job do
       allow_any_instance_of(PaymentLhvConnectJob).to receive(:open_ssl_keystore).and_return(openssl_struct)
 
       expect_any_instance_of(PaymentLhvConnectJob).not_to receive(:send_transactions_to_registry).with(params: [])
-      PaymentLhvConnectJob.perform_now(test: false)
+      PaymentLhvConnectJob.perform_now
     end
   end
 end

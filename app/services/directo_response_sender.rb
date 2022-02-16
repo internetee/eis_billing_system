@@ -1,5 +1,6 @@
 class DirectoResponseSender
-  def self.send_request(response:, xml_data:)
+  def self.send_request(response:, xml_data:, initiator:)
+    @initiator = initiator
     base_request(response: response, xml_data: xml_data)
   end
 
@@ -9,16 +10,24 @@ class DirectoResponseSender
       xml_data: xml_data
     }
 
-    uri = URI(invoice_generator_url)
+    url = invoice_generator_url
+
+    uri = URI(url)
     http = Net::HTTP.new(uri.host, uri.port)
 
     http.put(invoice_generator_url, response_data.to_json, headers)
   end
 
   def self.invoice_generator_url
-    return "#{ENV['base_registry_dev']}/eis_billing/directo_response" if Rails.env.development?
+    if @initiator == 'registry'
+      return "#{ENV['base_registry_dev']}/eis_billing/directo_response" if Rails.env.development?
 
-    "#{ENV['base_registry_staging']}/eis_billing/directo_response"
+      "#{ENV['base_registry_staging']}/eis_billing/directo_response"
+    elsif @initiator == 'auction'
+      return "#{ENV['base_auction_dev']}/eis_billing/directo_response" if Rails.env.development?
+
+      "#{ENV['base_auction_staging']}/eis_billing/directo_response"
+    end
   end
 
   def self.generate_token
