@@ -30,16 +30,13 @@ RSpec.describe "Api::V1::CallbackHandler::CallbackHandlers", type: :request do
   it_behaves_like 'should notify initiator', response_everypay
 
   describe "GET /callback" do
-    # it "should return 200 ok response" do
-    #   FakeWeb.register_uri(:put, "http://registry:3000/eis_billing/payment_status", body: 'ok')
-    #   invoice.payment_reference = 'some'
-    #   invoice.save
+    it "should return 200 ok response" do
+      allow(Notify).to receive(:call).and_return(true)
+      expect_any_instance_of(Api::V1::CallbackHandler::CallbackHandlerController).to receive(:base_request).and_return(JSON.parse(response_everypay.to_json))
 
-    #   expect_any_instance_of(Api::V1::CallbackHandler::CallbackHandlerController).to receive(:base_request).and_return(JSON.parse(response_everypay.to_json))
+      get api_v1_callback_handler_callback_url + '?payment_reference=some'
 
-    #   get api_v1_callback_handler_callback_url + '?payment_reference=some'
-
-    #   expect(response).to have_http_status(:success)
-    # end
+      expect(response).to have_http_status(:success)
+    end
   end
 end

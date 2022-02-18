@@ -51,32 +51,9 @@ class DirectoInvoiceForwardJob < ApplicationJob
 
     DirectoResponseSender.send_request(response: res.body, xml_data: @client.invoices.as_xml, initiator: @initiator)
 
-    update_number(@client.invoices.as_xml)
+    # update_number(@client.invoices.as_xml)
   rescue SocketError, Errno::ECONNREFUSED, Timeout::Error, Errno::EINVAL, Errno::ECONNRESET,
          EOFError, Net::HTTPBadResponse, Net::HTTPHeaderSyntaxError, Net::ProtocolError
     Rails.logger.info('[Directo] Failed to communicate via API')
-  end
-
-  def update_number(xml_data)
-    Nokogiri::XML(xml_data).css('Result').each do |res|
-      invoice_number = res.attributes['docid'].value.to_i
-
-      next unless invoice_number.to_i > Setting.directo_monthly_number_last.to_i
-
-      Setting.directo_monthly_number_last = invoice_number.to_i
-    end
-  end
-
-  def assign_monthly_numbers
-    raise 'Directo Counter is going to be out of period!' if directo_counter_exceedable?(@client.invoices.count)
-
-    min_directo    = Setting.directo_monthly_number_min.presence.try(:to_i)
-    directo_number = [Setting.directo_monthly_number_last.presence.try(:to_i),
-                      min_directo].compact.max || 0
-
-    @client.invoices.each do |inv|
-      directo_number += 1
-      inv.number = directo_number
-    end
   end
 end

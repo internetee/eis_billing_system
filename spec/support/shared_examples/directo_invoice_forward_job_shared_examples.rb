@@ -3,16 +3,16 @@ RSpec.shared_examples 'should send invoices to directo' do |_params|
     ActiveJob::Base.queue_adapter = :test
   end
 
-  # let(:invoice) { build(:invoice) }
+  response = OpenStruct.new
 
-  response = <<-XML
+  xml_response = <<-XML
   <?xml version="1.0" encoding="UTF-8"?>
     <results>
       <Result Type="0" Desc="OK" docid="309902" doctype="ARVE" submit="Invoices"/>
     </results>
   XML
 
-  xml_invoice_schema = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><invoices>  <invoice Number=\"1\" InvoiceDate=\"2010-07-05\" CustomerCode=\"bestnames\" Destination=\"GB\" Language=\"ENG\" Currency=\"EUR\" TransactionDate=\"2010-08-06\">    <line RN=\"1\" RR=\"1\" ProductID=\"ETTEM06\" Quantity=\"1\" ProductName=\"Order nr. 1\" UnitPriceWoVAT=\"5.00\" VATCode=\"6\"/>  </invoice></invoices>"
+  response.body = xml_response
 
   directo_invoice_json = [
     {
@@ -71,13 +71,41 @@ RSpec.shared_examples 'should send invoices to directo' do |_params|
   ]
 
   describe '#perform - send_receipts' do
-    # it 'DirectoResponseSender should get respose' do
-    #   FakeWeb.allow_net_connect = false
-    #   FakeWeb.register_uri(:post, ENV['directo_invoice_url'], body: response)
+    it 'DirectoResponseSender should get respose' do
+      directo_client = OpenStruct.new
 
-    #   expect(DirectoResponseSender).to receive(:send_request).with(response: response, xml_data: xml_invoice_schema).and_return('ok')
+      class DirectoClientInvoice
+        def add_with_schema(invoice:, schema:)
+          true
+        end
 
-    #   DirectoInvoiceForwardJob.perform_now(invoice_data: directo_invoice_json, initiator: 'registry')
-    # end
+        def as_xml
+          <<-XML
+            <?xml version="1.0" encoding="UTF-8"?>
+              <results>
+                <Result Type="0" Desc="OK" docid="309902" doctype="ARVE" submit="Invoices"/>
+              </results>
+          XML
+        end
+
+        def deliver(ssl_verify: false)
+          response = OpenStruct.new
+          response.body = <<-XML
+            <?xml version="1.0" encoding="UTF-8"?>
+              <results>
+                <Result Type="0" Desc="OK" docid="309902" doctype="ARVE" submit="Invoices"/>
+              </results>
+          XML
+
+          response
+        end
+      end
+
+      directo_client_invoice = DirectoClientInvoice.new
+      directo_client.invoices = directo_client_invoice
+
+      allow_any_instance_of(DirectoInvoiceForwardJob).to receive(:new_directo_client).and_return(directo_client)
+      DirectoInvoiceForwardJob.perform_now(invoice_data: directo_invoice_json, initiator: 'registry')
+    end
   end
 end

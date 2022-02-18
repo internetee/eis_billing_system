@@ -38,7 +38,7 @@ class DirectoResponseSender
     { data: GlobalVariable::SECRET_WORD }
   end
 
-  def self.headers 
+  def self.headers
     {
     'Authorization' => "Bearer #{generate_token}",
     'Content-Type' => 'application/json',

@@ -2,8 +2,8 @@ class SendEInvoiceJob < ApplicationJob
   # discard_on HTTPClient::TimeoutError
 
   def perform(e_invoice_data)
+    # byebug
     logger.info "Started to process e-invoice for invoice_id #{e_invoice_data[:invoice_data][:id]}"
-
     process(e_invoice_data)
   rescue StandardError => e
     log_error(invoice: e_invoice_data[:invoice_data][:id], error: e)

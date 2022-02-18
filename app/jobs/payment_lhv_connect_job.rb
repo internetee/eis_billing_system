@@ -42,6 +42,8 @@ class PaymentLhvConnectJob < ApplicationJob
     sorted_by_ref_number.each do |s|
       reference_initiator = Reference.find_by(reference_number: s[0])
 
+      return inform_admin if reference_initiator.nil?
+
       if reference_initiator.initiator == 'registry'
         send_transactions_to_registry(params: s[1])
       else
@@ -52,6 +54,10 @@ class PaymentLhvConnectJob < ApplicationJob
 
     # send_transactions_to_registry(params: incoming_transactions)
     puts "Transactions processed: #{incoming_transactions.size}"
+  end
+
+  def inform_admin
+    Rails.logger.info "Should be implemented! Inform to admin that reference number not found"
   end
 
   def open_ssl_keystore

@@ -83,7 +83,7 @@ module Notify
   def headers 
     {
     'Authorization' => "Bearer #{generate_token}",
-    'Content-Type' => 'application/json',
+    'Content-Type' => 'application/json'
     }
   end
 
