@@ -27,6 +27,8 @@ class DirectoResponseSender
       return "#{ENV['base_auction_dev']}/eis_billing/directo_response" if Rails.env.development?
 
       "#{ENV['base_auction_staging']}/eis_billing/directo_response"
+    elsif @initiator == 'eeid'
+      "#{ENV['base_eeid_dev']}/eis_billing/directo_response"
     end
   end
 

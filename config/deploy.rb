@@ -3,6 +3,7 @@ lock "~> 3.16.0"
 
 set :application, "eis_billing_system"
 set :repo_url, "git@github.com:internetee/eis_billing_system.git"
+# set :repo_url, "https://github.com/internetee/eis_billing_system.git"
 set :branch, 'master'
 
 # Default branch is :master

@@ -43,6 +43,8 @@ module Notify
     elsif initiator == 'auction'
 
       ENV['auction_update_payment_url']
+    elsif initiator == 'eeid'
+      ENV['eeid_update_payment_url']
     end
   end
 
