@@ -35,3 +35,5 @@ keystore.p12
 lhv_cer.cer
 lhv_staging.cer
 LHV_test_rootca2011.cer
+
+/config/credentials/staging.key

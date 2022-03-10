@@ -31,14 +31,11 @@ require "capistrano/rbenv"
 # require "capistrano/chruby"
 require "capistrano/bundler"
 # require "capistrano/rails/assets"
-# require 'capistrano/faster_assets'
 require "capistrano/rails/migrations"
 require "capistrano/passenger"
 # require "capistrano/rails"
 
 set :rbenv_type, :user
 set :rbenv_ruby, '3.0.3' # or whatever version you chose
-
-
 # Load custom tasks from `lib/capistrano/tasks` if you have any defined
 Dir.glob("lib/capistrano/tasks/*.rake").each { |r| import r }

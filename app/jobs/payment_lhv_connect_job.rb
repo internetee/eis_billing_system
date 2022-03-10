@@ -42,7 +42,7 @@ class PaymentLhvConnectJob < ApplicationJob
     sorted_by_ref_number.each do |s|
       reference_initiator = Reference.find_by(reference_number: s[0])
 
-      return inform_admin if reference_initiator.nil?
+      return inform_admin(s[0]) if reference_initiator.nil?
 
       if reference_initiator.initiator == 'registry'
         send_transactions_to_registry(params: s[1])
@@ -56,8 +56,9 @@ class PaymentLhvConnectJob < ApplicationJob
     puts "Transactions processed: #{incoming_transactions.size}"
   end
 
-  def inform_admin
-    Rails.logger.info "Should be implemented! Inform to admin that reference number not found"
+  def inform_admin(reference_number)
+    Rails.logger.info "Inform to admin that reference number not found"
+    BillingMailer.inform_admin(reference_number: reference_number).deliver_now
   end
 
   def open_ssl_keystore

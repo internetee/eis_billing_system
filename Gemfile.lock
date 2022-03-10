@@ -314,10 +314,10 @@ DEPENDENCIES
   bcrypt (~> 3.1.7)
   bootsnap (>= 1.4.4)
   byebug
-  capistrano (~> 3.11)
-  capistrano-passenger (~> 0.2.0)
-  capistrano-rails (~> 1.4)
-  capistrano-rbenv (~> 2.1, >= 2.1.4)
+  capistrano
+  capistrano-passenger
+  capistrano-rails
+  capistrano-rbenv
   countries
   database_cleaner
   directo!
