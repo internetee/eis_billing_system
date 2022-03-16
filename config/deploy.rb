@@ -59,6 +59,12 @@ namespace :deploy do
     end
   end
 
+  task :symlink_lhv_connect do
+    on roles(:app) do
+      execute "ln -nfs #{shared_path}/config/EESTIINTERNETISA.p12 #{release_path}/EESTIINTERNETISA.p12"
+    end
+  end
+
   desc 'Restart application'
   task :restart do
     on roles(:app), in: :sequence, wait: 5 do

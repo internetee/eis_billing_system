@@ -49,8 +49,12 @@ class DirectoInvoiceForwardJob < ApplicationJob
 
     res = @client.invoices.deliver(ssl_verify: false)
 
-    DirectoResponseSender.send_request(response: res.body, xml_data: @client.invoices.as_xml, initiator: @initiator)
+    Rails.logger.info("[Directo] - response received:\n #{res.body}")
+    Rails.logger.info("[Directo] - initiator:\n #{@initiator}")
 
+    registry_response = DirectoResponseSender.send_request(response: res.body, xml_data: @client.invoices.as_xml, initiator: @initiator)
+
+    Rails.logger.info "Registry response: #{registry_response.body}"
     # update_number(@client.invoices.as_xml)
   rescue SocketError, Errno::ECONNREFUSED, Timeout::Error, Errno::EINVAL, Errno::ECONNRESET,
          EOFError, Net::HTTPBadResponse, Net::HTTPHeaderSyntaxError, Net::ProtocolError

@@ -1,6 +1,7 @@
 class DirectoResponseSender
   def self.send_request(response:, xml_data:, initiator:)
     @initiator = initiator
+    Rails.logger.info "BREAKPOINT"
     base_request(response: response, xml_data: xml_data)
   end
 
@@ -12,10 +13,13 @@ class DirectoResponseSender
 
     url = invoice_generator_url
 
-    uri = URI(url)
+    uri = URI.parse(url)
     http = Net::HTTP.new(uri.host, uri.port)
+    http.use_ssl = true unless Rails.env.development?
 
-    http.put(invoice_generator_url, response_data.to_json, headers)
+    Rails.logger.info "Sanding directo response data: #{response_data.to_json}"
+
+    http.put(uri.request_uri, response_data.to_json, headers)
   end
 
   def self.invoice_generator_url
