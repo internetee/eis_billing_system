@@ -1,7 +1,7 @@
 class CreateReferences < ActiveRecord::Migration[6.1]
   def change
     create_table :references do |t|
-      t.integer :reference_number, null: false
+      t.string :reference_number, null: false
       t.string :initiator, null: false
 
       t.timestamps
