@@ -7,14 +7,14 @@ RSpec.describe "Api::V1::InvoiceGenerator::ReferenceNumberGenerators", type: :re
     before { allow_any_instance_of(ApplicationController).to receive(:authorized).and_return(true) }
 
     it "should return reference number" do
-      allow(Billing::ReferenceNo).to receive(:generate).and_return('001')
+      allow(Billing::ReferenceNo).to receive(:generate).and_return('1')
 
       post api_v1_invoice_generator_reference_number_generator_index_url, params: { initiator: 'registry' }
 
       reference_number = JSON.parse(response.body)['reference_number']
 
       expect(response).to have_http_status(:success)
-      expect(reference_number).to eq('001')
+      expect(reference_number).to eq('1')
     end
 
     it "should create a record in reference table" do
@@ -29,11 +29,11 @@ RSpec.describe "Api::V1::InvoiceGenerator::ReferenceNumberGenerators", type: :re
 
       reference = Reference.last
       expect(reference.initiator).to eq('registry')
-      expect(reference.reference_number).to eq(233)
+      expect(reference.reference_number).to eq('233')
     end
 
     it "should return reference number without zeros in first positions" do
-      allow(Billing::ReferenceNo).to receive(:generate).and_return('000233')
+      allow(Billing::ReferenceNo).to receive(:generate).and_return('233')
 
       expect(Reference.count).to eq(0)
 
@@ -44,7 +44,7 @@ RSpec.describe "Api::V1::InvoiceGenerator::ReferenceNumberGenerators", type: :re
 
       reference = Reference.last
       expect(reference.initiator).to eq('registry')
-      expect(reference.reference_number).to eq(233)
+      expect(reference.reference_number).to eq('233')
     end
   end
 end

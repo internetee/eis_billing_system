@@ -30,7 +30,7 @@ RSpec.describe "Api::V1::ImportData::ReferenceData", type: :request do
       expect { post api_v1_import_data_reference_data_url, params: reference_data }.to change { Reference.count }.by(1)
 
       expect(Reference.last.initiator).to eq('registry')
-      expect(Reference.last.reference_number).to eq(333)
+      expect(Reference.last.reference_number).to eq('333')
       expect(response).to have_http_status(:success)
     end
 
