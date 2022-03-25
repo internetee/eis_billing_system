@@ -13,9 +13,8 @@ class ApplicationController < ActionController::API
   def decoded_token
     if auth_header
       token = auth_header.split(' ')[1]
-      # header: { 'Authorization': 'Bearer <token>' }
       begin
-        JWT.decode(token, ENV['secret_word'], true, algorithm: 'HS256')
+        JWT.decode(token, billing_secret_key, true, algorithm: 'HS256')
       rescue JWT::DecodeError
         nil
       end
@@ -24,7 +23,24 @@ class ApplicationController < ActionController::API
 
   def accessable_service
     if decoded_token
-      decoded_token[0]['data'] == GlobalVariable::SECRET_WORD
+      initiator = decoded_token[0]['initiator']
+      assign_initiator_if_it_exist(initiator)
+    end
+  end
+
+  def assign_initiator_if_it_exist(initiator)
+    case initiator
+    when 'registry'
+      @initiator = 'registry'
+      true
+    when 'eeid'
+      @initiator = 'eeid'
+      true
+    when 'auction'
+      @initiator = 'auction'
+      true
+    else
+      false
     end
   end
 
@@ -34,6 +50,10 @@ class ApplicationController < ActionController::API
 
   def authorized
     render json: { message: 'Access denied', code: '403' }, status: :unauthorized unless logged_in?
+  end
+
+  def billing_secret_key
+    Rails.application.credentials.config[:billing_secret]
   end
 
   def logger
