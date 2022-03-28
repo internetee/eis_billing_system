@@ -14,8 +14,8 @@ module EverypayLinkGenerator
       order_reference: params[:invoice_number].to_s,
       customer_name: params[:customer_name].to_s, # buyer_name
       customer_email: params[:customer_email].to_s, # buyer_email
-      custom_field_1: params.fetch(:custom_field_1, ''),
-      custom_field_2: params[:custom_field_2].to_s,
+      custom_field_1: params.fetch(:custom_field1, ''),
+      custom_field_2: params[:custom_field2].to_s,
       invoice_number: params[:invoice_number].to_s,
       linkpay_token: GlobalVariable::LINKPAY_TOKEN
     }

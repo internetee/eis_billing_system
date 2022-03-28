@@ -4,6 +4,6 @@ class Api::V1::InvoiceGenerator::InvoiceGeneratorController < Api::V1::InvoiceGe
 
     render json: { 'message' => 'Link created', 'everypay_link' => link, status: :created }
   rescue StandardError => e
-    logger.info e
+    Rails.logger.info e
   end
 end

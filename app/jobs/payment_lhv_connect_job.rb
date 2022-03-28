@@ -4,6 +4,7 @@ class PaymentLhvConnectJob < ApplicationJob
 
   REFERENCE_NUMBER_TEST_VALUE = '34443'.freeze
   TRANSACTION_SUM_TEST_VALUE = 100
+  INITIATOR = 'billing'.freeze
 
   def perform
     payment_process
@@ -44,16 +45,14 @@ class PaymentLhvConnectJob < ApplicationJob
 
       return inform_admin(s[0]) if reference_initiator.nil?
 
-      if reference_initiator.initiator == 'registry'
-        send_transactions_to_registry(params: s[1])
-      else
-        p reference_initiator.initiator
-        p s[1]
-      end
+      Rails.logger.info "Sending to registry >>>>>>>>>>>>>>>>>>>>>>>>>"
+      Rails.logger.info s[1]
+      Rails.logger.info ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
+
+      send_transactions_to_registry(params: s[1])
     end
 
-    # send_transactions_to_registry(params: incoming_transactions)
-    puts "Transactions processed: #{incoming_transactions.size}"
+    Rails.logger.info "Transactions processed: #{incoming_transactions.size}"
   end
 
   def inform_admin(reference_number)
@@ -72,20 +71,18 @@ class PaymentLhvConnectJob < ApplicationJob
     uri = URI.parse(url_transaction)
     http = Net::HTTP.new(uri.host, uri.port)
 
-    res = http.post(url_transaction, params.to_json, headers)
-
-    res
+    http.post(url_transaction, params.to_json, headers)
   end
 
   def generate_token
-    JWT.encode(payload, ENV['secret_word'])
+    JWT.encode(payload, billing_secret)
   end
 
   def payload
-    { data: GlobalVariable::SECRET_WORD }
+    { initiator: INITIATOR }
   end
 
-  def headers 
+  def headers
     {
     'Authorization' => "Bearer #{generate_token}",
     'Content-Type' => 'application/json',
@@ -93,9 +90,11 @@ class PaymentLhvConnectJob < ApplicationJob
   end
 
   def url_transaction
-    return "#{ENV['base_registry_dev']}/eis_billing/lhv_connect_transactions" if Rails.env.development?
+    "#{ENV['base_registry']}/eis_billing/lhv_connect_transactions"
+  end
 
-    "#{ENV['base_registry_staging']}/eis_billing/lhv_connect_transactions"
+  def billing_secret
+    Rails.application.credentials.config[:billing_secret]
   end
 
   def test_transactions
@@ -104,10 +103,5 @@ class PaymentLhvConnectJob < ApplicationJob
                    date: Time.zone.today,
                    payment_reference_number: '7366488',
                    payment_description: "description 7366488")
-  end
-
-  def log(msg)
-    @log ||= Logger.new($stdout)
-    @log.info(msg)
   end
 end

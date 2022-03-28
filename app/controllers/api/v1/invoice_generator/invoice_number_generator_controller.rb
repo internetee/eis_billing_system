@@ -5,9 +5,9 @@ class Api::V1::InvoiceGenerator::InvoiceNumberGeneratorController < Api::V1::Inv
   def create
     invoice_number = invoice_number_generate
 
-    return render json: { 'message' => 'Link created', 'error' => invoice_number, status: :error } if invoice_number == 'out of range'
+    return render json: { 'message' => 'Number create failed', 'error' => invoice_number, status: :not_implemented } if invoice_number == 'out of range'
 
-    render json: { 'message' => 'Link created', 'invoice_number' => invoice_number, status: :created }
+    render json: { 'message' => 'Number created', 'invoice_number' => invoice_number, status: :created }
   end
 
   private

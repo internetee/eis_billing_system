@@ -5,7 +5,6 @@ class CreateInvoices < ActiveRecord::Migration[6.1]
       t.string :initiator, null: false
       t.string :payment_reference
       t.string :transaction_amount
-      t.integer :status, default: 0, null: false, index: true
 
       t.timestamps
     end
