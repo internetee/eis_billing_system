@@ -51,7 +51,7 @@ class Notify < Base
     }
   end
 
-  def logger
+  def self.logger
     @logger ||= Rails.logger
   end
 end

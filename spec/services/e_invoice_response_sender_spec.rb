@@ -67,7 +67,6 @@ RSpec.describe 'EInvoiceResponseSender' do
     buyer_e_invoice_iban: '12345678990',
     seller_country_code: 'EE',
     buyer_country_code: 'EE',
-    initiator: 'registry'
   }
 
   describe 'e-invoice response handler' do
@@ -77,11 +76,11 @@ RSpec.describe 'EInvoiceResponseSender' do
       uri_object.port = '3000'
 
       allow(URI).to receive(:parse).and_return(uri_object)
-      allow(EInvoiceResponseSender).to receive(:invoice_generator_url).and_return('http://endpoint/get')
-      allow(EInvoiceResponseSender).to receive(:headers).and_return({'header': 'header'})
+      allow(EInvoiceResponseSender).to receive(:get_endpoint_services_e_invoice_url).and_return('http://endpoint/get')
+      allow(EInvoiceResponseSender).to receive(:generate_headers).and_return({'header': 'header'})
       expect_any_instance_of(Net::HTTP).to receive(:put).and_return('200 - ok')
 
-      result = EInvoiceResponseSender.send_request(initiator: 'registry', invoice_number: '1')
+      result = EInvoiceResponseSender.send_request(invoice_number: '1')
       expect(result).to eq('200 - ok')
     end
   end

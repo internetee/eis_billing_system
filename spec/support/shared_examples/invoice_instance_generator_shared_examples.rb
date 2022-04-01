@@ -3,7 +3,7 @@ RSpec.shared_examples 'generate invoice instance' do
     it "should generate invoice based on upcoming params from registry" do
       params = {
         invoice_number: "12345",
-        custom_field_2: "registry",
+        custom_field2: "registry",
         transaction_amount: "23.30"
       }
 
@@ -16,7 +16,7 @@ RSpec.shared_examples 'generate invoice instance' do
     it "should generate invoice based on upcoming params from auction" do
       params = {
         invoice_number: "12345",
-        custom_field_2: "auction",
+        custom_field2: "auction",
         transaction_amount: "23.30"
       }
 

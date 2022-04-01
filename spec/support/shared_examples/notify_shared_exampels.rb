@@ -3,6 +3,7 @@ RSpec.shared_examples 'should notify initiator' do |response_everypay|
 
   before(:each) do
     stub_const('ENV', {'update_payment_url' => 'http://endpoint:3000/get'})
+    stub_const('ENV', {'registry_update_payment_url' => 'http://endpoint/get'})
   end
 
   it 'should notify registrar that response was receive in callback handler' do

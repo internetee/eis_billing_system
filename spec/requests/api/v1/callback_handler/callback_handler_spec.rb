@@ -36,7 +36,7 @@ RSpec.describe "Api::V1::CallbackHandler::CallbackHandlers", type: :request do
 
       get api_v1_callback_handler_callback_url + '?payment_reference=some'
 
-      expect(response).to have_http_status(:success)
+      expect(response).to have_http_status(:ok)
     end
   end
 end

@@ -1,9 +1,9 @@
 class Api::V1::CallbackHandler::CallbackHandlerController < Api::V1::CallbackHandler::BaseController
-  KEY = 'c05fa8dae730cc0cf57fe445861953fa'
-  LINKPAY_PREFIX = 'https://igw-demo.every-pay.com/lp'
-  LINKPAY_TOKEN = 'k5t5xq'
-  LINKPAY_QR = true
-  API_USERNAME = 'ca8d6336dd750ddb'
+  KEY = ENV['everypay_key']
+  LINKPAY_PREFIX = ENV['linkpay_prefix'] || 'https://igw-demo.every-pay.com/lp'
+  LINKPAY_TOKEN = ENV['linkpay_token']
+  # LINKPAY_QR = true // Maybe useful in future
+  API_USERNAME = ENV['api_username']
 
   def callback
     payment_reference = params[:payment_reference]

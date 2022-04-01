@@ -1,6 +1,6 @@
 class EInvoiceResponseSender < Base
-  def self.send_request(initiator: ,invoice_number:)
-    base_request(initiator: initiator, invoice_number: invoice_number)
+  def self.send_request(invoice_number:)
+    base_request(invoice_number: invoice_number)
   end
 
   def self.base_request(invoice_number:)
