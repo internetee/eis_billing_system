@@ -13,8 +13,24 @@ class Notify < Base
 
     return logger.info "Not found initiator. Inititor #{invoice.initiator}" if url.nil?
 
+    parsed_response[:invoice_number_collection] = invoice_numbers_from_multi_payment(invoice)
+
     http = generate_http_request_sender(url: url)
     http.put(url, parsed_response.to_json, generate_headers)
+  end
+
+  def self.invoice_numbers_from_multi_payment(invoice)
+    return unless invoice.initiator == 'auction'
+
+    numbers = invoice.description.split(' ')
+    results = Invoice.where(invoice_number: numbers).pluck(:invoice_number, :payment_reference)
+    data = []
+
+    results.each do |r|
+      data << { number: r[0], ref: r[1] }
+    end
+
+    data
   end
 
   def self.get_update_payment_url

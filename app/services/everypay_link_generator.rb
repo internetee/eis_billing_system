@@ -3,6 +3,7 @@ module EverypayLinkGenerator
 
   def create(params:)
     everypay_params = everypay_params(params)
+
     linker = EverypayV4Wrapper::LinkBuilder.new(key: GlobalVariable::KEY, params: everypay_params)
 
     linker.build_link

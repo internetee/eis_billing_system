@@ -18,6 +18,11 @@ class DirectoInvoiceForwardJob < ApplicationJob
 
   def send_receipts
     @invoice_data.each do |invoice|
+      p ">>>>>>>>>>>>>.."
+      p invoice
+      p ">>>>>>>>>>>>>>>>"
+      #  "customer"=>{"code"=>"330099886633322", "destination"=>"EE", "vat_reg_no"=>"123456789"},
+
       if @initiator == 'auction'
         @client.invoices.add_with_schema(invoice: invoice, schema: 'auction')
       else
@@ -25,7 +30,7 @@ class DirectoInvoiceForwardJob < ApplicationJob
       end
     end
 
-    sync_with_directo
+    sync_with_directo if @client.invoices.count.positive?
   end
 
   def send_monthly_invoices
