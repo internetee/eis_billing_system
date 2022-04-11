@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_04_04_084852) do
+ActiveRecord::Schema.define(version: 2022_04_11_064129) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -19,15 +19,16 @@ ActiveRecord::Schema.define(version: 2022_04_04_084852) do
     t.integer "invoice_number", null: false
     t.string "initiator", null: false
     t.string "payment_reference"
-    t.string "transaction_amount"
+    t.decimal "transaction_amount"
     t.integer "status", default: 0, null: false
+    t.jsonb "everypay_response"
+    t.jsonb "directo_data"
+    t.boolean "in_directo", default: false
+    t.datetime "transaction_time"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.datetime "transaction_time"
-    t.jsonb "everypay_response"
-    t.boolean "in_directo", default: false
-    t.jsonb "directo_data"
     t.string "description"
+    t.datetime "sent_at_omniva"
     t.index ["status"], name: "index_invoices_on_status"
   end
 
@@ -48,6 +49,13 @@ ActiveRecord::Schema.define(version: 2022_04_04_084852) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["code"], name: "index_setting_entries_on_code", unique: true
+  end
+
+  create_table "users", force: :cascade do |t|
+    t.string "email"
+    t.string "password_digest"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
   end
 
 end

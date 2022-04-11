@@ -1,0 +1,75 @@
+<style>
+  select {
+    padding: 10px 15px;
+    margin: 5px 5px;
+    background-color: white;
+  }
+</style>
+
+<div data-controller="sort-link">
+  <div class="container mx-auto">
+    <%= form_with url: dashboard_index_path, 
+                  method: :get,
+                  data: { controller: 'debounce',
+                          debounce_target: 'form',
+                          turbo_action: "advance",
+                          turbo_frame: "results",
+                          action: 'input->debounce#search' 
+                        } do |form| %>
+      <%= form.search_field :invoice_number, value: params[:invoice_number],
+                            class: 'w-full pl-3 pr-10 py-2 border-2 border-gray-200 rounded-xl hover:border-gray-300 focus:outline-none focus:border-blue-500 transition-colors mb-7 bg-white',
+                            placeholder: 'Type by invoice' %>
+
+      <div> 
+      <div>
+        <%= form.select :status, 
+                        Invoice.statuses,
+                        include_blank: 'Invoice status',
+                        selected: params[:status] %>
+          <%= form.number_field :min_amount, value: params[:min_amount] || 1.0 %>
+          <%= form.number_field :max_amount, value: params[:max_amount] || 2000.0 %>
+      </div>
+
+      <%= form.hidden_field :sort, value: params[:sort], data: { sort_link_target: "sort"} %>
+      <%= form.hidden_field :direction, value: params[:direction], data: { sort_link_target: "direction"} %>
+
+      <div class="row-2">
+        Show
+        <%= form.select :per_page,
+              options_for_select([5, 10, 25, 50, 100],
+              selected: params[:per_page]) %>
+      </div>
+      </div>
+    <% end %>
+
+    <%= turbo_frame_tag "results" do %>
+      <div>
+        <table class="min-w-full mt-6">
+          <thead>
+            <tr>
+              <th class="px-6 py-1 border-b border-gray-200 bg-gray-50 text-left text-xs text-gray-500 uppercase"><%= sort_link_to "Bait", "invoice_number" %></th>
+              <th class="px-6 py-1 border-b border-gray-200 bg-gray-50 text-left text-xs text-gray-500 uppercase"><%= sort_link_to "Status", "status" %></th>
+              <th class="px-6 py-1 border-b border-gray-200 bg-gray-50 text-left text-xs text-gray-500 uppercase"><%= sort_link_to "From", "initiator" %></th>
+              <th class="px-6 py-1 border-b border-gray-200 bg-gray-50 text-left text-xs text-gray-500 uppercase">Payment Reference</th>
+              <th class="px-6 py-1 border-b border-gray-200 bg-gray-50 text-left text-xs text-gray-500 uppercase"><%= sort_link_to "Transaction Time", "transaction_time" %></th>
+              <th class="px-6 py-1 border-b border-gray-200 bg-gray-50 text-left text-xs text-gray-500 uppercase"><%= sort_link_to "Amount", "transaction_amount" %></th>
+              <th class="px-6 py-1 border-b border-gray-200 bg-gray-50 text-left text-xs text-gray-500 uppercase">Everypay response</th>
+              <th class="px-6 py-1 border-b border-gray-200 bg-gray-50 text-left text-xs text-gray-500 uppercase">Directo Data</th>
+              <th class="px-6 py-1 border-b border-gray-200 bg-gray-50 text-left text-xs text-gray-500 uppercase"><%= sort_link_to "E-invoice sent at", "sent_at_omniva" %></th>
+              <th class="px-6 py-1 border-b border-gray-200 bg-gray-50 text-left text-xs text-gray-500 uppercase"><%= sort_link_to "In Directo", "in_directo" %></th>
+            </tr>
+          </thead>
+          <tbody id="invoices">
+            <%= render @invoices %>
+          </tbody>
+        </table>
+
+        <% if @pagy.pages > 1 %>
+          <div class="footer">
+            <%== pagy_nav(@pagy) %>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+  </div>

@@ -13,11 +13,19 @@ class SendEInvoiceJob < ApplicationJob
   private
 
   def process(e_invoice_data)
-    e_invoice_instance = EInvoiceGenerator.new(e_invoice_data)
-    e_invoice_instance.generate.deliver
+    invoice_number = e_invoice_data[:invoice_data][:number]
 
-    EInvoiceResponseSender.send_request(invoice_number: e_invoice_data[:invoice_data][:number])
-    log_success(e_invoice_data)
+    e_invoice_instance = EInvoiceGenerator.new(e_invoice_data)
+    data = e_invoice_instance.generate.deliver
+    message = data.to_hash[:e_invoice_response][:message]
+
+    if message.include? 'Success'
+      EInvoiceResponseSender.send_request(invoice_number: e_invoice_data[:invoice_data][:number])
+      invoice = Invoice.find_by(invoice_number: invoice_number)
+      invoice.update(sent_at_omniva: Time.zone.now)
+    else
+      logger.info 'FAILED IN EINVOICE OMNIVA TRANSFER'
+    end
   end
 
   def log_success(e_invoice_data)

@@ -1,0 +1,37 @@
+          
+<h1 class='text-center font-bold text-2xl'>Create Admin</h1>
+<%= form_with model: user, url: url do |f| %>
+  <div class="my-2">
+    <%= f.label 'email', class: "text-sm font-bold" %><br>
+    <%= f.text_field :email, autofocus: true, required: true, class: "w-full px-3 py-2 mt-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded focus:outline-none focus:ring-indigo-500  focus:border-indigo-500 focus:z-10 sm:text-sm", placeholder: "" %>
+  </div>
+
+  <% unless f.object.new_record? %>
+    <div class="bg-white py-8">
+    <div class="px-4">
+      <div class="relative">
+        <div class="absolute inset-0 flex items-center" aria-hidden="true">
+          <div class="w-full border-t border-gray-300"></div>
+        </div>
+        <div class="relative flex justify-center">
+        <span class="px-2 bg-white text-sm text-gray-500">
+          Leave this field empty if you won't to update password
+        </span>
+        </div>
+      </div>
+    </div>
+    </div>
+  <% end %>
+
+  <div class="my-2">
+    <%= f.label 'password', class: "text-sm font-bold" %><br>
+    <%= f.password_field :password, autofocus: true, required: f.object.new_record? ? true : false, class: "w-full px-3 py-2 mt-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded focus:outline-none focus:ring-indigo-500  focus:border-indigo-500 focus:z-10 sm:text-sm", placeholder: "" %>
+  </div>
+  <div class="my-2">
+    <%= f.label 'password_confirmation', class: "text-sm font-bold" %><br>
+    <%= f.password_field :password_confirmation, autofocus: true, required: f.object.new_record? ? true : false, class: "w-full px-3 py-2 mt-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded focus:outline-none focus:ring-indigo-500  focus:border-indigo-500 focus:z-10 sm:text-sm", placeholder: "" %>
+  </div>
+  <div class="my-2 text-center">
+    <%= f.submit f.object.new_record? ? '+ Create new admin user' : 'Update admin user', class: "h-10 py-2 mt-4 px-4 border border-transparent text-sm font-semibold rounded-md text-white bg-violet-700 hover:bg-violet-800 transition duration-150 ease-in-out shadow-md cursor-pointer" %>
+  </div>
+<% end %>

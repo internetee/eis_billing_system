@@ -18,11 +18,6 @@ class DirectoInvoiceForwardJob < ApplicationJob
 
   def send_receipts
     @invoice_data.each do |invoice|
-      p ">>>>>>>>>>>>>.."
-      p invoice
-      p ">>>>>>>>>>>>>>>>"
-      #  "customer"=>{"code"=>"330099886633322", "destination"=>"EE", "vat_reg_no"=>"123456789"},
-
       if @initiator == 'auction'
         @client.invoices.add_with_schema(invoice: invoice, schema: 'auction')
       else
@@ -59,10 +54,31 @@ class DirectoInvoiceForwardJob < ApplicationJob
 
     registry_response = DirectoResponseSender.send_request(response: res.body, xml_data: @client.invoices.as_xml, initiator: @initiator)
 
+    process_directo_response(@client.invoices.as_xml, res.body)
+
     Rails.logger.info "Registry response: #{registry_response.body}"
     # update_number(@client.invoices.as_xml)
   rescue SocketError, Errno::ECONNREFUSED, Timeout::Error, Errno::EINVAL, Errno::ECONNRESET,
          EOFError, Net::HTTPBadResponse, Net::HTTPHeaderSyntaxError, Net::ProtocolError
     Rails.logger.info('[Directo] Failed to communicate via API')
+  end
+
+  private
+
+  def process_directo_response(xml, req)
+    Rails.logger.info "[Directo] - Responded with body: #{xml}"
+    Nokogiri::XML(req).css('Result').each do |res|
+      invoice = Invoice.find_by(invoice_number: res.attributes['docid'].value.to_i)
+      invoice.update(in_directo: true)
+    end
+  end
+
+  def mark_invoice_as_sent(invoice: nil, res:, req:)
+    if invoice
+      directo_record.item = invoice
+      invoice.update(in_directo: true)
+    end
+
+    directo_record.save!
   end
 end

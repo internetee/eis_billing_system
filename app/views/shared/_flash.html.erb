@@ -1,0 +1,23 @@
+<!-- <div id="flash"> -->
+<div id="flash">
+
+  <% if flash.any? %>
+      <% flash.each do |type, msg| %>
+      <div>
+        <% if type == 'notice' %>
+          <div class="absolute top-0 right-0 z-10 w-2/12 p-5 bg-transparent transition duration-700 ease-out">
+            <p class="notice border-2 border-green-500 border-solid w-full py-5 px-3 bg-green-200 mb-5 text-green-500 font-medium rounded-lg inline-block"><%= notice %></p>
+          </div>
+        <% elsif type == 'alert' %>
+          <div class="absolute top-0 right-0 z-10 w-2/12 p-5 bg-transparent transition duration-700 ease-out">
+            <p class="alert border-2 border-red-500 border-solid w-full py-2 px-3 bg-red-50 mb-5 text-red-500 font-medium rounded-lg inline-block"><%= alert %></p>
+          </div>
+        <% else %>
+          <div class="absolute top-0 right-0 z-10 w-2/12 p-5 bg-transparent transition duration-700 ease-out">
+            <p class="notice border-2 border-green-500 border-solid w-full py-5 px-3 bg-green-200 mb-5 text-green-500 font-medium rounded-lg inline-block"><%= msg %></p>
+          </div>
+        <% end %>
+      </div>
+      <% end %>
+  <% end %>
+</div>

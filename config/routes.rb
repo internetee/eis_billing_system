@@ -1,4 +1,30 @@
 Rails.application.routes.draw do
+  root 'dashboard#index'
+
+  get 'sign_up', to: 'registrations#new'
+  post 'sign_up', to: 'registrations#create'
+  get 'sign_in', to: 'sessions#new'
+  post 'sign_in', to: 'sessions#create', as: 'log_in'
+  delete 'logout', to: 'sessions#destroy'
+
+  resources :users, only: [:index, :destroy, :edit, :update, :new] do
+    collection do
+      post :search
+    end
+  end
+
+  resources :dashboard do
+    collection do
+      post :search
+    end
+  end
+
+  resources :everypay, only: [:index] do
+    collection do
+      post :everypay_data
+    end
+  end
+  
   namespace :api, defaults: { format: :json } do
     namespace :v1 do
 

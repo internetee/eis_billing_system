@@ -1,0 +1,11 @@
+<div class="container mx-auto">
+  <%= form_with url: everypay_data_everypay_index_path, method: :post, class: 'flex flex-row items-center justfy-center' do |form| %>
+    <%= form.search_field :payment_reference,
+                          class: 'w-full pl-3 py-2 pr-10 border-2 border-gray-200 rounded-xl hover:border-gray-300 focus:outline-none focus:border-blue-500 transition-colors bg-white',
+                          placeholder: 'Type payment reference number' %>
+    <%= form.submit 'Run', class: 'ml-4 h-10 py-2 my-1 px-8 border border-transparent text-sm font-semibold rounded-md text-white bg-violet-700 hover:bg-violet-800 transition duration-150 ease-in-out shadow-md cursor-pointer' %>
+  <% end %>
+
+  <div id="response_everypay"></div>
+  <div id="notifier_result"></div>
+</div>

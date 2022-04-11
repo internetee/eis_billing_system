@@ -1,0 +1,3 @@
+<%= turbo_frame_tag 'admin_form' do %>
+    <%= render partial: 'users/form', locals: { user: @user, url: user_path } %>
+<% end %>

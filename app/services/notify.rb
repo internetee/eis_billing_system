@@ -5,7 +5,7 @@ class Notify < Base
 
     return false if invoice.nil?
 
-    invoice.update(payment_reference: parsed_response[:payment_reference])
+    update_invoice_state(parsed_response: parsed_response, invoice: invoice)
 
     return logger.info "Invoice not found\n Yout response #{parsed_response}" if invoice.nil?
 
@@ -16,7 +16,18 @@ class Notify < Base
     parsed_response[:invoice_number_collection] = invoice_numbers_from_multi_payment(invoice)
 
     http = generate_http_request_sender(url: url)
-    http.put(url, parsed_response.to_json, generate_headers)
+    response = http.put(url, parsed_response.to_json, generate_headers)
+
+    response.code
+  end
+
+  def self.update_invoice_state(parsed_response:, invoice:)
+    status = parsed_response[:payment_state] == 'settled' ? :paid : :failed
+
+    invoice.update(payment_reference: parsed_response[:payment_reference],
+                   status: status,
+                   transaction_time: parsed_response[:transaction_time],
+                   everypay_response: parsed_response)
   end
 
   def self.invoice_numbers_from_multi_payment(invoice)

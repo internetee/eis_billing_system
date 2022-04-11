@@ -1,0 +1,33 @@
+<div class="container mx-auto">
+    <%= form_with url: search_users_path, 
+                  method: :post,
+                  data: { controller: 'debounce', debounce_target: 'form' } do |form| %>
+      <%= form.search_field :title_search, value: params[:title_search], oninput: "this.form.requestSubmit()",
+                            class: 'w-full pl-3 pr-10 py-2 border-2 border-gray-200 rounded-xl hover:border-gray-300 focus:outline-none focus:border-blue-500 transition-colors mb-7 bg-white',
+                            placeholder: 'Search by email' %>
+    <% end %>
+
+    <div class='flex flex-row'>
+      <div class='basis-3/4'>
+        <table class="min-w-full">
+          <thead>
+            <tr>
+              <th class="px-6 py-2 border-b border-gray-200 bg-gray-50 text-left text-md leading-4 text-gray-500 uppercase tracking-wider">Email</th>
+              <th class="px-2 py-2 border-b border-gray-200 bg-gray-50 text-left leading-4 text-gray-500 uppercase tracking-wider text-right">
+                <%= button_to 'New admin user', '#', class: 'h-10 py-2 my-1 px-4 border border-transparent text-sm font-semibold rounded-md text-white bg-violet-700 hover:bg-violet-800 transition duration-150 ease-in-out shadow-md cursor-pointer', data: { turbo_frame: 'admin_form' } %>
+              </th>
+            </tr>
+          </thead>
+          <tbody id="users" class='bg-white'>
+              <%= render partial: 'users', locals: { users: @users } %>
+          </tbody>
+        </table>
+      </div>
+
+      <div class='ml-4 bases-1/4 p-6 bg-white' id="new_user">
+        <%= turbo_frame_tag 'admin_form' do %>
+          <%= render partial: 'form', locals: { user: @new_user, url: sign_up_path } %>
+        <% end %>
+      </div>
+    </div>
+</div>
