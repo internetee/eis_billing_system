@@ -20,18 +20,41 @@
                             class: 'w-full pl-3 pr-10 py-2 border-2 border-gray-200 rounded-xl hover:border-gray-300 focus:outline-none focus:border-blue-500 transition-colors mb-7 bg-white',
                             placeholder: 'Type by invoice' %>
 
-      <div> 
+      <div class="flex flex-row items-center">
       <div>
         <%= form.select :status, 
                         Invoice.statuses,
                         include_blank: 'Invoice status',
                         selected: params[:status] %>
-          <%= form.number_field :min_amount, value: params[:min_amount] || 1.0 %>
-          <%= form.number_field :max_amount, value: params[:max_amount] || 2000.0 %>
+          <%#= form.number_field :min_amount, value: params[:min_amount] || 1.0 %>
+          <%#= form.number_field :max_amount, value: params[:max_amount] || 2000.0 %>
       </div>
 
       <%= form.hidden_field :sort, value: params[:sort], data: { sort_link_target: "sort"} %>
       <%= form.hidden_field :direction, value: params[:direction], data: { sort_link_target: "direction"} %>
+
+        <div class="w-full sm:w-1/2 pt-6 sm:pl-4 text-center mx-10"
+             data-controller="range-slider"
+             data-range-slider-min-value="<%= @min_amount %>"
+             data-range-slider-max-value="<%= @max_amount %>"
+             style="width: 250px;">
+
+          <div data-range-slider-target="slider">
+
+          </div>
+
+          <%= form.hidden_field :min_amount,
+                  value: params[:min_amount] || @min_amount,
+                  data: { range_slider_target: "currentMin" } %>
+
+          <%= form.hidden_field :max_amount,
+                  value: params[:max_amount] || @max_amount,
+                  data: { range_slider_target: "currentMax" } %>
+
+          <div class="bottom-0 text-sm font-medium text-gray-500">
+            Invoice amount
+          </div>
+        </div>
 
       <div class="row-2">
         Show

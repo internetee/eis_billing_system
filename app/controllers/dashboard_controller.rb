@@ -4,8 +4,11 @@ class DashboardController < ParentController
   def index
     # @invoices = Invoice.search(params)
     @pagy, @invoices = pagy(Invoice.search(params),
-                            items: params[:per_page] ||= 20,
+                            items: params[:per_page] ||= 25,
                             link_extra: 'data-turbo-action="advance"')
+
+    @min_amount = 1
+    @max_amount = 2000
   end
 
   def search

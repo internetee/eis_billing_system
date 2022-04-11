@@ -46,6 +46,7 @@ Rails.application.routes.draw do
       namespace :invoice_generator do
         resources :invoice_generator, only: [:create]
         resources :invoice_number_generator, only: [:create]
+        resources :invoice_status, only: [:create]
         resources :reference_number_generator, only: [:create]
       end
 

@@ -8,7 +8,7 @@ class Invoice < ApplicationRecord
     }
   }
 
-  enum status: %i[unpaid paid failed]
+  enum status: %i[unpaid paid cancelled]
 
   scope :with_status, -> (status) {
     where(status: status) if status.present?
