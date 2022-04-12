@@ -7,11 +7,11 @@ class Notify < Base
 
     update_invoice_state(parsed_response: parsed_response, invoice: invoice)
 
-    return logger.info "Invoice not found\n Yout response #{parsed_response}" if invoice.nil?
+    return Rails.logger.info "Invoice not found\n Yout response #{parsed_response}" if invoice.nil?
 
     url = get_update_payment_url[invoice.initiator.to_sym]
 
-    return logger.info "Not found initiator. Inititor #{invoice.initiator}" if url.nil?
+    return Rails.logger.info "Not found initiator. Inititor #{invoice.initiator}" if url.nil?
 
     parsed_response[:invoice_number_collection] = invoice_numbers_from_multi_payment(invoice)
 
@@ -76,9 +76,5 @@ class Notify < Base
       ob_payment_state: response['ob_payment_state'],
       transaction_time: response['transaction_time']
     }
-  end
-
-  def self.logger
-    @logger ||= Rails.logger
   end
 end

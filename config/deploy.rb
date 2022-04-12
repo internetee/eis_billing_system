@@ -29,8 +29,10 @@ set :rails_env, "staging"
 
 # Default value for linked_dirs is []
 # append :linked_dirs, "log", "tmp/pids", "tmp/cache", "tmp/sockets", "public/system"
-append :linked_dirs, 'log', 'storage', 'tmp/cache', '.bundle'
-set :assets_dependencies, %w(Gemfile.lock config/routes.rb)
+# append :linked_dirs, 'log', 'storage', 'tmp/cache', '.bundle'
+# set :assets_dependencies, %w(Gemfile.lock config/routes.rb)
+append :linked_dirs, 'log', 'storage', 'tmp/pids', 'tmp/cache', 'tmp/sockets', 'vendor/bundle', '.bundle', 'public/system', 'public/uploads'
+set :assets_dependencies, %w(app/assets lib/assets vendor/assets Gemfile.lock config/routes.rb)
 set :linked_files, %w{config/application.yml}
 # set :linked_files, %w{config/application.yml}
 # app/assets lib/assets vendor/assets
@@ -49,7 +51,7 @@ set :keep_releases, 5
 namespace :deploy do
   namespace :assets do
     task :precompile do
-      logger.info "No precompile"
+      puts "No precompile"
     end
   end
   

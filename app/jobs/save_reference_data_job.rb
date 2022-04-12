@@ -13,8 +13,8 @@ class SaveReferenceDataJob < ApplicationJob
   end
 
   def log_request(reference_number:, initiator:)
-    logger.info reference_number
-    logger.info initiator
-    logger.info "++++++++++++++++++"
+    Rails.logger.info reference_number
+    Rails.logger.info initiator
+    Rails.logger.info "++++++++++++++++++"
   end
 end

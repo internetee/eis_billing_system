@@ -3,7 +3,7 @@ class SendEInvoiceJob < ApplicationJob
 
   def perform(e_invoice_data)
     # byebug
-    logger.info "Started to process e-invoice for invoice_id #{e_invoice_data[:invoice_data][:id]}"
+    Rails.logger.info "Started to process e-invoice for invoice_id #{e_invoice_data[:invoice_data][:id]}"
     process(e_invoice_data)
   rescue StandardError => e
     log_error(invoice: e_invoice_data[:invoice_data][:id], error: e)
@@ -24,13 +24,13 @@ class SendEInvoiceJob < ApplicationJob
       invoice = Invoice.find_by(invoice_number: invoice_number)
       invoice.update(sent_at_omniva: Time.zone.now)
     else
-      logger.info 'FAILED IN EINVOICE OMNIVA TRANSFER'
+      Rails.logger.info 'FAILED IN EINVOICE OMNIVA TRANSFER'
     end
   end
 
   def log_success(e_invoice_data)
     message = "E-Invoice for an invoice with ID # #{e_invoice_data[:invoice_data][:id]} was sent successfully"
-    logger.info message
+    Rails.logger.info message
   end
 
   def log_error(invoice:, error:)
@@ -39,10 +39,6 @@ class SendEInvoiceJob < ApplicationJob
       The error message was the following: #{error}
       This job will retry.
     TEXT
-    logger.error message
-  end
-
-  def logger
-    Rails.logger
+    Rails.logger.error message
   end
 end

@@ -31,9 +31,9 @@ class Api::V1::ImportData::InvoiceDataController < ApplicationController
   private
 
   def log_request(invoice_number:, initiator:, transaction_amount:)
-    logger.info invoice_number
-    logger.info initiator
-    logger.info transaction_amount
-    logger.info "++++++++++++++++++"
+    Rails.logger.info invoice_number
+    Rails.logger.info initiator
+    Rails.logger.info transaction_amount
+    Rails.logger.info "++++++++++++++++++"
   end
 end

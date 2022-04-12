@@ -55,8 +55,4 @@ class ApplicationController < ActionController::API
   def billing_secret_key
     ENV['billing_secret']
   end
-
-  def logger
-    Rails.logger
-  end
 end
