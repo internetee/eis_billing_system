@@ -10,11 +10,14 @@ class Api::V1::ImportData::InvoiceDataController < ApplicationController
 
       log_request(invoice_number: invoice_number, initiator: initiator, transaction_amount: transaction_amount)
 
+      status = data['status']
+      status = 'unpaid' if status == 'issued'
+
       invoice = Invoice.new
-      invoice.invoice_number = data['invoice_number']
-      invoice.initiator = data['initiator']
-      invoice.transaction_amount = data['transaction_amount']
-      invoice.status = data['status']
+      invoice.invoice_number = invoice_number
+      invoice.initiator = initiator
+      invoice.transaction_amount = transaction_amount
+      invoice.status = status
       invoice.in_directo = data['in_directo']
       invoice.sent_at_omniva = data['e_invoice_sent_at']
       invoice.transaction_time = data['transaction_time']

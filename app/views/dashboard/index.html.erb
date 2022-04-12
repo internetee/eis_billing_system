@@ -26,8 +26,6 @@
                         Invoice.statuses,
                         include_blank: 'Invoice status',
                         selected: params[:status] %>
-          <%#= form.number_field :min_amount, value: params[:min_amount] || 1.0 %>
-          <%#= form.number_field :max_amount, value: params[:max_amount] || 2000.0 %>
       </div>
 
       <%= form.hidden_field :sort, value: params[:sort], data: { sort_link_target: "sort"} %>
