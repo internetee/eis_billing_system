@@ -24,6 +24,8 @@ Rails.application.routes.draw do
       post :everypay_data
     end
   end
+
+  resources :references, only: [:index]
   
   namespace :api, defaults: { format: :json } do
     namespace :v1 do

@@ -1,0 +1,43 @@
+
+<div data-controller="sort-link">
+  <div class="container mx-auto">
+    <%= form_with url: references_path, 
+                  method: :get,
+                  data: { controller: 'debounce',
+                          debounce_target: 'form',
+                          turbo_action: "advance",
+                          turbo_frame: "results",
+                          action: 'input->debounce#search' 
+                        } do |form| %>
+      <%= form.search_field :reference_number, value: params[:reference_number],
+                            class: 'w-full pl-3 pr-10 py-2 border-2 border-gray-200 rounded-xl hover:border-gray-300 focus:outline-none focus:border-blue-500 transition-colors mb-7 bg-white',
+                            placeholder: 'Search by reference number' %>
+
+      <%= form.hidden_field :sort, value: params[:sort], data: { sort_link_target: "sort"} %>
+      <%= form.hidden_field :direction, value: params[:direction], data: { sort_link_target: "direction"} %>
+    <% end %>
+
+  <%= turbo_frame_tag "results" do %>
+      <div>
+        <table class="min-w-full mt-6">
+          <thead>
+            <tr>
+              <th class="px-6 py-1 border-b border-gray-200 bg-gray-50 text-left text-xs text-gray-500 uppercase"><%= sort_link_to "Reference number", "reference_number" %></th>
+              <th class="px-6 py-1 border-b border-gray-200 bg-gray-50 text-left text-xs text-gray-500 uppercase"><%= sort_link_to "Related", "initiator" %></th>
+              <th class="px-6 py-1 border-b border-gray-200 bg-gray-50 text-left text-xs text-gray-500 uppercase"><%= sort_link_to "Created at", "created_at" %></th>
+            </tr>
+          </thead>
+          <tbody id="references">
+            <%= render @references %>
+          </tbody>
+        </table>
+
+        <% if @pagy.pages > 1 %>
+          <div class="footer">
+            <%== pagy_nav(@pagy) %>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+</div>

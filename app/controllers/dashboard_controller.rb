@@ -2,7 +2,6 @@ class DashboardController < ParentController
   before_action :require_user_logged_in!
 
   def index
-    # @invoices = Invoice.search(params)
     @pagy, @invoices = pagy(Invoice.search(params),
                             items: params[:per_page] ||= 25,
                             link_extra: 'data-turbo-action="advance"')

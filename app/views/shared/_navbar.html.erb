@@ -11,6 +11,10 @@
             <i class="fa-solid fa-house"></i> <span class="ml-2">Home</span>
           <% end %>
 
+          <%= link_to references_path, class: 'px-6 py-1 flex flex-col md:flex-row md:items-center' do %>
+            <i class="fa-solid fa-id-badge"></i> <span class="ml-2">Reference numbers</span>
+          <% end %>
+
           <%= link_to everypay_index_path, class: 'px-6 py-1 flex flex-col md:flex-row md:items-center' do %>
             <i class="fa-solid fa-money-bill"></i> <span class="ml-2">Get data from Everypay</span>
           <% end %>

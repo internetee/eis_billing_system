@@ -18,6 +18,8 @@ class DirectoInvoiceForwardJob < ApplicationJob
 
   def send_receipts
     @invoice_data.each do |invoice|
+      invoice = JSON.parse(invoice.to_json)
+
       if @initiator == 'auction'
         @client.invoices.add_with_schema(invoice: invoice, schema: 'auction')
       else

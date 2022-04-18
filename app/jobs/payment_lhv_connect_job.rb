@@ -71,7 +71,16 @@ class PaymentLhvConnectJob < ApplicationJob
     uri = URI.parse(url_transaction)
     http = Net::HTTP.new(uri.host, uri.port)
 
-    http.post(url_transaction, params.to_json, headers)
+    unless Rails.env.development? || Rails.env.test?
+      http.use_ssl = true
+      http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+    end
+
+    res = http.post(url_transaction, params.to_json, headers)
+
+    Rails.logger.info ">>>>>>"
+    Rails.logger.info res.body
+    Rails.logger.info ">>>>>>"
   end
 
   def generate_token
@@ -94,7 +103,7 @@ class PaymentLhvConnectJob < ApplicationJob
   end
 
   def billing_secret
-    Rails.application.credentials.config[:billing_secret]
+    ENV['billing_secret']
   end
 
   def test_transactions
