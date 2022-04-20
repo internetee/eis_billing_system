@@ -1,10 +1,10 @@
 class Api::V1::ImportData::InvoiceDataController < ApplicationController
   def create
-    response = params["_json"]
+    response = params['_json']
     response.each do |data|
-      invoice_number = data["invoice_number"]
-      initiator = data["initiator"]
-      transaction_amount = data["transaction_amount"]
+      invoice_number = data['invoice_number']
+      initiator = data['initiator']
+      transaction_amount = data['transaction_amount']
 
       next unless Invoice.find_by(invoice_number: invoice_number).nil?
 
@@ -25,7 +25,7 @@ class Api::V1::ImportData::InvoiceDataController < ApplicationController
       invoice.save!
     end
 
-    render status: 200, json: { status: 'ok' }
+    render status: :ok
   end
 
   private

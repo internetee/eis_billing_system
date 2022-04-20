@@ -4,6 +4,6 @@ class Api::V1::CallbackHandler::CallbackHandlerController < Api::V1::CallbackHan
     response = EverypayResponse.send_request(payment_reference)
     result = Notify.call(response)
 
-    render json: { message: result, status: :success }
+    render status: :ok, json: { message: result }
   end
 end

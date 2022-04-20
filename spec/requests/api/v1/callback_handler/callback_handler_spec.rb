@@ -1,17 +1,19 @@
 require 'rails_helper'
 
 RSpec.describe "Api::V1::CallbackHandler::CallbackHandlers", type: :request do
+  before(:each) { ActionMailer::Base.delivery_method = :test }
+
   let(:invoice) { create(:invoice) }
 
   response_everypay = {
     account_name: 'EUR',
     order_reference: 1,
-    email: "clien@mail.ee",
+    email: 'clien@mail.ee',
     customer_ip: '12.32.12.12',
     customer_url: 'http://eis.ee',
     payment_created_at: Time.zone.now - 10.hours,
-    initial_amount: "10.0",
-    standing_amount: "10.0",
+    initial_amount: '10.0',
+    standing_amount: '10.0',
     payment_reference: '234343423423423asd',
     payment_link: 'http://everypay.link',
     api_username: 'some-api',
@@ -29,14 +31,32 @@ RSpec.describe "Api::V1::CallbackHandler::CallbackHandlers", type: :request do
 
   it_behaves_like 'should notify initiator', response_everypay
 
-  describe "GET /callback" do
-    it "should return 200 ok response" do
+  describe 'error handler' do
+    it 'should notify if invoice did not find' do
+      response_everypay = {
+        order_reference: 'some_random'
+      }
+
+      expect { Notify.call(response_everypay) }.to change { ActionMailer::Base.deliveries.count }.by(1)
+    end
+
+    it 'should notify if standard error occur' do
+      expect { Notify.call(nil) }.to change { ActionMailer::Base.deliveries.count }.by(1)
+    end
+  end
+
+  describe 'callback handler' do
+    it 'it should received params from everypay and send request' do
+      url = api_v1_callback_handler_callback_path + '?payment_reference=test_code'
+      everypay_response = {
+        everypay: 'success'
+      }
+
+      allow(EverypayResponse).to receive(:send_request).and_return(everypay_response)
       allow(Notify).to receive(:call).and_return(true)
-      expect_any_instance_of(Api::V1::CallbackHandler::CallbackHandlerController).to receive(:base_request).and_return(JSON.parse(response_everypay.to_json))
+      get url
 
-      get api_v1_callback_handler_callback_url + '?payment_reference=some'
-
-      expect(response).to have_http_status(:ok)
+      expect(JSON.parse(response.body)['message']).to eq(true)
     end
   end
 end

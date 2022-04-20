@@ -7,6 +7,9 @@ class DirectoInvoiceForwardJob < ApplicationJob
 
     @client = new_directo_client
     monthly ? send_monthly_invoices : send_receipts
+  rescue StandardError => e
+    NotifierMailer.inform_admin(title: 'Directo error occur',
+                                error_message: e.message).deliver_now
   end
 
   private
@@ -62,10 +65,10 @@ class DirectoInvoiceForwardJob < ApplicationJob
     # update_number(@client.invoices.as_xml)
   rescue SocketError, Errno::ECONNREFUSED, Timeout::Error, Errno::EINVAL, Errno::ECONNRESET,
          EOFError, Net::HTTPBadResponse, Net::HTTPHeaderSyntaxError, Net::ProtocolError
+    NotifierMailer.inform_admin(title: '[Directo] Failed to communicate via API',
+                                error_message: '[Directo] Failed to communicate via API').deliver_now
     Rails.logger.info('[Directo] Failed to communicate via API')
   end
-
-  private
 
   def process_directo_response(xml, req)
     Rails.logger.info "[Directo] - Responded with body: #{xml}"

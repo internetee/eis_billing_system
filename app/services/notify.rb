@@ -3,22 +3,23 @@ class Notify < Base
     parsed_response = parse_response(response)
     invoice = Invoice.find_by(invoice_number: parsed_response[:order_reference])
 
-    return false if invoice.nil?
+    return notify(title: 'Invoice not found',
+                  error_message: "Invoice with #{parsed_response[:order_reference]} number not found") if invoice.nil?
 
     update_invoice_state(parsed_response: parsed_response, invoice: invoice)
-
-    return Rails.logger.info "Invoice not found\n Yout response #{parsed_response}" if invoice.nil?
-
     url = get_update_payment_url[invoice.initiator.to_sym]
-
-    return Rails.logger.info "Not found initiator. Inititor #{invoice.initiator}" if url.nil?
-
     parsed_response[:invoice_number_collection] = invoice_numbers_from_multi_payment(invoice)
-
     http = generate_http_request_sender(url: url)
     response = http.put(url, parsed_response.to_json, generate_headers)
 
     response.code
+  rescue StandardError => e
+    notify(title: 'Error occur in callback handler', error_message: "Error message #{e}")
+  end
+
+  def self.notify(title:, error_message:)
+    NotifierMailer.inform_admin(title: title,
+                                error_message: error_message).deliver_now
   end
 
   def self.update_invoice_state(parsed_response:, invoice:)
