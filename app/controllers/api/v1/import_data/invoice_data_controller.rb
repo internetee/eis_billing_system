@@ -6,6 +6,8 @@ class Api::V1::ImportData::InvoiceDataController < ApplicationController
       initiator = data['initiator']
       transaction_amount = data['transaction_amount']
 
+      next if invoice_number.nil?
+
       next unless Invoice.find_by(invoice_number: invoice_number).nil?
 
       log_request(invoice_number: invoice_number, initiator: initiator, transaction_amount: transaction_amount)

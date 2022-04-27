@@ -10,9 +10,9 @@ class Notify < Base
     url = get_update_payment_url[invoice.initiator.to_sym]
     parsed_response[:invoice_number_collection] = invoice_numbers_from_multi_payment(invoice)
     http = generate_http_request_sender(url: url)
-    response = http.put(url, parsed_response.to_json, generate_headers)
 
-    response.code
+    response = http.put(url, parsed_response.to_json, generate_headers)
+    response
   rescue StandardError => e
     notify(title: 'Error occur in callback handler', error_message: "Error message #{e}")
   end

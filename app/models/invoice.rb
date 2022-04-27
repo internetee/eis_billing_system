@@ -8,17 +8,17 @@ class Invoice < ApplicationRecord
     }
   }
 
-  enum status: %i[unpaid paid cancelled]
+  enum status: %i[unpaid paid cancelled failed]
 
-  scope :with_status, -> (status) {
+  scope :with_status, ->(status) {
     where(status: status) if status.present?
   }
 
-  scope :with_number, -> (invoice_number) {
+  scope :with_number, ->(invoice_number) {
     search_by_number(invoice_number) if invoice_number.present?
   }
 
-  scope :with_amount_between, -> (low, high) {
+  scope :with_amount_between, ->(low, high) {
     where(transaction_amount: low.to_f..high.to_f) if low.present? && high.present?
   }
 
