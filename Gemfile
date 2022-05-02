@@ -85,3 +85,5 @@ gem 'pg_search'
 
 # Use Pagy for pagination
 gem "pagy", "~> 5.5"
+
+gem 'simpleidn', '0.2.1' # For punycode

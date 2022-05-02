@@ -291,6 +291,8 @@ GEM
       json (>= 1.8, < 3)
       simplecov-html (~> 0.10.0)
     simplecov-html (0.10.2)
+    simpleidn (0.2.1)
+      unf (~> 0.1.4)
     sixarm_ruby_unaccent (1.2.0)
     socksify (1.7.1)
     spring (4.0.0)
@@ -313,6 +315,9 @@ GEM
       rails (>= 6.0.0)
     tzinfo (2.0.4)
       concurrent-ruby (~> 1.0)
+    unf (0.1.4)
+      unf_ext
+    unf_ext (0.0.8)
     unicode-display_width (2.1.0)
     wasabi (3.7.0)
       addressable
@@ -358,6 +363,7 @@ DEPENDENCIES
   rspec-rails
   rubocop-rails
   simplecov (= 0.17.1)
+  simpleidn (= 0.2.1)
   spring
   sprockets-rails
   strong_migrations

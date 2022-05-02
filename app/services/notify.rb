@@ -14,7 +14,8 @@ class Notify < Base
     response = http.put(url, parsed_response.to_json, generate_headers)
     response
   rescue StandardError => e
-    notify(title: 'Error occur in callback handler', error_message: "Error message #{e}")
+    Rails.logger.error e
+    # notify(title: 'Error occur in callback handler', error_message: "Error message #{e}")
   end
 
   def self.notify(title:, error_message:)
