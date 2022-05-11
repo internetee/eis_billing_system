@@ -23,7 +23,7 @@ RSpec.describe 'Api::V1::ImportData::InvoiceData', type: :request do
         'transaction_time' => Time.zone.now - 2.days
       }] }
 
-      expect { post api_v1_import_data_invoice_data_url, params: invoice_data }.to change { Invoice.count }.by(2)
+      expect { post api_v1_import_data_invoice_data_url, params: invoice_data }.to change { Invoice.size }.by(2)
 
       expect(response).to have_http_status(:success)
     end
@@ -47,7 +47,7 @@ RSpec.describe 'Api::V1::ImportData::InvoiceData', type: :request do
         'transaction_time' => Time.zone.now - 2.days
       }] }
 
-      expect { post api_v1_import_data_invoice_data_url, params: invoice_data }.to change { Invoice.count }.by(1)
+      expect { post api_v1_import_data_invoice_data_url, params: invoice_data }.to change { Invoice.size }.by(1)
 
       expect(Invoice.last.initiator).to eq('registry')
       expect(Invoice.last.invoice_number).to eq(333)

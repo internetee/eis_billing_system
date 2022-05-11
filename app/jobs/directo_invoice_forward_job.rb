@@ -30,7 +30,7 @@ class DirectoInvoiceForwardJob < ApplicationJob
       end
     end
 
-    sync_with_directo if @client.invoices.count.positive?
+    sync_with_directo if @client.invoices.size.positive?
   end
 
   def send_monthly_invoices
@@ -43,7 +43,7 @@ class DirectoInvoiceForwardJob < ApplicationJob
   def send_invoice_for_registrar(summary)
     @client.invoices.add_with_schema(invoice: summary, schema: 'summary') unless summary.nil?
 
-    sync_with_directo if @client.invoices.count.positive?
+    sync_with_directo if @client.invoices.size.positive?
   end
 
   def sync_with_directo
