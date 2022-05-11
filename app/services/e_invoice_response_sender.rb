@@ -1,9 +1,16 @@
 class EInvoiceResponseSender < Base
-  def self.send_request(invoice_number:)
-    base_request(invoice_number: invoice_number)
+  attr_reader :invoice_number
+
+  def initialize(invoice_number:)
+    @invoice_number = invoice_number
   end
 
-  def self.base_request(invoice_number:)
+  def self.send_request(invoice_number:)
+    fetcher = new(invoice_number: invoice_number)
+    fetcher.base_request(invoice_number: invoice_number)
+  end
+
+  def base_request(invoice_number:)
     url = get_endpoint_services_e_invoice_url
 
     response_data = {
@@ -11,11 +18,13 @@ class EInvoiceResponseSender < Base
       date: Time.zone.now
     }
 
-    http = generate_http_request_sender(url: url)
-    http.put(url, response_data.to_json, generate_headers)
+    http = Base.generate_http_request_sender(url: url)
+    http.put(url, response_data.to_json, Base.generate_headers)
   end
 
-  def self.get_endpoint_services_e_invoice_url
+  private
+
+  def get_endpoint_services_e_invoice_url
     "#{ENV['base_registry']}/eis_billing/e_invoice_response"
   end
 end

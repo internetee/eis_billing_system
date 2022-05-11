@@ -15,8 +15,8 @@ class ApplicationController < ActionController::API
       token = auth_header.split(' ')[1]
       begin
         JWT.decode(token, billing_secret_key, true, algorithm: 'HS256')
-      rescue JWT::DecodeError
-        nil
+      rescue JWT::DecodeError => e
+        Rails.logger.warn(e)
       end
     end
   end

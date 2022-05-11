@@ -1,10 +1,15 @@
-module EverypayLinkGenerator
-  extend self
+class EverypayLinkGenerator
+  attr_reader :params
 
-  def create(params:)
-    everypay_params = linkpay_params(params)
+  def initialize(params: )
+    @params = params    
+  end
 
-    build_link(everypay_params.to_query)
+  def self.create(params:)
+    fetcher = new(params: params)
+    everypay_params = fetcher.linkpay_params(params)
+
+    fetcher.build_link(everypay_params.to_query)
   end
 
   def linkpay_params(params)
