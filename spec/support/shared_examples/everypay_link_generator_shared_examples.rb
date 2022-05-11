@@ -63,7 +63,7 @@ RSpec.shared_examples 'everypay link generator' do
   let(:invoice) { create(:invoice) }
 
   it 'it should generate link for specific invoice' do
-    expect_any_instance_of(EverypayV4Wrapper::LinkBuilder).to receive(:build_link).and_return('http://everypay.link')
+    allow_any_instance_of(EverypayLinkGenerator).to receive(:build_link).and_return('http://everypay.link')
 
     link = EverypayLinkGenerator.create(params: params)
 

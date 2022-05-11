@@ -1,8 +1,8 @@
 class EverypayLinkGenerator
   attr_reader :params
 
-  def initialize(params: )
-    @params = params    
+  def initialize(params:)
+    @params = params
   end
 
   def self.create(params:)

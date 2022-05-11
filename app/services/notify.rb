@@ -15,7 +15,7 @@ class Notify < Base
     response
   rescue StandardError => e
     Rails.logger.error e
-    # notify(title: 'Error occur in callback handler', error_message: "Error message #{e}")
+    notify(title: 'Error occur in callback handler', error_message: "Error message #{e}")
   end
 
   def self.notify(title:, error_message:)

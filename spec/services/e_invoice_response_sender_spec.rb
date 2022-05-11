@@ -76,7 +76,7 @@ RSpec.describe 'EInvoiceResponseSender' do
       uri_object.port = '3000'
 
       allow(URI).to receive(:parse).and_return(uri_object)
-      allow(EInvoiceResponseSender).to receive(:get_endpoint_services_e_invoice_url).and_return('http://endpoint/get')
+      allow_any_instance_of(EInvoiceResponseSender).to receive(:get_endpoint_services_e_invoice_url).and_return('http://endpoint/get')
       allow(EInvoiceResponseSender).to receive(:generate_headers).and_return({'header': 'header'})
       expect_any_instance_of(Net::HTTP).to receive(:put).and_return('200 - ok')
 

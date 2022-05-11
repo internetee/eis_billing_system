@@ -23,7 +23,7 @@ RSpec.shared_examples 'should notify initiator' do |response_everypay|
 
     res = Notify.call(JSON.parse(response_everypay.to_json))
 
-    expect(res).to match(200)
+    expect(res.code).to match(200)
   end
 
   describe 'notifier' do
@@ -120,7 +120,7 @@ RSpec.shared_examples 'should notify initiator' do |response_everypay|
 
       res = Notify.call(JSON.parse(response_everypay.to_json))
 
-      expect(res).to match(200)
+      expect(res.code).to match(200)
     end
   end
 
