@@ -1,5 +1,6 @@
 <%= tag.tr id: dom_id(reference), class: 'bg-white' do %>
   <td class="px-6 py-1 border-b border-gray-200"><%= reference.reference_number %></td>
   <td class="px-6 py-1 border-b border-gray-200"><%= reference.initiator %></td>
+  <td class="px-6 py-1 border-b border-gray-200"><%= reference.owner %></td>
   <td class="px-6 py-1 border-b border-gray-200"><%= reference.created_at %></td>
 <% end %>
