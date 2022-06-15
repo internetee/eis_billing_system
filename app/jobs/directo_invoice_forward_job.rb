@@ -30,7 +30,7 @@ class DirectoInvoiceForwardJob < ApplicationJob
       end
     end
 
-    sync_with_directo if @client.invoices.size.positive?
+    sync_with_directo if @client.invoices.count.positive?
   end
 
   def send_monthly_invoices
@@ -43,7 +43,7 @@ class DirectoInvoiceForwardJob < ApplicationJob
   def send_invoice_for_registrar(summary)
     @client.invoices.add_with_schema(invoice: summary, schema: 'summary') unless summary.nil?
 
-    sync_with_directo if @client.invoices.size.positive?
+    sync_with_directo if @client.invoices.count.positive?
   end
 
   def sync_with_directo
@@ -62,7 +62,6 @@ class DirectoInvoiceForwardJob < ApplicationJob
     process_directo_response(@client.invoices.as_xml, res.body)
 
     Rails.logger.info "Registry response: #{registry_response.body}"
-    # update_number(@client.invoices.as_xml)
   rescue SocketError, Errno::ECONNREFUSED, Timeout::Error, Errno::EINVAL, Errno::ECONNRESET,
          EOFError, Net::HTTPBadResponse, Net::HTTPHeaderSyntaxError, Net::ProtocolError
     NotifierMailer.inform_admin(title: '[Directo] Failed to communicate via API',
@@ -74,7 +73,7 @@ class DirectoInvoiceForwardJob < ApplicationJob
     Rails.logger.info "[Directo] - Responded with body: #{xml}"
     Nokogiri::XML(req).css('Result').each do |res|
       invoice = Invoice.find_by(invoice_number: res.attributes['docid'].value.to_i)
-      invoice.update(in_directo: true)
+      invoice.update(in_directo: true, directo_data: xml)
     end
   end
 
