@@ -13,7 +13,7 @@ class Api::V1::InvoiceGenerator::ReferenceNumberGeneratorController < Applicatio
       end
     end
 
-    render json: { 'message' => 'Reference number created', 'reference_number' => reference_number, status: :created }
+    render json: { 'message' => "Reference number created; #{reference_number}", 'reference_number' => reference_number }, status: :created
   end
 
   private

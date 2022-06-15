@@ -12,7 +12,6 @@ class EverypayLinkGenerator
     res = HttpBuildQuery.create everypay_params
     res.gsub!('+', '%20')
 
-    # fetcher.build_link(everypay_params.to_query)
     fetcher.build_link(res)
   end
 

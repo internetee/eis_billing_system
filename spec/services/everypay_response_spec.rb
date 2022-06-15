@@ -14,7 +14,7 @@ RSpec.describe 'EverypayResponse' do
           @uri = uri
         end
 
-        def basic_auth(username, secret)
+        def basic_auth(username='mock_env_username', secret)
           username + ' ' + secret
         end
       end
