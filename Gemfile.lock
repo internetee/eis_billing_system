@@ -360,6 +360,7 @@ DEPENDENCIES
   puma (~> 5.0)
   rails (~> 6.1.4, >= 6.1.4.1)
   redis (~> 4.0)
+  rexml
   rspec-rails
   rubocop-rails
   simplecov (= 0.17.1)

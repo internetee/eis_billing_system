@@ -7,6 +7,9 @@ Rails.application.routes.draw do
   post 'sign_in', to: 'sessions#create', as: 'log_in'
   delete 'logout', to: 'sessions#destroy'
 
+  resources :directo, only: [:show]
+  resources :everypay_response, only: [:show]
+
   resources :users, only: [:index, :destroy, :edit, :update, :new] do
     collection do
       post :search

@@ -7,6 +7,6 @@ class Api::V1::Directo::DirectoController < ApplicationController
 
     DirectoInvoiceForwardJob.perform_now(invoice_data: invoice_data, initiator: initiator, monthly: monthly, dry: dry)
 
-    render json: { 'message' => 'Invoice data received', status: :created }
+    render json: { 'message' => 'Invoice data received' }, status: :created
   end
 end
