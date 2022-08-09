@@ -32,6 +32,7 @@ smtp_authentication: 'plain' # 'plain', 'login', 'cram_md5'
 
 everypay_key: ""
 linkpay_prefix: 'https://igw-demo.every-pay.com/lp'
+linkpay_check_prefix: 'https://igw-demo.every-pay.com/api/v4/payments'
 linkpay_token: ''
 
 base_registry_dev: "https://registry:3000"

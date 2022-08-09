@@ -1,6 +1,6 @@
 class EverypayResponse < Base
   KEY = ENV['everypay_key']
-  LINKPAY_PREFIX = ENV['linkpay_prefix'] || 'https://igw-demo.every-pay.com/lp'
+  LINKPAY_CHECK_PREFIX = ENV['linkpay_check_prefix'] || 'https://igw-demo.every-pay.com/api/v4/payments'
   LINKPAY_TOKEN = ENV['linkpay_token']
   API_USERNAME = ENV['api_username']
 
@@ -18,7 +18,7 @@ class EverypayResponse < Base
   end
 
   def generate_url(payment_reference:, api_username:)
-    "https://igw-demo.every-pay.com/api/v4/payments/#{payment_reference}?api_username=#{api_username}"
+    "#{LINKPAY_CHECK_PREFIX}/#{payment_reference}?api_username=#{api_username}"
   end
 
   def base_request(url:, api_username:, api_secret:)

@@ -29,6 +29,6 @@ class EverypayLinkGenerator
   def build_link(params)
     hmac = OpenSSL::HMAC.hexdigest('sha256', GlobalVariable::KEY, params)
 
-    "https://igw-demo.every-pay.com/lp?#{params}&hmac=#{hmac}"
+    "#{GlobalVariable::LINKPAY_PREFIX}?#{params}&hmac=#{hmac}"
   end
 end
