@@ -1,4 +1,5 @@
 RSpec.shared_examples 'should send invoices to directo' do |_params|
+  let!(:admin) { create(:user) }
   before(:each) do
     ActiveJob::Base.queue_adapter = :test
     ActionMailer::Base.delivery_method = :test
