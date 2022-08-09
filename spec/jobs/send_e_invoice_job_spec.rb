@@ -1,6 +1,8 @@
 require 'rails_helper'
 
 RSpec.describe "SendEInvoiceJob", type: :job do
+  let!(:admin) { create(:user) }
+
   before(:each) do
     ActiveJob::Base.queue_adapter = :test
     ActionMailer::Base.delivery_method = :test

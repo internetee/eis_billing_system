@@ -38,6 +38,7 @@ RSpec.describe "Api::V1::InvoiceGenerator::InvoiceStatusController", type: :requ
 
   describe "error handler" do
     let(:invoice) { create(:invoice) }
+    let!(:admin) { create(:user) }
 
     before { allow_any_instance_of(ApplicationController).to receive(:authorized).and_return(true) }
     before(:each) { ActionMailer::Base.delivery_method = :test }

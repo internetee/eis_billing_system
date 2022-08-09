@@ -32,6 +32,8 @@ RSpec.describe "Api::V1::CallbackHandler::CallbackHandlers", type: :request do
   it_behaves_like 'should notify initiator', response_everypay
 
   describe 'error handler' do
+    let!(:admin) { create(:user) }
+
     it 'should notify if invoice did not find' do
       response_everypay = {
         order_reference: 'some_random'
