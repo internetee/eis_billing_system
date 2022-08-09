@@ -27,6 +27,8 @@ RSpec.shared_examples 'should notify initiator' do |response_everypay|
   end
 
   describe 'notifier' do
+    let!(:admin) { create(:user) }
+
     it 'should notify admin that error was occur' do
       title = 'error'
       text = 'very danger error happen'
