@@ -7,9 +7,9 @@ class Notify < Base
                   error_message: "Invoice with #{parsed_response[:order_reference]} number not found") if invoice.nil?
 
 
-    return if invoice.paid?
-
     update_invoice_state(parsed_response: parsed_response, invoice: invoice)
+    return unless invoice.paid?
+
     url = get_update_payment_url[invoice.initiator.to_sym]
     parsed_response[:invoice_number_collection] = invoice_numbers_from_multi_payment(invoice)
     http = generate_http_request_sender(url: url)
