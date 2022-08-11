@@ -5,8 +5,9 @@ class Api::V1::InvoiceGenerator::InvoiceStatusController < Api::V1::InvoiceGener
       render json: { 'message' => 'Status updated' }, status: :ok
     else
       render json: { 'message' => 'Something goes wrong' }
+      error_message = "Status for #{params[:invoice_number]} wasn't updated; Invoice #{invoice}"
       NotifierMailer.inform_admin(title: 'Status received error',
-                                  error_message: "Status for #{params[:invoice_number]} wasn't updated; Invoice #{invoice}").deliver_now
+                                  error_message: error_message).deliver_now
     end
   rescue StandardError => e
     Rails.logger.info e

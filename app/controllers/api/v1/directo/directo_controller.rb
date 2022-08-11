@@ -5,7 +5,8 @@ class Api::V1::Directo::DirectoController < ApplicationController
     monthly = params[:monthly]
     initiator = params[:initiator]
 
-    DirectoInvoiceForwardJob.perform_now(invoice_data: invoice_data, initiator: initiator, monthly: monthly, dry: dry)
+    DirectoInvoiceForwardJob.perform_now(invoice_data: invoice_data, initiator: initiator,
+                                         monthly: monthly, dry: dry)
 
     render json: { 'message' => 'Invoice data received' }, status: :created
   end

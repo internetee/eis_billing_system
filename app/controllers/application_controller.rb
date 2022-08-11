@@ -11,21 +11,21 @@ class ApplicationController < ActionController::API
   end
 
   def decoded_token
-    if auth_header
-      token = auth_header.split(' ')[1]
-      begin
-        JWT.decode(token, billing_secret_key, true, algorithm: 'HS256')
-      rescue JWT::DecodeError => e
-        Rails.logger.warn(e)
-      end
+    return unless auth_header
+
+    token = auth_header.split(' ')[1]
+    begin
+      JWT.decode(token, billing_secret_key, true, algorithm: 'HS256')
+    rescue JWT::DecodeError => e
+      Rails.logger.warn(e)
     end
   end
 
   def accessable_service
-    if decoded_token
-      initiator = decoded_token[0]['initiator']
-      assign_initiator_if_it_exist(initiator)
-    end
+    return unless decoded_token
+
+    initiator = decoded_token[0]['initiator']
+    assign_initiator_if_it_exist(initiator)
   end
 
   def assign_initiator_if_it_exist(initiator)
