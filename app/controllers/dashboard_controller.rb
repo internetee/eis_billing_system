@@ -16,7 +16,8 @@ class DashboardController < ParentController
     respond_to do |format|
       format.turbo_stream do
         render turbo_stream: [
-          turbo_stream.update('invoices', partial: "dashboard/invoices", locals: { invoices: @invoices })
+          turbo_stream.update('invoices', partial: 'dashboard/invoices',
+                                          locals: { invoices: @invoices }),
         ]
       end
     end

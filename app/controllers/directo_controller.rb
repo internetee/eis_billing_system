@@ -1,5 +1,5 @@
 class DirectoController < ParentController
-  require "rexml/document"
+  require 'rexml/document'
 
   before_action :require_user_logged_in!
 

@@ -10,7 +10,7 @@ class Api::V1::EInvoice::EInvoiceController < ApplicationController
       buyer_e_invoice_iban: params[:buyer_e_invoice_iban],
       seller_country_code: params[:seller_country_code],
       buyer_country_code: params[:buyer_country_code],
-      initiator: params[:initiator]
+      initiator: params[:initiator],
     }
 
     SendEInvoiceJob.perform_now(e_invoice_data)

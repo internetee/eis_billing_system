@@ -6,14 +6,14 @@ class Api::V1::InvoiceGenerator::ReferenceNumberGeneratorController < Applicatio
       reference_number = generate
 
       reference = Reference.find_by(reference_number: reference_number)
-      if reference.nil?
-        Reference.create!(reference_number: reference_number, initiator: initiator)
+      next unless reference.nil?
 
-        break
-      end
+      Reference.create!(reference_number: reference_number, initiator: initiator)
+      break
     end
 
-    render json: { 'message' => "Reference number created; #{reference_number}", 'reference_number' => reference_number }, status: :created
+    render json: { 'message' => "Reference number created; #{reference_number}",
+                   'reference_number' => reference_number }, status: :created
   end
 
   private

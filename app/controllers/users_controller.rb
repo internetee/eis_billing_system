@@ -18,20 +18,20 @@ class UsersController < ParentController
   def update
     respond_to do |format|
       if Current.user.update(strong_params)
-        flash.now[:notice] = "Admin user was updated"
+        flash.now[:notice] = 'Admin user was updated'
         format.turbo_stream do
           render turbo_stream: [
             render_turbo_flash,
             turbo_stream.replace(Current.user,
                                  partial: 'users/user',
-                                 locals: { user: Current.user })
+                                 locals: { user: Current.user }),
           ]
         end
       else
         format.turbo_stream do
           flash.now[:alert] = 'Something went wrong!'
           render turbo_stream: [
-            render_turbo_flash
+            render_turbo_flash,
           ]
         end
       end
@@ -45,32 +45,28 @@ class UsersController < ParentController
         flash.now[:alert] = "#{title} was deleted"
         format.turbo_stream do
           render turbo_stream: [
-            turbo_stream.remove(@user)
+            turbo_stream.remove(@user),
           ]
         end
       else
         format.turbo_stream do
           flash.now[:alert] = 'Something went wrong!'
-          render turbo_stream: [
-          ]
+          render turbo_stream: []
         end
       end
     end
   end
 
   def search
-    if params.dig(:title_search).present?
-      @search_param = params[:title_search].to_s.downcase
+    redirect_to users_path and return unless params[:title_search].present?
 
-      @users = User.search_by_email(@search_param).with_pg_search_highlight
-    else
-      redirect_to users_path and return
-    end
+    @search_param = params[:title_search].to_s.downcase
+    @users = User.search_by_email(@search_param).with_pg_search_highlight
 
     respond_to do |format|
       format.turbo_stream do
         render turbo_stream: [
-          turbo_stream.update('users', partial: "users/users", locals: { users: @users })
+          turbo_stream.update('users', partial: 'users/users', locals: { users: @users }),
         ]
       end
     end

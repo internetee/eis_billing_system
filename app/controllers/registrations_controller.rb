@@ -15,8 +15,9 @@ class RegistrationsController < ParentController
       respond_to do |format|
         format.turbo_stream do
           render turbo_stream: [
-            turbo_stream.prepend('users', partial: "users/user", locals: { user: @user }),
-            turbo_stream.update('new_user', partial: "users/form", locals: { user: @new_user, url: sign_up_path })
+            turbo_stream.prepend('users', partial: 'users/user', locals: { user: @user }),
+            turbo_stream.update('new_user', partial: 'users/form',
+                                            locals: { user: @new_user, url: sign_up_path }),
           ]
         end
       end
