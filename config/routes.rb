@@ -53,6 +53,7 @@ Rails.application.routes.draw do
         resources :invoice_number_generator, only: [:create]
         resources :invoice_status, only: [:create]
         resources :reference_number_generator, only: [:create]
+        resources :oneoff, only: [:create]
       end
 
       namespace :callback_handler do

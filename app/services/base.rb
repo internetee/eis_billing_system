@@ -1,6 +1,12 @@
 class Base
   INITIATOR = 'billing'.freeze
 
+  API_USERNAME = 'ca8d6336dd750ddb'
+  KEY = 'c05fa8dae730cc0cf57fe445861953fa'
+  BASE_ENDPOINT = 'https://igw-demo.every-pay.com/api/v4'
+  ONEOFF_ENDPOINT = '/payments/oneoff'
+  ACCOUNT_NAME = 'EUR3D1'
+
   def self.generate_http_request_sender(url:)
     uri = URI(url)
     http = Net::HTTP.new(uri.host, uri.port)
