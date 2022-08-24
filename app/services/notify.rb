@@ -1,5 +1,13 @@
 class Notify < Base
-  def self.call(response)
+  include Request
+
+  attr_reader :response
+
+  def initialize(response:)
+    @response = response
+  end
+
+  def call
     parsed_response = parse_response(response)
     invoice = Invoice.find_by(invoice_number: parsed_response[:order_reference])
 
@@ -11,21 +19,24 @@ class Notify < Base
 
     url = get_update_payment_url[invoice.initiator.to_sym]
     parsed_response[:invoice_number_collection] = invoice_numbers_from_multi_payment(invoice)
-    http = generate_http_request_sender(url: url)
+    # http = generate_http_request_sender(url: url)
 
-    response = http.put(url, parsed_response.to_json, generate_headers)
-    response
+    # response = http.put(url, parsed_response.to_json, generate_headers)
+
+    put_request(url, parsed_response.to_json)
   rescue StandardError => e
     Rails.logger.error e
     notify(title: 'Error occur in callback handler', error_message: "Error message #{e}")
   end
 
-  def self.notify(title:, error_message:)
+  def notify(title:, error_message:)
+    # return if Rails.env.development?
+
     NotifierMailer.inform_admin(title: title,
                                 error_message: error_message).deliver_now
   end
 
-  def self.update_invoice_state(parsed_response:, invoice:)
+  def update_invoice_state(parsed_response:, invoice:)
     status = parsed_response[:payment_state] == 'settled' ? :paid : :failed
 
     invoice.update(payment_reference: parsed_response[:payment_reference],
@@ -34,7 +45,7 @@ class Notify < Base
                    everypay_response: parsed_response)
   end
 
-  def self.invoice_numbers_from_multi_payment(invoice)
+  def invoice_numbers_from_multi_payment(invoice)
     return unless invoice.initiator == 'auction'
 
     numbers = invoice.description.split(' ')
@@ -48,7 +59,7 @@ class Notify < Base
     data
   end
 
-  def self.get_update_payment_url
+  def get_update_payment_url
     {
       registry: ENV['registry_update_payment_url'],
       auction: ENV['auction_update_payment_url'],
@@ -56,7 +67,7 @@ class Notify < Base
     }
   end
 
-  def self.parse_response(response)
+  def parse_response(response)
     {
       account_name: response['account_name'],
       order_reference: response['order_reference'],

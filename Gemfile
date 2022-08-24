@@ -89,3 +89,5 @@ gem 'pg_search'
 gem "pagy", "~> 5.5"
 
 gem 'simpleidn', '0.2.1' # For punycode
+
+gem 'faraday'

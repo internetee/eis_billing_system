@@ -1,7 +1,6 @@
 class Api::V1::InvoiceGenerator::OneoffController < Api::V1::InvoiceGenerator::BaseController
   def create
     response = Oneoff.send_request(invoice_number: params[:invoice_number], customer_url: params[:customer_url])
-
     parsed_response = JSON.parse(response)
 
     if parsed_response['error'].presence
