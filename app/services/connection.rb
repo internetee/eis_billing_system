@@ -21,6 +21,7 @@ module Connection
 
   def options
     {
+      request: { timeout: 3.seconds },
       headers: {
         'Authorization' => "Bearer #{generate_token}",
         'Content-Type' => 'application/json',

@@ -23,7 +23,7 @@ class Notify < Base
 
     # response = http.put(url, parsed_response.to_json, generate_headers)
 
-    put_request(url, parsed_response.to_json)
+    put_request(url, parsed_response)
   rescue StandardError => e
     Rails.logger.error e
     notify(title: 'Error occur in callback handler', error_message: "Error message #{e}")
@@ -38,7 +38,6 @@ class Notify < Base
 
   def update_invoice_state(parsed_response:, invoice:)
     status = parsed_response[:payment_state] == 'settled' ? :paid : :failed
-
     invoice.update(payment_reference: parsed_response[:payment_reference],
                    status: status,
                    transaction_time: parsed_response[:transaction_time],
