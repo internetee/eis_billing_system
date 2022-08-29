@@ -1,5 +1,9 @@
-class Notify < Base
+class Notify
   include Request
+
+  SETTLED = 'settled'.freeze
+  PREPENDED = 'prepended'.freeze
+  AUCTION = 'auction'.freeze
 
   attr_reader :response
 
@@ -19,25 +23,23 @@ class Notify < Base
 
     url = get_update_payment_url[invoice.initiator.to_sym]
     parsed_response[:invoice_number_collection] = invoice_numbers_from_multi_payment(invoice)
-    # http = generate_http_request_sender(url: url)
 
-    # response = http.put(url, parsed_response.to_json, generate_headers)
-
-    put_request(url, parsed_response)
+    put_request(direction: 'services', path: url, params: parsed_response)
   rescue StandardError => e
     Rails.logger.error e
     notify(title: 'Error occur in callback handler', error_message: "Error message #{e}")
   end
 
   def notify(title:, error_message:)
-    # return if Rails.env.development?
+    return if Rails.env.development?
 
     NotifierMailer.inform_admin(title: title,
                                 error_message: error_message).deliver_now
   end
 
   def update_invoice_state(parsed_response:, invoice:)
-    status = parsed_response[:payment_state] == 'settled' ? :paid : :failed
+    status = parsed_response[:payment_state] == SETTLED ? :paid : :failed
+
     invoice.update(payment_reference: parsed_response[:payment_reference],
                    status: status,
                    transaction_time: parsed_response[:transaction_time],
@@ -45,12 +47,11 @@ class Notify < Base
   end
 
   def invoice_numbers_from_multi_payment(invoice)
-    return unless invoice.initiator == 'auction'
+    return if !invoice.initiator == AUCTION || invoice.description == PREPENDED
 
     numbers = invoice.description.split(' ')
     results = Invoice.where(invoice_number: numbers).pluck(:invoice_number, :payment_reference)
     data = []
-
     results.each do |r|
       data << { number: r[0], ref: r[1] }
     end

@@ -1,4 +1,5 @@
-class Oneoff < Base
+class Oneoff
+  include Request
   attr_reader :invoice_number, :customer_url
 
   def initialize(invoice_number:, customer_url:)
@@ -9,29 +10,20 @@ class Oneoff < Base
   def self.send_request(invoice_number:, customer_url:)
     fetcher = new(invoice_number: invoice_number, customer_url: customer_url)
 
-    fetcher.base_request(api_username: API_USERNAME, api_secret: KEY)
+    fetcher.base_request
   end
 
-  def base_request(api_username:, api_secret:)
-    uri = URI("#{BASE_ENDPOINT}#{ONEOFF_ENDPOINT}")
-
-    request = Net::HTTP::Post.new uri
-    request.basic_auth api_username, api_secret
-    request.body = JSON.generate body
-    request.content_type = 'application/json'
-
-    Net::HTTP.start(uri.host, uri.port,
-                    use_ssl: uri.scheme == 'https',
-                    verify_mode: OpenSSL::SSL::VERIFY_NONE) do |http|
-      response = http.request(request)
-      response.body
-    end
+  def base_request
+    uri = URI("#{GlobalVariable::BASE_ENDPOINT}#{GlobalVariable::ONEOFF_ENDPOINT}")
+    post(direction: 'everypay', path: uri, params: body)
   end
+
+  private
 
   def body
     {
-      'api_username' => API_USERNAME,
-      'account_name' => ACCOUNT_NAME,
+      'api_username' => GlobalVariable::API_USERNAME,
+      'account_name' => GlobalVariable::ACCOUNT_NAME,
       'amount' => @invoice.transaction_amount.to_f,
       'order_reference' => "#{@invoice.invoice_number}",
       'token_agreement' => 'unscheduled',

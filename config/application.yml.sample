@@ -40,6 +40,15 @@ base_registry_staging: "https://st-adm.infra.tld.ee"
 registry_update_payment_url: "https://registry:3000/eis_billing/payment_status"
 auction_update_payment_url: "https://auction:3000/eis_billing/payment_status"
 
+everypay_key: ""
+linkpay_prefix: 'https://igw-demo.every-pay.com/lp'
+linkpay_token: ''
+api_username: ''
+everypay_base: https://igw-demo.every-pay.com/api/v4
+account_name: ''
+
+timeout_is_sec: 3
+
 lhv_keystore: './eestiInternetiSa/eestiInternetiSa.p12'
 lhv_keystore_password: 'changeit'
 lhv_keystore_alias: 'eestiinternetisa_connect0021'

@@ -1,4 +1,6 @@
-class EInvoiceResponseSender < Base
+class EInvoiceResponseSender
+  include Request
+
   attr_reader :invoice_number
 
   def initialize(invoice_number:)
@@ -18,8 +20,7 @@ class EInvoiceResponseSender < Base
       date: Time.zone.now
     }
 
-    http = Base.generate_http_request_sender(url: url)
-    http.put(url, response_data.to_json, Base.generate_headers)
+    put_request(direction: 'services', path: url, params: response_data)
   end
 
   private

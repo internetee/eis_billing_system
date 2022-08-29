@@ -57,11 +57,13 @@ class DirectoInvoiceForwardJob < ApplicationJob
     Rails.logger.info("[Directo] - response received:\n #{res.body}")
     Rails.logger.info("[Directo] - initiator:\n #{@initiator}")
 
-    registry_response = DirectoResponseSender.send_request(response: res.body, xml_data: @client.invoices.as_xml, initiator: @initiator)
+    registry_response = DirectoResponseSender.send_request(response: res.body,
+                                                           xml_data: @client.invoices.as_xml,
+                                                           initiator: @initiator)
 
     process_directo_response(@client.invoices.as_xml, res.body)
 
-    Rails.logger.info "Registry response: #{registry_response.body}"
+    Rails.logger.info "Registry response: #{registry_response}"
   rescue SocketError, Errno::ECONNREFUSED, Timeout::Error, Errno::EINVAL, Errno::ECONNRESET,
          EOFError, Net::HTTPBadResponse, Net::HTTPHeaderSyntaxError, Net::ProtocolError
     NotifierMailer.inform_admin(title: '[Directo] Failed to communicate via API',
@@ -77,12 +79,12 @@ class DirectoInvoiceForwardJob < ApplicationJob
     end
   end
 
-  def mark_invoice_as_sent(invoice: nil, res:, req:)
-    if invoice
-      directo_record.item = invoice
-      invoice.update(in_directo: true)
-    end
+  # def mark_invoice_as_sent(invoice: nil, res:, req:)
+  #   if invoice
+  #     directo_record.item = invoice
+  #     invoice.update(in_directo: true)
+  #   end
 
-    directo_record.save!
-  end
+  #   directo_record.save!
+  # end
 end
