@@ -7,14 +7,12 @@ RSpec.describe "SendEInvoiceJob", type: :job do
     ActiveJob::Base.queue_adapter = :test
     ActionMailer::Base.delivery_method = :test
 
-    uri_object = OpenStruct.new
-    uri_object.host = 'http://endpoint/get'
-    uri_object.port = '3000'
+    sucess_message = {
+      message: "Success delivered"
+    }
 
-    allow(URI).to receive(:parse).and_return(uri_object)
-    allow_any_instance_of(EInvoiceResponseSender).to receive(:get_endpoint_services_e_invoice_url).and_return('http://endpoint/get')
-    allow(EInvoiceResponseSender).to receive(:generate_headers).and_return({'header': 'header'})
-    allow_any_instance_of(Net::HTTP).to receive(:put).and_return('200 - ok')
+    stub_request(:put, "http://registry:3000/eis_billing/e_invoice_response").
+        to_return(status: 200, body: sucess_message.to_json, headers: {})
   end
 
   describe 'EInvoice deliver' do

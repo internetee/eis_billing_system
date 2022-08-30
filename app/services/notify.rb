@@ -33,8 +33,8 @@ class Notify
   def notify(title:, error_message:)
     return if Rails.env.development?
 
-    NotifierMailer.inform_admin(title: title,
-                                error_message: error_message).deliver_now
+    i = NotifierMailer.inform_admin(title: title,
+                                    error_message: error_message).deliver_now
   end
 
   def update_invoice_state(parsed_response:, invoice:)
@@ -48,15 +48,28 @@ class Notify
 
   def invoice_numbers_from_multi_payment(invoice)
     return if !invoice.initiator == AUCTION || invoice.description == PREPENDED
-
+    
     numbers = invoice.description.split(' ')
     results = Invoice.where(invoice_number: numbers).pluck(:invoice_number, :payment_reference)
     data = []
     results.each do |r|
+      set_description_for_multiple_payment(parent_invoice: invoice, invoice_number: r[0])
       data << { number: r[0], ref: r[1] }
     end
 
     data
+  end
+
+  def set_description_for_multiple_payment(parent_invoice:, invoice_number:)
+    invoice = Invoice.find_by(invoice_number: invoice_number)
+
+    invoice.payment_reference = parent_invoice.payment_reference
+    invoice.status = parent_invoice.status
+    invoice.transaction_time = parent_invoice.transaction_time
+    invoice.everypay_response = parent_invoice.everypay_response
+    invoice.description = "related to #{parent_invoice.invoice_number}"
+
+    invoice.save!
   end
 
   def get_update_payment_url

@@ -7,15 +7,17 @@ RSpec.describe "Api::V1::InvoiceGenerator::InvoiceGenerators", type: :request do
     transaction_amount: "23.30"
   }
 
-  it_behaves_like 'invoice generator', params
+  before { allow_any_instance_of(ApplicationController).to receive(:authorized).and_return(true) }
 
-  describe "POST /create" do
-    before { allow_any_instance_of(ApplicationController).to receive(:authorized).and_return(true) }
+  it "should generate invoice instance" do
+    expect { InvoiceInstanceGenerator.create(params: params) }.to change { Invoice.count }.by(1)
+  end
 
-    it "should return success response" do
-      post api_v1_invoice_generator_invoice_generator_index_url, params: params
+  it "should generate invoice link" do
+    expect_any_instance_of(EverypayLinkGenerator).to receive(:build_link).and_return('http://everypay.link')
 
-      expect(response).to have_http_status(:success)
-    end
+    link = EverypayLinkGenerator.create(params: params)
+    expect(link).to eq('http://everypay.link')
   end
 end
+

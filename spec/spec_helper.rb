@@ -14,6 +14,11 @@
 #
 # See http://rubydoc.info/gems/rspec-core/RSpec/Core/Configuration
 
+require 'database_cleaner'
+require 'webmock/rspec'
+
+WebMock.disable_net_connect!(allow_localhost: true)
+
 # require all the files from /spec/support directory
 Dir["./spec/support/**/*.rb"].sort.each { |f| require f }
 
