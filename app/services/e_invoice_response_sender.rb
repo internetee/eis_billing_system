@@ -26,6 +26,6 @@ class EInvoiceResponseSender
   private
 
   def get_endpoint_services_e_invoice_url
-    "#{ENV['base_registry']}/eis_billing/e_invoice_response"
+    "#{GlobalVariable::BASE_REGISTRY}/eis_billing/e_invoice_response"
   end
 end

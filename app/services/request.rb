@@ -39,7 +39,7 @@ module Request
 
   def everypay_options
     {
-      request: { timeout: GlobalVariable::TIMEOUT_IN_SECONDS.seconds || 3},
+      request: { timeout: GlobalVariable::TIMEOUT_IN_SECONDS.seconds || 3 },
       headers: {
         'Authorization' => "Basic #{generate_basic_token}",
         'Content-Type' => 'application/json',

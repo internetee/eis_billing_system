@@ -31,9 +31,9 @@ class DirectoResponseSender
 
   def get_endpoint_services_directo_url
     {
-      registry: "#{ENV['base_registry']}#{DIRECTO_SERVICE_ENDPOINT}",
-      auction: "#{ENV['base_auction']}#{DIRECTO_SERVICE_ENDPOINT}",
-      eeid: "#{ENV['base_eeid']}#{DIRECTO_SERVICE_ENDPOINT}"
+      registry: "#{GlobalVariable::BASE_REGISTRY}#{DIRECTO_SERVICE_ENDPOINT}",
+      auction: "#{GlobalVariable::BASE_AUCTION}#{DIRECTO_SERVICE_ENDPOINT}",
+      eeid: "#{GlobalVariable::BASE_EEID}#{DIRECTO_SERVICE_ENDPOINT}"
     }
   end
 end

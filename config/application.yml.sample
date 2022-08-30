@@ -35,10 +35,13 @@ linkpay_prefix: 'https://igw-demo.every-pay.com/lp'
 linkpay_check_prefix: 'https://igw-demo.every-pay.com/api/v4/payments'
 linkpay_token: ''
 
-base_registry_dev: "https://registry:3000"
-base_registry_staging: "https://st-adm.infra.tld.ee"
-registry_update_payment_url: "https://registry:3000/eis_billing/payment_status"
-auction_update_payment_url: "https://auction:3000/eis_billing/payment_status"
+base_registry: "http://registry:3000"
+base_auction: "http://auction_center:3000"
+base_eeid: "http://eeid:3000"
+
+auction_update_payment_url: "http://auction_center:3000/eis_billing/payment_status"
+eeid_update_payment_url: "http://eeid:3000/eis_billing/payment_status"
+registry_update_payment_url: "http://registry:3000/eis_billing/payment_status"
 
 everypay_key: ""
 linkpay_prefix: 'https://igw-demo.every-pay.com/lp'

@@ -34,7 +34,7 @@ RSpec.describe 'Notify' do
       }
 
       notifier = Notify.new(response: JSON.parse(everypay_response.to_json))
-      response = notifier.call
+      notifier.call
       invoice.reload
 
       expect(invoice.status).to eq('paid')
@@ -61,7 +61,7 @@ RSpec.describe 'Notify' do
       }
 
       notifier = Notify.new(response: JSON.parse(everypay_response.to_json))
-      response = notifier.call
+      notifier.call
 
       invoice_one.reload
       invoice_two.reload
@@ -83,7 +83,6 @@ RSpec.describe 'Notify' do
         order_reference: 'no_exists',
         payment_reference: 'test',
       }
-
 
       notifier = Notify.new(response: JSON.parse(everypay_response.to_json))
       mailer = notifier.call

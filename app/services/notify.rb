@@ -33,8 +33,8 @@ class Notify
   def notify(title:, error_message:)
     return if Rails.env.development?
 
-    i = NotifierMailer.inform_admin(title: title,
-                                    error_message: error_message).deliver_now
+    NotifierMailer.inform_admin(title: title,
+                                error_message: error_message).deliver_now
   end
 
   def update_invoice_state(parsed_response:, invoice:)
@@ -48,7 +48,7 @@ class Notify
 
   def invoice_numbers_from_multi_payment(invoice)
     return if !invoice.initiator == AUCTION || invoice.description == PREPENDED
-    
+
     numbers = invoice.description.split(' ')
     results = Invoice.where(invoice_number: numbers).pluck(:invoice_number, :payment_reference)
     data = []

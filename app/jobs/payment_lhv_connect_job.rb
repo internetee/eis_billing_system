@@ -35,7 +35,7 @@ class PaymentLhvConnectJob < ApplicationJob
       next if message.credit_transactions.empty?
 
       message.credit_transactions.each do |credit_transaction|
-        incoming_transactions << credit_transaction
+        incoming_transactions << credit_transaction unless credit_transaction.payment_reference_number.nil?
       end
     end
 
@@ -45,7 +45,7 @@ class PaymentLhvConnectJob < ApplicationJob
 
       if reference_initiator.nil?
         inform_admin(s[0])
-        
+
         next
       end
 
