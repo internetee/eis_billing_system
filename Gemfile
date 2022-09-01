@@ -32,8 +32,6 @@ group :development, :test do
   gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]
   gem 'rspec-rails'
   gem 'factory_bot_rails'
-  gem 'database_cleaner'
-  gem 'simplecov', '0.17.1', require: false
   gem 'rubocop-rails', require: false
 end
 
@@ -41,6 +39,17 @@ group :development do
   gem 'listen', '~> 3.3'
   # Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
   gem 'spring'
+end
+
+group :test do
+  # Use system testing [https://guides.rubyonrails.org/testing.html#system-testing]
+  gem 'faker', git: 'https://github.com/faker-ruby/faker.git', branch: 'master'
+  gem 'selenium-webdriver'
+  gem 'simplecov', '0.21.2', require: false
+  gem 'webdrivers'
+  gem 'webmock'
+  gem 'database_cleaner'
+  gem 'database_cleaner-active_record'
 end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem

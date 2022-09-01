@@ -1,5 +1,8 @@
-class DirectoResponseSender < Base
+class DirectoResponseSender
+  include Request
+
   attr_reader :response, :xml_data, :initiator
+  DIRECTO_SERVICE_ENDPOINT = '/eis_billing/directo_response'.freeze
 
   def initialize(response:, xml_data:, initiator:)
     @response = response
@@ -21,18 +24,16 @@ class DirectoResponseSender < Base
     Rails.logger.info "Sanding directo response data: #{response_data.to_json}"
 
     url = get_endpoint_services_directo_url[@initiator.to_sym]
-    http = Base.generate_http_request_sender(url: url)
-    # http.use_ssl = true unless Rails.env.development?
-    http.put(url, response_data.to_json, Base.generate_headers)
+    put_request(direction: 'services', path: url, params: response_data)
   end
 
   private
 
   def get_endpoint_services_directo_url
     {
-      registry: "#{ENV['base_registry']}/eis_billing/directo_response",
-      auction: "#{ENV['base_auction']}/eis_billing/directo_response",
-      eeid: "#{ENV['base_eeid']}/eis_billing/directo_response"
+      registry: "#{GlobalVariable::BASE_REGISTRY}#{DIRECTO_SERVICE_ENDPOINT}",
+      auction: "#{GlobalVariable::BASE_AUCTION}#{DIRECTO_SERVICE_ENDPOINT}",
+      eeid: "#{GlobalVariable::BASE_EEID}#{DIRECTO_SERVICE_ENDPOINT}"
     }
   end
 end

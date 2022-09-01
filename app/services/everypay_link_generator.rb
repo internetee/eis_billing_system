@@ -17,6 +17,7 @@ class EverypayLinkGenerator
 
   def linkpay_params(params)
     { 'transaction_amount' => params[:transaction_amount].to_s,
+      'reference_number' => params[:reference_number].to_s,
       'order_reference' => params[:invoice_number].to_s,
       'customer_name' => params[:customer_name].to_s,
       'customer_email' => params[:customer_email].to_s,

@@ -35,7 +35,7 @@ class PaymentLhvConnectJob < ApplicationJob
       next if message.credit_transactions.empty?
 
       message.credit_transactions.each do |credit_transaction|
-        incoming_transactions << credit_transaction
+        incoming_transactions << credit_transaction unless credit_transaction.payment_reference_number.nil?
       end
     end
 
@@ -43,7 +43,11 @@ class PaymentLhvConnectJob < ApplicationJob
     sorted_by_ref_number.each do |s|
       reference_initiator = Reference.find_by(reference_number: s[0])
 
-      return inform_admin(s[0]) if reference_initiator.nil?
+      if reference_initiator.nil?
+        inform_admin(s[0])
+
+        next
+      end
 
       Rails.logger.info "Sending to registry >>>>>>>>>>>>>>>>>>>>>>>>>"
       Rails.logger.info s[1]

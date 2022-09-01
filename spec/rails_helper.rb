@@ -9,6 +9,7 @@ require File.expand_path('../config/environment', __dir__)
 # Prevent database truncation if the environment is production
 abort("The Rails environment is running in production mode!") if Rails.env.production?
 require 'rspec/rails'
+# require 'database_cleaner'
 # require 'support/factory_bot'
 # Add additional requires below this line. Rails is not loaded until this point!
 
@@ -37,7 +38,7 @@ rescue ActiveRecord::PendingMigrationError => e
 end
 RSpec.configure do |config|
   config.include FactoryBot::Syntax::Methods
-  config.fixture_path = "#{::Rails.root}/spec/fixtures"
+  # config.fixture_path = "#{::Rails.root}/spec/fixtures"
 
   # Remove this line if you're not using ActiveRecord or ActiveRecord fixtures
   # config.fixture_path = "#{::Rails.root}/spec/fixtures"
@@ -46,6 +47,39 @@ RSpec.configure do |config|
   # examples within a transaction, remove the following line or assign false
   # instead of true.
   config.use_transactional_fixtures = true
+  # config.use_transactional_fixtures = true
+  config.before(:suite) do
+    # DatabaseCleaner.clean_with(:truncation)
+    if config.use_transactional_fixtures?
+			# raise(<<-MSG)      
+			# 	Delete line `config.use_transactional_fixtures = true` from rails_helper.rb
+			# 	(or set it to false) to prevent uncommitted transactions being used in
+			# 	JavaScript-dependent specs.
+			# 	During testing, the app-under-test that the browser driver connects to
+			# 	uses a different database connection to the database connection used by
+			# 	the spec. The app's database connection would not be able to access
+			# 	uncommitted transaction data setup over the spec's database connection.        
+			# MSG
+		end
+		DatabaseCleaner.clean_with(:truncation)
+  end
+
+  config.before(:each) do
+    DatabaseCleaner.strategy = :transaction
+  end
+
+  config.before(:each, :js => true) do
+    DatabaseCleaner.strategy = :truncation
+  end
+
+  config.before(:each) do
+    DatabaseCleaner.start
+  end
+
+  config.after(:each) do
+    DatabaseCleaner.clean
+  end
+
 
   # You can uncomment this line to turn off ActiveRecord support entirely.
   # config.use_active_record = false

@@ -1,6 +1,7 @@
 class EInvoiceGenerator
-  attr_reader :e_invoice_data
-  attr_reader :invoice, :payable, :items, :buyer_billing_email, :buyer_e_invoice_iban, :invoice_subtotal, :invoice_vat_amount, :seller_country_code, :buyer_country_code
+  attr_reader :invoice, :payable, :items, :buyer_billing_email,
+              :buyer_e_invoice_iban, :invoice_subtotal, :invoice_vat_amount,
+              :seller_country_code, :buyer_country_code, :e_invoice_data
 
   def initialize(e_invoice_data)
     @invoice = e_invoice_data[:invoice_data]

@@ -1,8 +1,5 @@
-class EverypayResponse < Base
-  KEY = ENV['everypay_key']
-  LINKPAY_CHECK_PREFIX = ENV['linkpay_check_prefix'] || 'https://igw-demo.every-pay.com/api/v4/payments'
-  LINKPAY_TOKEN = ENV['linkpay_token']
-  API_USERNAME = ENV['api_username']
+class EverypayResponse
+  include Request
 
   attr_reader :payment_reference
 
@@ -13,25 +10,15 @@ class EverypayResponse < Base
   def self.send_request(payment_reference)
     fetcher = new(payment_reference)
 
-    url = fetcher.generate_url(payment_reference: payment_reference, api_username: API_USERNAME)
-    fetcher.base_request(url: url, api_username: API_USERNAME, api_secret: KEY)
+    uri = fetcher.generate_url(payment_reference: payment_reference)
+    fetcher.base_request(uri: uri)
   end
 
-  def generate_url(payment_reference:, api_username:)
-    "#{LINKPAY_CHECK_PREFIX}/#{payment_reference}?api_username=#{api_username}"
+  def generate_url(payment_reference:)
+    "#{GlobalVariable::BASE_ENDPOINT}/payments/#{payment_reference}?api_username=#{GlobalVariable::API_USERNAME}"
   end
 
-  def base_request(url:, api_username:, api_secret:)
-    uri = URI(url)
-    Net::HTTP.start(uri.host, uri.port,
-                    use_ssl: uri.scheme == 'https',
-                    verify_mode: OpenSSL::SSL::VERIFY_NONE) do |http|
-      request = Net::HTTP::Get.new uri.request_uri
-      request.basic_auth api_username, api_secret
-
-      response = http.request request
-
-      return JSON.parse(response.body)
-    end
+  def base_request(uri:)
+    get(direction: 'everypay', path: uri)
   end
 end

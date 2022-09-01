@@ -1,37 +1,30 @@
-class Oneoff < Base
-  attr_reader :invoice_number, :customer_url
+class Oneoff
+  include Request
+  attr_reader :invoice_number, :customer_url, :reference_number
 
-  def initialize(invoice_number:, customer_url:)
+  def initialize(invoice_number:, customer_url:, reference_number:)
     @invoice = Invoice.find_by(invoice_number: invoice_number)
     @customer_url = customer_url
+    @reference_number = reference_number
   end
 
-  def self.send_request(invoice_number:, customer_url:)
-    fetcher = new(invoice_number: invoice_number, customer_url: customer_url)
+  def self.send_request(invoice_number:, customer_url:, reference_number: nil)
+    fetcher = new(invoice_number: invoice_number, customer_url: customer_url, reference_number: reference_number)
 
-    fetcher.base_request(api_username: API_USERNAME, api_secret: KEY)
+    fetcher.base_request
   end
 
-  def base_request(api_username:, api_secret:)
-    uri = URI("#{BASE_ENDPOINT}#{ONEOFF_ENDPOINT}")
-
-    request = Net::HTTP::Post.new uri
-    request.basic_auth api_username, api_secret
-    request.body = JSON.generate body
-    request.content_type = 'application/json'
-
-    Net::HTTP.start(uri.host, uri.port,
-                    use_ssl: uri.scheme == 'https',
-                    verify_mode: OpenSSL::SSL::VERIFY_NONE) do |http|
-      response = http.request(request)
-      response.body
-    end
+  def base_request
+    uri = URI("#{GlobalVariable::BASE_ENDPOINT}#{GlobalVariable::ONEOFF_ENDPOINT}")
+    post(direction: 'everypay', path: uri, params: body)
   end
+
+  private
 
   def body
     {
-      'api_username' => API_USERNAME,
-      'account_name' => ACCOUNT_NAME,
+      'api_username' => GlobalVariable::API_USERNAME,
+      'account_name' => GlobalVariable::ACCOUNT_NAME,
       'amount' => @invoice.transaction_amount.to_f,
       'order_reference' => "#{@invoice.invoice_number}",
       'token_agreement' => 'unscheduled',
@@ -41,15 +34,17 @@ class Oneoff < Base
       'customer_ip' => '1.2.3.4',
       'customer_url' => customer_url,
       'preferred_country' => 'EE',
-      'billing_city' => 'Tartu',
-      'billing_country' => 'EE',
-      'billing_line1' => 'Main street 1',
-      'billing_line2' => 'Building 3',
-      'billing_line3' => 'Room 11',
+      'billing_city' => Setting.registry_city,
+      'billing_country' => Setting.registry_country_code,
+      'billing_line1' => Setting.registry_street,
+      # 'billing_line2' => 'Building 3',
+      # 'billing_line3' => 'Room 11',
       'billing_postcode' => '51009',
-      'billing_state' => 'EE',
+      'billing_state' => Setting.registry_state,
       'locale' => 'en',
-      'request_token' => true
+      'request_token' => true,
+      'structured_reference' => reference_number.to_s
+      # 'payment_description' => "Reference number: 1233321"
     }
   end
 end

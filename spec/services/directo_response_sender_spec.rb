@@ -12,56 +12,44 @@ RSpec.describe 'DirectoResponseSender' do
     this_is: 'response'
   }
 
+  service_message = {
+    message: 'everything okey'
+  }
+
+  before(:each) do
+    stub_request(:put, "http://registry:3000/eis_billing/directo_response")
+    .to_return(status: 200, body: service_message.to_json, headers: {})
+
+    stub_request(:put, "http://auction_center:3000/eis_billing/directo_response")
+    .to_return(status: 200, body: service_message.to_json, headers: {})
+
+    stub_request(:put, "http://eeid:3000/eis_billing/directo_response")
+    .to_return(status: 200, body: service_message.to_json, headers: {})
+  end
+
   describe 'generate url' do
     it 'if initiator registry, then it should return registry endpoin' do
-      stub_const('ENV', { 'base_registry' => 'registry' })
+      results = DirectoResponseSender.send_request(response: directo_json_response,
+                                                   xml_data: xml_data,
+                                                   initiator: 'registry')
 
-      class MockHttp
-        def put(one, two, three)
-          "everything okey"
-        end
-      end
-
-      allow(Base).to receive(:generate_http_request_sender).with(url: 'registry/eis_billing/directo_response').and_return(MockHttp.new)
-      allow(Base).to receive(:generate_headers).and_return({header: 'header'})
-
-      results = DirectoResponseSender.send_request(response: directo_json_response, xml_data: xml_data, initiator: 'registry')
-
-      expect(results).to eq("everything okey")
+      expect(results["message"]).to eq("everything okey")
     end
 
     it 'if initiator auction, then it should return auction endpoin' do
-      stub_const('ENV', { 'base_auction' => 'auction' })
+      results = DirectoResponseSender.send_request(response: directo_json_response,
+                                                   xml_data: xml_data,
+                                                   initiator: 'auction')
 
-      class MockHttp
-        def put(one, two, three)
-          "everything okey"
-        end
-      end
-
-      allow(Base).to receive(:generate_http_request_sender).with(url: 'auction/eis_billing/directo_response').and_return(MockHttp.new)
-      allow(Base).to receive(:generate_headers).and_return({header: 'header'})
-
-      results = DirectoResponseSender.send_request(response: directo_json_response, xml_data: xml_data, initiator: 'auction')
-
-      expect(results).to eq("everything okey")
+      expect(results["message"]).to eq("everything okey")
     end
 
     it 'if initiator eeid, then it should return eeid endpoin' do
-      stub_const('ENV', { 'base_eeid' => 'eeid' })
+      results = DirectoResponseSender.send_request(response: directo_json_response,
+                                                   xml_data: xml_data,
+                                                   initiator: 'eeid')
 
-      class MockHttp
-        def put(one, two, three)
-          "everything okey"
-        end
-      end
-
-      allow(Base).to receive(:generate_http_request_sender).with(url: 'eeid/eis_billing/directo_response').and_return(MockHttp.new)
-      allow(Base).to receive(:generate_headers).and_return({header: 'header'})
-
-      results = DirectoResponseSender.send_request(response: directo_json_response, xml_data: xml_data, initiator: 'eeid')
-
-      expect(results).to eq("everything okey")
+      expect(results["message"]).to eq("everything okey")
     end
   end
 end
