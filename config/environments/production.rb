@@ -82,7 +82,7 @@ Rails.application.configure do
   if Rails.env.production?
     # Use a different logger for distributed setups.
     require "syslog/logger"
-    config.logger = ActiveSupport::TaggedLogging.new(Syslog::Logger.new 'billing_system')
+    config.logger = ActiveSupport::TaggedLogging.new(Syslog::Logger.new 'billing system')
   end
 
   if ENV["RAILS_LOG_TO_STDOUT"].present?
