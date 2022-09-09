@@ -5,7 +5,7 @@ class GlobalVariable
 
   API_USERNAME = ENV['api_username']
   KEY = ENV['everypay_key']
-  BASE_ENDPOINT = 'https://igw-demo.every-pay.com/api/v4'.freeze
+  BASE_ENDPOINT = ENV['everypay_base'] || 'https://igw-demo.every-pay.com/api/v4'
   ONEOFF_ENDPOINT = '/payments/oneoff'.freeze
   ACCOUNT_NAME = ENV['account_name']
 
