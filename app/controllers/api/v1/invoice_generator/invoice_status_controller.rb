@@ -1,6 +1,11 @@
 class Api::V1::InvoiceGenerator::InvoiceStatusController < Api::V1::InvoiceGenerator::BaseController
   def create
     invoice = Invoice.find_by(invoice_number: params[:invoice_number])
+    if invoice.nil?
+      return notify(title: "Invoice with #{parsed_response[:order_reference]} number not found",
+                    error_message: "Invoice with #{parsed_response[:order_reference]} number not found")
+    end
+
     if invoice.update(status: params[:status])
       render json: { 'message' => 'Status updated' }, status: :ok
     else
