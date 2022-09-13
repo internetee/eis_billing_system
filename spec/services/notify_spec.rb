@@ -87,8 +87,8 @@ RSpec.describe 'Notify' do
       notifier = Notify.new(response: JSON.parse(everypay_response.to_json))
       mailer = notifier.call
 
-      expect(mailer.subject).to eq("Invoice not found")
-      expect(mailer.body). to include("Invoice with no_exists number not found")
+      expect(mailer.subject).to eq("Invoice with #{everypay_response[:order_reference]} number not found")
+      expect(mailer.body).to include("Invoice with #{everypay_response[:order_reference]} number not found")
     end
   end
 end
