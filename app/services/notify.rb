@@ -20,6 +20,8 @@ class Notify
                     error_message: "Invoice with #{parsed_response[:order_reference]} number not found")
     end
 
+    return if invoice.paid?
+
     update_invoice_state(parsed_response: parsed_response, invoice: invoice)
     return unless invoice.paid?
 
