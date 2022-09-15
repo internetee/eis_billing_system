@@ -4,9 +4,9 @@ class Api::V1::InvoiceGenerator::OneoffController < Api::V1::InvoiceGenerator::B
                                    customer_url: params[:customer_url],
                                    reference_number: params[:reference_number])
     # parsed_response = JSON.parse(response)
-
     if response['error'].presence
       render json: { error: response['error'] }, status: :unprocessable_entity
+      return
     end
 
     render json: { 'message' => 'Link created',

@@ -4,14 +4,14 @@ RSpec.describe 'Notify' do
 
   before(:each) do
     response_message = {
-      message: 'received'
+      message: 'received',
     }
-    stub_request(:put, "http://registry:3000/eis_billing/payment_status")
-    .to_return(status: 200, body: response_message.to_json, headers: {})
-    stub_request(:put, "http://auction_center:3000/eis_billing/payment_status")
-    .to_return(status: 200, body: response_message.to_json, headers: {})
-    stub_request(:put, "http://eeid:3000/eis_billing/payment_status")
-    .to_return(status: 200, body: response_message.to_json, headers: {})
+    stub_request(:put, "#{GlobalVariable::BASE_REGISTRY}/eis_billing/payment_status")
+      .to_return(status: 200, body: response_message.to_json, headers: {})
+    stub_request(:put, "#{GlobalVariable::BASE_AUCTION}/eis_billing/payment_status")
+      .to_return(status: 200, body: response_message.to_json, headers: {})
+    stub_request(:put, "#{GlobalVariable::BASE_EEID}/eis_billing/payment_status")
+      .to_return(status: 200, body: response_message.to_json, headers: {})
   end
 
   describe 'payment process' do
@@ -51,7 +51,6 @@ RSpec.describe 'Notify' do
       expect(invoice_one.status).to eq('unpaid')
       expect(invoice_two.status).to eq('unpaid')
       expect(invoice_three.status).to eq('unpaid')
-
 
       everypay_response = {
         payment_state: 'settled',

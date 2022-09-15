@@ -109,12 +109,12 @@ RSpec.describe 'DirectoInvoiceForwardJob', type: :job do
       directo_client_invoice = DirectoClientInvoice.new(invoice.id)
       directo_client.invoices = directo_client_invoice
 
-      stub_request(:put, "http://registry:3000/eis_billing/directo_response")
-         .to_return(status: 200, body: directo_client_invoice.as_xml.to_json, headers: {})
-      stub_request(:put, "http://auction_center:3000/eis_billing/directo_response")
-         .to_return(status: 200, body: directo_client_invoice.as_xml.to_json, headers: {})
-      stub_request(:put, "http://eeid:3000/eis_billing/directo_response")
-         .to_return(status: 200, body: directo_client_invoice.as_xml.to_json, headers: {})
+      stub_request(:put, "#{GlobalVariable::BASE_REGISTRY}/eis_billing/directo_response")
+        .to_return(status: 200, body: directo_client_invoice.as_xml.to_json, headers: {})
+      stub_request(:put, "#{GlobalVariable::BASE_AUCTION}/eis_billing/directo_response")
+        .to_return(status: 200, body: directo_client_invoice.as_xml.to_json, headers: {})
+      stub_request(:put, "#{GlobalVariable::BASE_EEID}/eis_billing/directo_response")
+        .to_return(status: 200, body: directo_client_invoice.as_xml.to_json, headers: {})
 
       allow_any_instance_of(DirectoInvoiceForwardJob).to receive(:new_directo_client).and_return(directo_client)
       DirectoInvoiceForwardJob.perform_now(invoice_data: directo_invoice_json, initiator: 'registry')

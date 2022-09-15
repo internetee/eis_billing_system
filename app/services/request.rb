@@ -43,7 +43,7 @@ module Request
       headers: {
         'Authorization' => "Basic #{generate_basic_token}",
         'Content-Type' => 'application/json',
-      }
+      },
     }
   end
 
@@ -57,7 +57,7 @@ module Request
       headers: {
         'Authorization' => "Bearer #{generate_token}",
         'Content-Type' => 'application/json',
-      }
+      },
     }
   end
 
