@@ -7,7 +7,7 @@ class EverypayResponse
     @payment_reference = payment_reference
   end
 
-  def self.send_request(payment_reference)
+  def self.call(payment_reference)
     fetcher = new(payment_reference)
 
     uri = fetcher.generate_url(payment_reference: payment_reference)

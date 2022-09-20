@@ -28,6 +28,7 @@ module EisBillingSystem
     config.autoload_paths += %W(#{config.root}/lib)
     config.autoload_paths += %W(#{config.root}/lib/error)
     config.autoload_paths += %W(#{config.root}/services)
+    config.autoload_paths += %W(#{config.root}/contracts)
     config.eager_load_paths << Rails.root.join('lib')
 
     # Configuration for the application, engines, and railties goes here.

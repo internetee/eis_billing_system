@@ -100,3 +100,7 @@ gem "pagy", "~> 5.5"
 gem 'simpleidn', '0.2.1' # For punycode
 
 gem 'faraday'
+
+# specification
+gem 'dry-initializer', '~> 3.0.3'
+gem 'dry-validation'

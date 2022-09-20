@@ -6,9 +6,8 @@ module Api
 
         def callback
           payment_reference = params[:payment_reference]
-          response = EverypayResponse.send_request(payment_reference)
-          notifier = Notify.new(response: response)
-          result = notifier.call
+          response = EverypayResponse.call(payment_reference)
+          result = Notify.call(response: response)
 
           render status: :ok, json: { message: result }
         end

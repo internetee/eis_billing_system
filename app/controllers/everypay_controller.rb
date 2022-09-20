@@ -6,9 +6,8 @@ class EverypayController < ParentController
   def everypay_data
     payment_reference = params[:payment_reference]
 
-    response = EverypayResponse.send_request(payment_reference)
-    notifier = Notify.new(response: response)
-    notifier.call
+    response = EverypayResponse.call(payment_reference)
+    Notify.call(response: response)
 
     respond_to do |format|
       format.turbo_stream do
