@@ -22,4 +22,8 @@ class DashboardController < ParentController
       end
     end
   end
+
+  def description
+    @description = Invoice.find(params[:invoice_id]).description
+  end
 end

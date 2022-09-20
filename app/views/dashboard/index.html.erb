@@ -7,7 +7,7 @@
 </style>
 
 <div data-controller="sort-link">
-  <div class="container mx-auto">
+  <div class="">
     <%= form_with url: dashboard_index_path, 
                   method: :get,
                   data: { controller: 'debounce',
@@ -20,7 +20,7 @@
                             class: 'w-full pl-3 pr-10 py-2 border-2 border-gray-200 rounded-xl hover:border-gray-300 focus:outline-none focus:border-blue-500 transition-colors mb-7 bg-white',
                             placeholder: 'Type by invoice' %>
 
-      <div class="flex flex-row items-center">
+      <div class="flex flex-row items-baseline">
       <div>
         <%= form.select :status, 
                         Invoice.statuses,
@@ -37,9 +37,7 @@
              data-range-slider-max-value="<%= @max_amount %>"
              style="width: 250px;">
 
-          <div data-range-slider-target="slider">
-
-          </div>
+          <div data-range-slider-target="slider"></div>
 
           <%= form.hidden_field :min_amount,
                   value: params[:min_amount] || @min_amount,
@@ -60,10 +58,31 @@
               options_for_select([5, 10, 25, 50, 100],
               selected: params[:per_page]) %>
       </div>
+
+      <div class='ml-4 flex items-baseline'>
+          <p class="text-sm text-gray-700">
+            Total pages:
+            <span class="font-medium"><%= @pagy.pages %></span>
+          </p>
+        <%= form.number_field :page,
+                              class: 'ml-4 w-full px-2 py-2 border-2 border-gray-200 rounded-xl hover:border-gray-300 focus:outline-none focus:border-blue-500 transition-colors mb-7 bg-white w-64',
+                              placeholder: 1 %>
+      </div>
+
       </div>
     <% end %>
 
     <%= turbo_frame_tag "results" do %>
+
+    <div class="text-center">
+      <p class="text-sm text-gray-700">
+        Showing
+        <span class="font-medium"><%= @pagy.page %></span>
+        page of
+        <span class="font-medium"><%= @pagy.pages %></span>
+      </p>
+    </div>
+
     <%= turbo_frame_tag "modal" %>
       <div>
         <table class="min-w-full mt-6">
@@ -77,8 +96,10 @@
               <th class="px-6 py-1 border-b border-gray-200 bg-gray-50 text-left text-xs text-gray-500 uppercase"><%= sort_link_to "Amount", "transaction_amount" %></th>
               <th class="px-6 py-1 border-b border-gray-200 bg-gray-50 text-left text-xs text-gray-500 uppercase">Everypay response</th>
               <th class="px-6 py-1 border-b border-gray-200 bg-gray-50 text-left text-xs text-gray-500 uppercase">Directo Data</th>
+              <th class="px-6 py-1 border-b border-gray-200 bg-gray-50 text-left text-xs text-gray-500 uppercase">Description</th>
               <th class="px-6 py-1 border-b border-gray-200 bg-gray-50 text-left text-xs text-gray-500 uppercase"><%= sort_link_to "E-invoice sent at", "sent_at_omniva" %></th>
               <th class="px-6 py-1 border-b border-gray-200 bg-gray-50 text-left text-xs text-gray-500 uppercase"><%= sort_link_to "In Directo", "in_directo" %></th>
+              <th class="px-6 py-1 border-b border-gray-200 bg-gray-50 text-left text-xs text-gray-500 uppercase"><%= sort_link_to "Created at", "created_at" %></th>
             </tr>
           </thead>
           <tbody id="invoices">
@@ -87,7 +108,7 @@
         </table>
 
         <% if @pagy.pages > 1 %>
-          <div class="footer">
+          <div class="footer text-center mt-2">
             <%== pagy_nav(@pagy) %>
           </div>
         <% end %>

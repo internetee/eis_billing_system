@@ -9,6 +9,7 @@ Rails.application.routes.draw do
 
   resources :directo, only: [:show]
   resources :everypay_response, only: [:show]
+  get 'description', to: 'dashboard#description', as: 'invoice_description'
 
   resources :users, only: [:index, :destroy, :edit, :update, :new] do
     collection do
