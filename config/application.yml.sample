@@ -36,6 +36,7 @@ linkpay_check_prefix: 'https://igw-demo.every-pay.com/api/v4/payments'
 linkpay_token: ''
 
 base_registry: "http://registry:3000"
+base_registrar: "http://registrar_center:3000"
 base_auction: "http://auction_center:3000"
 base_eeid: "http://eeid:3000"
 
