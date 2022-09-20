@@ -23,6 +23,11 @@ class DirectoInvoiceForwardJob < ApplicationJob
     @invoice_data.each do |invoice|
       invoice = JSON.parse(invoice.to_json)
 
+      next unless Invoice.exists?(invoice_number: invoice['number'])
+
+      parsed = JSON.parse(@client.invoices.to_json)
+      next if parsed['invoices'].any? { |i| i['number'] == invoice['number'] }
+
       if @initiator == 'auction'
         @client.invoices.add_with_schema(invoice: invoice, schema: 'auction')
       else
