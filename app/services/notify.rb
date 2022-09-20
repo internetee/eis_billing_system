@@ -18,8 +18,8 @@ class Notify
     invoice = Invoice.find_by(invoice_number: parsed_response[:order_reference])
 
     if invoice.nil?
-      return notify(title: "Invoice with #{parsed_response[:order_reference]} number not found",
-                    error_message: "Invoice with #{parsed_response[:order_reference]} number not found")
+      return notifier.notify(title: "Invoice with #{parsed_response[:order_reference]} number not found",
+                             error_message: "Invoice with #{parsed_response[:order_reference]} number not found")
     end
 
     return if invoice.paid?
