@@ -2,6 +2,7 @@ RSpec.describe Oneoff do
   describe 'successful case' do
     let(:invoice) { create(:invoice) }
     let(:customer_url_registry) { GlobalVariable::BASE_REGISTRY }
+    let(:customer_url_registrar) { GlobalVariable::BASE_REGISTRAR }
     let(:customer_url_eeid) { GlobalVariable::BASE_EEID }
     let(:customer_url_auction) { GlobalVariable::BASE_AUCTION }
     let(:reference) { create(:reference) }
@@ -37,6 +38,13 @@ RSpec.describe Oneoff do
     it 'should generate oneoff link for auction' do
       response = described_class.call(invoice_number: invoice.invoice_number.to_s,
                                       customer_url: customer_url_auction,
+                                      reference_number: nil)
+      expect(response).to a_hash_including(payment_link)
+    end
+
+    it 'should generate oneoff link for registrar' do
+      response = described_class.call(invoice_number: invoice.invoice_number.to_s,
+                                      customer_url: customer_url_registrar,
                                       reference_number: nil)
       expect(response).to a_hash_including(payment_link)
     end
