@@ -8,11 +8,11 @@ RSpec.describe "SendEInvoiceJob", type: :job do
     ActionMailer::Base.delivery_method = :test
 
     sucess_message = {
-      message: "Success delivered"
+      message: 'Success delivered',
     }
 
-    stub_request(:put, "http://registry:3000/eis_billing/e_invoice_response").
-        to_return(status: 200, body: sucess_message.to_json, headers: {})
+    stub_request(:put, "#{GlobalVariable::BASE_REGISTRY}/eis_billing/e_invoice_response")
+      .to_return(status: 200, body: sucess_message.to_json, headers: {})
   end
 
   describe 'EInvoice deliver' do
@@ -21,15 +21,15 @@ RSpec.describe "SendEInvoiceJob", type: :job do
     it 'invoice data should be delivered to Omniva' do
       response = {
         e_invoice_response: {
-          message: 'Success delivered'
-        }
+          message: 'Success delivered',
+        },
       }
 
       params = {
         invoice_data: {
           id: '2',
-          number: invoice.invoice_number
-        }
+          number: invoice.invoice_number,
+        },
       }
 
       e_invoice_instance = OpenStruct.new
@@ -49,15 +49,15 @@ RSpec.describe "SendEInvoiceJob", type: :job do
     it 'should send notify thath omniva delivering was failed' do
       response_failed = {
         e_invoice_response: {
-          message: 'Failed delivered'
-        }
+          message: 'Failed delivered',
+        },
       }
 
       params = {
         invoice_data: {
           id: '2',
-          number: invoice.invoice_number
-        }
+          number: invoice.invoice_number,
+        },
       }
 
       e_invoice_instance = OpenStruct.new

@@ -1,36 +1,42 @@
 class EInvoiceResponseSender
   include Request
 
-  attr_reader :invoice_number
+  # EINVOICE_RESPONSE_ENDPOINT = '/eis_billing/e_invoice_response'.freeze
 
-  def initialize(invoice_number:)
+  def initialize(invoice_number:, initiator:)
     @invoice_number = invoice_number
+    @initiator = initiator
   end
 
-  def self.send_request(invoice_number:)
-    fetcher = new(invoice_number: invoice_number)
-    # fetcher.base_request(invoice_number: invoice_number)
+  def self.send_request(invoice_number:, initiator:)
+    fetcher = new(invoice_number: invoice_number, initiator: initiator)
     fetcher.call
   end
 
   def call
-    EInvoiceResponseSenderJob.set(wait: 1.minute).perform_later(invoice_number: invoice_number)
+    EInvoiceResponseSenderJob.set(wait: 1.minute).perform_later(invoice_number, initiator)
   end
 
-  # def base_request(invoice_number:)
-  #   url = get_endpoint_services_e_invoice_url
-
+  # def call
   #   response_data = {
   #     invoice_number: invoice_number,
-  #     date: Time.zone.now
+  #     date: Time.zone.now,
   #   }
 
-  #   put_request(direction: 'services', path: url, params: response_data)
+  #   put_request(direction: 'services',
+  #               path: e_invoice_response_url[initiator.to_sym],
+  #               params: response_data)
   # end
 
-  # private
+  private
 
-  # def get_endpoint_services_e_invoice_url
-  #   "#{GlobalVariable::BASE_REGISTRY}/eis_billing/e_invoice_response"
+  attr_reader :invoice_number, :initiator
+
+  # def e_invoice_response_url
+  #   {
+  #     registry: "#{GlobalVariable::BASE_REGISTRY}#{EINVOICE_RESPONSE_ENDPOINT}",
+  #     auction: "#{GlobalVariable::BASE_AUCTION}#{EINVOICE_RESPONSE_ENDPOINT}",
+  #     eeid: "#{GlobalVariable::BASE_EEID}#{EINVOICE_RESPONSE_ENDPOINT}",
+  #   }
   # end
 end

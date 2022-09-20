@@ -19,8 +19,8 @@ class SendEInvoiceJob < ApplicationJob
     message = data.to_hash[:e_invoice_response][:message]
 
     if message.include? 'Success'
-
-      EInvoiceResponseSender.send_request(invoice_number: invoice_number)
+      EInvoiceResponseSender.send_request(invoice_number: invoice_number,
+                                          initiator: e_invoice_data[:initiator])
       invoice = Invoice.find_by(invoice_number: invoice_number)
       invoice.update(sent_at_omniva: Time.zone.now)
     else
