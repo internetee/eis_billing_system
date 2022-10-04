@@ -7,7 +7,7 @@ class DashboardController < ParentController
                             link_extra: 'data-turbo-action="advance"')
 
     @min_amount = 1
-    @max_amount = 2000
+    @max_amount = 200_000
   end
 
   def search
