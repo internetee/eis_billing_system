@@ -31,6 +31,7 @@ class OneoffParamsContract < Dry::Validation::Contract
       'https://registrar_center.test',
       'https://eeid.test',
       'https://auction_center.test',
+      'https://auction.test',
     ]
   end
 end
