@@ -3,7 +3,7 @@ class DirectoInvoiceForwardJob < ApplicationJob
     @initiator = initiator
     @invoice_data = invoice_data
     @dry = dry
-    (@month = Time.zone.now - 1.month) if monthly
+    @monthly = monthly
 
     @client = new_directo_client
     monthly ? send_monthly_invoices : send_receipts
@@ -39,21 +39,14 @@ class DirectoInvoiceForwardJob < ApplicationJob
   end
 
   def send_monthly_invoices
-    @invoice_data.each do |data|
-      @client = new_directo_client
-      send_invoice_for_registrar(data[:summary])
+    @invoice_data.each do |invoice|
+      invoice = JSON.parse(invoice.to_json)
+      @client.invoices.add_with_schema(invoice: invoice, schema: 'summary')
     end
-  end
-
-  def send_invoice_for_registrar(summary)
-    @client.invoices.add_with_schema(invoice: summary, schema: 'summary') unless summary.nil?
-
     sync_with_directo if @client.invoices.count.positive?
   end
 
   def sync_with_directo
-    assign_monthly_numbers if @month
-
     Rails.logger.info("[Directo] - attempting to send following XML:\n #{@client.invoices.as_xml}")
     return if @dry
 
@@ -62,34 +55,27 @@ class DirectoInvoiceForwardJob < ApplicationJob
     Rails.logger.info("[Directo] - response received:\n #{res.body}")
     Rails.logger.info("[Directo] - initiator:\n #{@initiator}")
 
-    registry_response = DirectoResponseSender.send_request(response: res.body,
-                                                           xml_data: @client.invoices.as_xml,
-                                                           initiator: @initiator)
+    initiator_response = DirectoResponseSender.send_request(response: res.body,
+                                                            xml_data: @client.invoices.as_xml,
+                                                            initiator: @initiator)
 
     process_directo_response(@client.invoices.as_xml, res.body)
 
-    Rails.logger.info "Registry response: #{registry_response}"
+    Rails.logger.info "Initiator response: #{initiator_response}"
   rescue SocketError, Errno::ECONNREFUSED, Timeout::Error, Errno::EINVAL, Errno::ECONNRESET,
          EOFError, Net::HTTPBadResponse, Net::HTTPHeaderSyntaxError, Net::ProtocolError
     NotifierMailer.inform_admin(title: '[Directo] Failed to communicate via API',
-                                error_message: '[Directo] Failed to communicate via API').deliver_now
+                                error_message: '[Directo] Failed to communicate via API')
+                  .deliver_now
     Rails.logger.info('[Directo] Failed to communicate via API')
   end
 
   def process_directo_response(xml, req)
     Rails.logger.info "[Directo] - Responded with body: #{xml}"
     Nokogiri::XML(req).css('Result').each do |res|
-      invoice = Invoice.find_by(invoice_number: res.attributes['docid'].value.to_i)
-      invoice.update(in_directo: true, directo_data: xml)
+      invoice_number = res.attributes['docid'].value.to_i
+      invoice = Invoice.find_by(invoice_number: invoice_number)
+      invoice&.update(in_directo: true, directo_data: xml)
     end
   end
-
-  # def mark_invoice_as_sent(invoice: nil, res:, req:)
-  #   if invoice
-  #     directo_record.item = invoice
-  #     invoice.update(in_directo: true)
-  #   end
-
-  #   directo_record.save!
-  # end
 end

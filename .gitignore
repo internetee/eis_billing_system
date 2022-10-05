@@ -41,3 +41,5 @@ LHV_test_rootca2011.cer
 EESTIINTERNETISA.p12
 
 docker-compose.yml
+
+vendor/gems
