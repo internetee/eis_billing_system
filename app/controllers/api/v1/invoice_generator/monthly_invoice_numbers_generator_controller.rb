@@ -29,14 +29,8 @@ module Api
         private
 
         def directo_counter_exceedable?(invoice_count)
-          p INVOICE_NUMBER_MIN
-          p INVOICE_NUMBER_MAX
-          p Setting.directo_monthly_number_last
           last_directo = [Setting.directo_monthly_number_last.presence.try(:to_i),
                           INVOICE_NUMBER_MIN].compact.max || 0
-
-                          p last_directo
-                          p  INVOICE_NUMBER_MAX && INVOICE_NUMBER_MAX < (last_directo + invoice_count)
 
           return true if INVOICE_NUMBER_MAX && INVOICE_NUMBER_MAX < (last_directo + invoice_count)
 

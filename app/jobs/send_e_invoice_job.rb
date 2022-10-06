@@ -22,7 +22,7 @@ class SendEInvoiceJob < ApplicationJob
       EInvoiceResponseSender.send_request(invoice_number: invoice_number,
                                           initiator: e_invoice_data[:initiator])
       invoice = Invoice.find_by(invoice_number: invoice_number)
-      invoice.update(sent_at_omniva: Time.zone.now)
+      invoice&.update(sent_at_omniva: Time.zone.now)
     else
       Rails.logger.info 'FAILED IN EINVOICE OMNIVA TRANSFER'
       NotifierMailer.inform_admin(title: 'Failed e-invoice delivering', error_message: message).deliver_now

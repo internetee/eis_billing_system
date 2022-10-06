@@ -89,7 +89,7 @@ class EInvoiceGenerator
       if invoice[:monthly_invoice] && invoice_item[:price] && invoice_item[:quantity]
         i.vat_rate = invoice[:vat_rate].to_f
         i.subtotal = (invoice_item[:price].to_f * invoice_item[:quantity].to_f).round(2)
-        i.vat_amount = (i.subtotal * i.vat_rate).round(2)
+        i.vat_amount = (i.subtotal * (i.vat_rate / 100)).round(2)
         i.total = (i.subtotal + i.vat_amount).round(2)
       else
         i.subtotal = invoice_item[:subtotal]
