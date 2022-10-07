@@ -35,7 +35,7 @@ class Notify
   end
 
   def notify(title:, error_message:)
-    return if Rails.env.development?
+    # return if Rails.env.development?
 
     NotifierMailer.inform_admin(title: title,
                                 error_message: error_message).deliver_now

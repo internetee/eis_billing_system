@@ -49,22 +49,16 @@ class EInvoiceGenerator
 
     e_invoice_invoice_items = []
     items.each do |invoice_item|
-      e_invoice_invoice_item = EInvoice::InvoiceItem.new.tap do |i|
-        i.description = invoice_item[:description]
-        i.price = invoice_item[:price]
-        i.quantity = invoice_item[:quantity]
-        i.unit = invoice_item[:unit]
-        i.subtotal = invoice_item[:subtotal]
-        i.vat_rate = invoice_item[:vat_rate]
-        i.vat_amount = invoice_item[:vat_amount]
-        i.total = invoice_item[:total]
-      end
+      e_invoice_invoice_item = generate_invoice_item(invoice, invoice_item)
       e_invoice_invoice_items << e_invoice_invoice_item
     end
+
+    e_invoice_name_item = e_invoice_invoice_items.shift if invoice[:monthly_invoice]
 
     e_invoice_invoice = EInvoice::Invoice.new.tap do |i|
       i.seller = seller
       i.buyer = buyer
+      i.name = e_invoice_name_item&.description
       i.items = e_invoice_invoice_items
       i.number = invoice[:number]
       i.date = invoice[:issue_date]
@@ -80,8 +74,29 @@ class EInvoiceGenerator
       i.currency = invoice[:currency]
       i.delivery_channel = %i[internet_bank portal]
       i.payable = payable
+      i.monthly_invoice = invoice[:monthly_invoice]
     end
 
     EInvoice::EInvoice.new(date: Time.zone.today, invoice: e_invoice_invoice)
+  end
+
+  def generate_invoice_item(invoice, invoice_item)
+    EInvoice::InvoiceItem.new.tap do |i|
+      i.description = invoice_item[:description]
+      i.price = invoice_item[:price]
+      i.quantity = invoice_item[:quantity]
+      i.unit = invoice_item[:unit]
+      if invoice[:monthly_invoice] && invoice_item[:price] && invoice_item[:quantity]
+        i.vat_rate = invoice[:vat_rate].to_f
+        i.subtotal = (invoice_item[:price].to_f * invoice_item[:quantity].to_f).round(2)
+        i.vat_amount = (i.subtotal * (i.vat_rate / 100)).round(2)
+        i.total = (i.subtotal + i.vat_amount).round(2)
+      else
+        i.subtotal = invoice_item[:subtotal]
+        i.vat_rate = invoice_item[:vat_rate]
+        i.vat_amount = invoice_item[:vat_amount]
+        i.total = invoice_item[:total]
+      end
+    end
   end
 end

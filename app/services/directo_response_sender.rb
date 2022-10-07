@@ -1,7 +1,7 @@
 class DirectoResponseSender
   include Request
 
-  attr_reader :response, :xml_data, :initiator
+  attr_reader :response, :xml_data, :initiator, :monthly
 
   DIRECTO_SERVICE_ENDPOINT = '/eis_billing/directo_response'.freeze
 
@@ -9,6 +9,7 @@ class DirectoResponseSender
     @response = response
     @xml_data = xml_data
     @initiator = initiator
+    @monthly = monthly
   end
 
   def self.send_request(response:, xml_data:, initiator:)
