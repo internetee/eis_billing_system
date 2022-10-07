@@ -25,9 +25,9 @@ class DepositPrepaymentService
   def invoice_params(params, invoice_number)
     {
       invoice_number: invoice_number,
-      initiator: params[:custom_field2].to_s,
+      custom_field2: params[:custom_field2].to_s,
       transaction_amount: params[:transaction_amount].to_s,
-      description: params.fetch(:custom_field1, DESCRIPTION_DEFAULT).to_s
+      custom_field1: params.fetch(:description, DESCRIPTION_DEFAULT).to_s
     }
   end
 end

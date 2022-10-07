@@ -17,6 +17,10 @@ class Notify
     parsed_response = notifier.parse_response(response)
     invoice = Invoice.find_by(invoice_number: parsed_response[:order_reference])
 
+    # TODO
+    # result = define_for_deposit(invoice)
+    # return if result
+
     if invoice.nil?
       return notifier.notify(title: "Invoice with #{parsed_response[:order_reference]} number not found",
                              error_message: "Invoice with #{parsed_response[:order_reference]} number not found")
@@ -34,6 +38,12 @@ class Notify
   rescue StandardError => e
     Rails.logger.error e
     notifier.notify(title: 'Error occur in callback handler', error_message: "Error message #{e}")
+  end
+
+  def define_for_deposit
+    false
+    # TODO
+    # parse invoice description
   end
 
   def notify(title:, error_message:)

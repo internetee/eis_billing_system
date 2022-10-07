@@ -1,7 +1,7 @@
 module Api
   module V1
     module InvoiceGenerator
-      class DepositPrepaymentController < ApplicationController
+      class DepositPrepaymentController < Api::V1::InvoiceGenerator::BaseController
         def create
           response = DepositPrepaymentService.call(params: params)
 
