@@ -17,10 +17,6 @@ class Notify
     parsed_response = notifier.parse_response(response)
     invoice = Invoice.find_by(invoice_number: parsed_response[:order_reference])
 
-    # TODO
-    # result = define_for_deposit(invoice)
-    # return if result
-
     if invoice.nil?
       return notifier.notify(title: "Invoice with #{parsed_response[:order_reference]} number not found",
                              error_message: "Invoice with #{parsed_response[:order_reference]} number not found")
@@ -31,8 +27,10 @@ class Notify
     notifier.update_invoice_state(parsed_response: parsed_response, invoice: invoice)
     return unless invoice.paid?
 
-    url = notifier.get_update_payment_url[invoice.initiator.to_sym]
-    parsed_response[:invoice_number_collection] = notifier.invoice_numbers_from_multi_payment(invoice)
+    url = get_update_payment_url[invoice.initiator.to_sym]
+    return define_for_deposit(invoice, url) if invoice.auction_deposit_prepayment?
+
+    parsed_response[:invoice_number_collection] = invoice_numbers_from_multi_payment(invoice)
 
     notifier.put_request(direction: 'services', path: url, params: parsed_response)
   rescue StandardError => e
@@ -40,10 +38,21 @@ class Notify
     notifier.notify(title: 'Error occur in callback handler', error_message: "Error message #{e}")
   end
 
-  def define_for_deposit
-    false
-    # TODO
-    # parse invoice description
+  private
+
+  def define_for_deposit(invoice, url)
+    attributes = invoice.description.split(',')
+    domain_name, user_uuid, user_email = attributes.map { |attr| attr.split(' ')[1] }
+
+    params = {
+      domain_name: domain_name,
+      user_uuid: user_uuid,
+      user_email: user_email,
+      transaction_amount: invoice.transaction_amount.to_f,
+      description: 'deposit'
+    }
+
+    put_request(direction: 'services', path: url, params: params)
   end
 
   def notify(title:, error_message:)

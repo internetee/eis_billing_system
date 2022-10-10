@@ -16,5 +16,12 @@ RSpec.describe Invoice, type: :model do
 
       expect(Invoice.search(params)).to include(invoice)
     end
+
+    it 'return true if invoice related to auction prepayment deposit case' do
+      invoice.update(description: 'auction_deposit test.ee, user_uuid sdfsdfsdf, user_email test@test.ee')
+      invoice.reload
+
+      expect(invoice.auction_deposit_prepayment?).to eq true
+    end
   end
 end
