@@ -1,5 +1,5 @@
 class SendEInvoiceJob < ApplicationJob
-  # discard_on HTTPClient::TimeoutError
+  retry_on Net::ReadTimeout, wait: 2.seconds, attempts: 3
 
   def perform(e_invoice_data)
     Rails.logger.info "Started to process e-invoice for invoice_id #{e_invoice_data[:invoice_data][:id]}"
