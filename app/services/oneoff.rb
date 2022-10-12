@@ -2,6 +2,7 @@ class InvalidParams < StandardError; end
 
 class Oneoff
   include Request
+  include ServiceApplication
 
   attr_reader :invoice_number, :customer_url, :reference_number
 
@@ -16,17 +17,13 @@ class Oneoff
     result = contract.call(invoice_number: invoice_number,
                            customer_url: customer_url,
                            reference_number: reference_number)
+    service = new(invoice_number: invoice_number, customer_url: customer_url, reference_number: reference_number)
 
     if result.success?
-      fetcher = new(invoice_number: invoice_number, customer_url: customer_url, reference_number: reference_number)
-
-      fetcher.base_request
+      response = service.base_request
+      service.parse_response(response)
     else
-      {
-        'error' => {
-           'message' => result.errors.messages.map { |m| m.text }.join(', ')
-        }
-      }
+      service.parse_validation_errors(result)
     end
   end
 

@@ -9,6 +9,10 @@ module ServiceApplication
     wrap(result: false, instance: nil, errors: e)
   end
 
+  def parse_validation_errors(result)
+    wrap(result: false, instance: nil, errors: result.errors.to_h)
+  end
+
   def wrap(**kwargs)
     result = kwargs[:result]
     instance = kwargs[:instance]

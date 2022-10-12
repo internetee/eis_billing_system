@@ -117,8 +117,7 @@ RSpec.describe 'Notify' do
         payment_reference: 'test'
       }
 
-      notifier = Notify.new(response: JSON.parse(everypay_response.to_json))
-      response = notifier.call
+      response = Notify.call(response: JSON.parse(everypay_response.to_json))
       invoice.reload
 
       expect(response['message']).to eq 'request successfully received' 

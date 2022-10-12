@@ -17,4 +17,8 @@ class GlobalVariable
   BASE_REGISTRAR = ENV['base_registrar'] || 'http://registrar_center:300'
   BASE_AUCTION = ENV['base_auction'] || 'http://auction_center:300'
   BASE_EEID = ENV['base_eeid'] || 'http://eeid:300'
+
+  REGISTRY_PAYMENT_URL = ENV['registry_update_payment_url'] || 'http://registry:3000/eis_billing/payment_status'
+  AUCTION_PAYMENT_URL = ENV['auction_update_payment_url'] || 'http://auction_center:3000/eis_billing/payment_status'
+  EEID_PAYMENT_URL = ENV['eeid_update_payment_url'] || 'http://eeid:3000/eis_billing/payment_status'
 end

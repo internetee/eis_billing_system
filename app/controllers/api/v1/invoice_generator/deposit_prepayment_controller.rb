@@ -3,14 +3,14 @@ module Api
     module InvoiceGenerator
       class DepositPrepaymentController < Api::V1::InvoiceGenerator::BaseController
         def create
-          response = DepositPrepaymentService.call(params: params)
+          response = DepositPrepaymentService.call(params: params.to_unsafe_hash)
 
           if response.result?
             render json: { 'message' => 'Link created',
                            'oneoff_redirect_link' => response.instance['payment_link'] },
                    status: :created
           else
-            render json: { error: response.instance['error'] }, status: :unprocessable_entity
+            render json: { error: response.errors }, status: :unprocessable_entity
           end
         end
       end

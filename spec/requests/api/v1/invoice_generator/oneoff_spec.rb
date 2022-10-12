@@ -76,7 +76,7 @@ RSpec.describe Api::V1::InvoiceGenerator::OneoffController, type: :request do
       post api_v1_invoice_generator_oneoff_index_path, params: payload, headers: {}
       expect(JSON.parse(response.body)['error']).to eq(
         {
-          "message" => I18n.t('api_errors.customer_url_error')
+          "customer_url" => [I18n.t('api_errors.customer_url_error')]
         }
       )
     end

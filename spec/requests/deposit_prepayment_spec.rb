@@ -11,7 +11,9 @@ RSpec.describe 'DepositPrepaymentController', type: :request do
         {
           initiator: 'auction',
           transaction_amount: '50.0',
-          customer_url: 'https://rollback.ee'
+          customer_url: "#{GlobalVariable::BASE_AUCTION}/test",
+          custom_field2: 'auction',
+          description: 'description'
         }
       end
 

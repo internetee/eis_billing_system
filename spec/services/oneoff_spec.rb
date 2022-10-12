@@ -18,35 +18,35 @@ RSpec.describe Oneoff do
       response = described_class.call(invoice_number: invoice.invoice_number.to_s,
                                       customer_url: customer_url_registry,
                                       reference_number: reference.to_s)
-      expect(response).to a_hash_including(payment_link)
+      expect(response.instance).to a_hash_including(payment_link)
     end
 
     it 'should generate oneoff link without reference number' do
       response = described_class.call(invoice_number: invoice.invoice_number.to_s,
                                       customer_url: customer_url_registry,
                                       reference_number: nil)
-      expect(response).to a_hash_including(payment_link)
+      expect(response.instance).to a_hash_including(payment_link)
     end
 
     it 'should generate oneoff link for eeid' do
       response = described_class.call(invoice_number: invoice.invoice_number.to_s,
                                       customer_url: customer_url_eeid,
                                       reference_number: nil)
-      expect(response).to a_hash_including(payment_link)
+      expect(response.instance).to a_hash_including(payment_link)
     end
 
     it 'should generate oneoff link for auction' do
       response = described_class.call(invoice_number: invoice.invoice_number.to_s,
                                       customer_url: customer_url_auction,
                                       reference_number: nil)
-      expect(response).to a_hash_including(payment_link)
+      expect(response.instance).to a_hash_including(payment_link)
     end
 
     it 'should generate oneoff link for registrar' do
       response = described_class.call(invoice_number: invoice.invoice_number.to_s,
                                       customer_url: customer_url_registrar,
                                       reference_number: nil)
-      expect(response).to a_hash_including(payment_link)
+      expect(response.instance).to a_hash_including(payment_link)
     end
   end
 
@@ -58,8 +58,8 @@ RSpec.describe Oneoff do
                                       customer_url: 'http://thisisinvalidurl.com',
                                       reference_number: nil)
 
-      expect(response['error']).to a_hash_including(
-        'message' => 'this url not supported'
+      expect(response.errors).to a_hash_including(
+        customer_url: ['this url not supported']
       )
     end
 
@@ -68,8 +68,8 @@ RSpec.describe Oneoff do
                                       customer_url: GlobalVariable::BASE_REGISTRY,
                                       reference_number: nil)
 
-      expect(response['error']).to a_hash_including(
-        'message' => 'must be filled'
+      expect(response.errors).to a_hash_including(
+        invoice_number: ['must be filled']
       )
     end
   end
