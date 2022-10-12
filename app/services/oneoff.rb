@@ -1,5 +1,8 @@
+class InvalidParams < StandardError; end
+
 class Oneoff
   include Request
+
   attr_reader :invoice_number, :customer_url, :reference_number
 
   def initialize(invoice_number:, customer_url:, reference_number:)
@@ -8,10 +11,23 @@ class Oneoff
     @reference_number = reference_number
   end
 
-  def self.send_request(invoice_number:, customer_url:, reference_number: nil)
-    fetcher = new(invoice_number: invoice_number, customer_url: customer_url, reference_number: reference_number)
+  def self.call(invoice_number:, customer_url:, reference_number: nil)
+    contract = OneoffParamsContract.new
+    result = contract.call(invoice_number: invoice_number,
+                           customer_url: customer_url,
+                           reference_number: reference_number)
 
-    fetcher.base_request
+    if result.success?
+      fetcher = new(invoice_number: invoice_number, customer_url: customer_url, reference_number: reference_number)
+
+      fetcher.base_request
+    else
+      {
+        'error' => {
+           'message' => result.errors.messages.map { |m| m.text }.join(', ')
+        }
+      }
+    end
   end
 
   def base_request
@@ -30,8 +46,8 @@ class Oneoff
       'token_agreement' => 'unscheduled',
       'nonce' => "#{rand(10 ** 30).to_s.rjust(30,'0')}",
       'timestamp' => "#{Time.zone.now.to_formatted_s(:iso8601)}",
-      'email' => 'user@example.com',
-      'customer_ip' => '1.2.3.4',
+      'email' => Setting.registry_email,
+      # 'customer_ip' => '1.2.3.4',
       'customer_url' => customer_url,
       'preferred_country' => 'EE',
       'billing_city' => Setting.registry_city,
@@ -39,7 +55,7 @@ class Oneoff
       'billing_line1' => Setting.registry_street,
       # 'billing_line2' => 'Building 3',
       # 'billing_line3' => 'Room 11',
-      'billing_postcode' => '51009',
+      'billing_postcode' => Setting.registry_zip,
       'billing_state' => Setting.registry_state,
       'locale' => 'en',
       'request_token' => true,

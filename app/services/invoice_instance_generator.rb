@@ -1,4 +1,5 @@
 class InvoiceInstanceGenerator
+
   def self.create(params:)
     Invoice.create!(invoice_number: params[:invoice_number].to_s,
                     initiator: params[:custom_field2].to_s,

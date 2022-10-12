@@ -1,0 +1,3 @@
+en:
+  api_errors:
+    customer_url_error: 'this url not supported'

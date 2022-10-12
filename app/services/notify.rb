@@ -11,27 +11,29 @@ class Notify
     @response = response
   end
 
-  def call
-    parsed_response = parse_response(response)
+  def self.call(response:)
+    notifier = new(response: response)
+
+    parsed_response = notifier.parse_response(response)
     invoice = Invoice.find_by(invoice_number: parsed_response[:order_reference])
 
     if invoice.nil?
-      return notify(title: "Invoice with #{parsed_response[:order_reference]} number not found",
-                    error_message: "Invoice with #{parsed_response[:order_reference]} number not found")
+      return notifier.notify(title: "Invoice with #{parsed_response[:order_reference]} number not found",
+                             error_message: "Invoice with #{parsed_response[:order_reference]} number not found")
     end
 
     return if invoice.paid?
 
-    update_invoice_state(parsed_response: parsed_response, invoice: invoice)
+    notifier.update_invoice_state(parsed_response: parsed_response, invoice: invoice)
     return unless invoice.paid?
 
-    url = get_update_payment_url[invoice.initiator.to_sym]
-    parsed_response[:invoice_number_collection] = invoice_numbers_from_multi_payment(invoice)
+    url = notifier.get_update_payment_url[invoice.initiator.to_sym]
+    parsed_response[:invoice_number_collection] = notifier.invoice_numbers_from_multi_payment(invoice)
 
-    put_request(direction: 'services', path: url, params: parsed_response)
+    notifier.put_request(direction: 'services', path: url, params: parsed_response)
   rescue StandardError => e
     Rails.logger.error e
-    notify(title: 'Error occur in callback handler', error_message: "Error message #{e}")
+    notifier.notify(title: 'Error occur in callback handler', error_message: "Error message #{e}")
   end
 
   def notify(title:, error_message:)
