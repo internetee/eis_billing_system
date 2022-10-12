@@ -6,9 +6,9 @@ module Api
         INVOICE_NUMBER_MAX = Setting.directo_monthly_number_max || 309_999
 
         def create
-          invoice_ids = params[:invoice_ids]
-          invoice_numbers = {}
-          if directo_counter_exceedable?(invoice_ids.size)
+          count = params[:count]
+          invoice_numbers = []
+          if directo_counter_exceedable?(count)
             return render json: { 'message' => 'Directo Counter is out of period!',
                                   'error' => 'out of range' }, status: :not_implemented
           end
@@ -16,9 +16,9 @@ module Api
           number = [Setting.directo_monthly_number_last.presence.try(:to_i),
                     INVOICE_NUMBER_MIN].compact.max || 0
 
-          invoice_ids.each do |id|
+          count.times do
             number += 1
-            invoice_numbers[id.to_s] = number
+            invoice_numbers << number
           end
 
           Setting.directo_monthly_number_last = number
