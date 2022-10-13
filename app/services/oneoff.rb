@@ -2,37 +2,41 @@ class InvalidParams < StandardError; end
 
 class Oneoff
   include Request
-  include ServiceApplication
+  include ApplicationService
 
   attr_reader :invoice_number, :customer_url, :reference_number
 
   def initialize(invoice_number:, customer_url:, reference_number:)
     @invoice = Invoice.find_by(invoice_number: invoice_number)
+
+    @invoice_number = invoice_number
     @customer_url = customer_url
     @reference_number = reference_number
   end
 
-  def self.call(invoice_number:, customer_url:, reference_number: nil)
+  def self.call(invoice_number:, customer_url:, reference_number:)
+    new(invoice_number: invoice_number, customer_url: customer_url, reference_number: reference_number).call
+  end
+
+  def call
     contract = OneoffParamsContract.new
     result = contract.call(invoice_number: invoice_number,
                            customer_url: customer_url,
                            reference_number: reference_number)
-    service = new(invoice_number: invoice_number, customer_url: customer_url, reference_number: reference_number)
-
     if result.success?
-      response = service.base_request
-      service.parse_response(response)
+      response = base_request
+      struct_response(response)
     else
-      service.parse_validation_errors(result)
+      parse_validation_errors(result)
     end
   end
+
+  private
 
   def base_request
     uri = URI("#{GlobalVariable::BASE_ENDPOINT}#{GlobalVariable::ONEOFF_ENDPOINT}")
     post(direction: 'everypay', path: uri, params: body)
   end
-
-  private
 
   def body
     {

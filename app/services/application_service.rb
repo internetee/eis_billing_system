@@ -1,5 +1,5 @@
-module ServiceApplication
-  def parse_response(response)
+module ApplicationService
+  def struct_response(response)
     if response['error'].present?
       wrap(result: false, instance: nil, errors: response['error'])
     else

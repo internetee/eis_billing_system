@@ -1,5 +1,5 @@
 class DepositPrepaymentService
-  include ServiceApplication
+  include ApplicationService
 
   DESCRIPTION_DEFAULT = 'deposit'.freeze
 
@@ -10,19 +10,19 @@ class DepositPrepaymentService
   end
 
   def self.call(params:)
+    new(params: params).call
+  end
+
+  def call
     contract = DepositPrepaymentContract.new
     result = contract.call(params)
 
-    service = new(params: params)
-
-    if result.success?
-      service.generate_oneoff_link
-    else
-      service.parse_validation_errors(result)
-    end
+    result.success? ? oneoff_link : parse_validation_errors(result)
   end
 
-  def generate_oneoff_link
+  private
+
+  def oneoff_link
     invoice_number = InvoiceNumberService.call
     invoice_params = invoice_params(params, invoice_number)
 
@@ -30,7 +30,7 @@ class DepositPrepaymentService
     response = Oneoff.call(invoice_number: invoice_number.to_s,
                            customer_url: params[:customer_url],
                            reference_number: params[:reference_number])
-    response.result? ? parse_response(response.instance) : parse_validation_errors(response)
+    response.result? ? struct_response(response.instance) : parse_validation_errors(response)
   end
 
   def invoice_params(params, invoice_number)
