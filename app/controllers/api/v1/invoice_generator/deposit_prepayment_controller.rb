@@ -1,11 +1,9 @@
 module Api
   module V1
     module InvoiceGenerator
-      class OneoffController < Api::V1::InvoiceGenerator::BaseController
+      class DepositPrepaymentController < Api::V1::InvoiceGenerator::BaseController
         def create
-          response = Oneoff.call(invoice_number: params[:invoice_number],
-                                 customer_url: params[:customer_url],
-                                 reference_number: params[:reference_number])
+          response = DepositPrepaymentService.call(params: params.to_unsafe_hash)
 
           if response.result?
             render json: { 'message' => 'Link created',

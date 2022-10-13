@@ -56,10 +56,10 @@ Rails.application.routes.draw do
         resources :invoice_status, only: [:create]
         resources :reference_number_generator, only: [:create]
         resources :oneoff, only: [:create]
+        resources :deposit_prepayment, only: [:create]
       end
 
       namespace :callback_handler do
-        # post 'callback_handler/callback'
         match '/callback', via: %i[get], to: 'callback_handler#callback', as: :callback
       end
 

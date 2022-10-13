@@ -21,19 +21,35 @@ class Notify
       return notifier.notify(title: "Invoice with #{parsed_response[:order_reference]} number not found",
                              error_message: "Invoice with #{parsed_response[:order_reference]} number not found")
     end
-
     return if invoice.paid?
 
     notifier.update_invoice_state(parsed_response: parsed_response, invoice: invoice)
     return unless invoice.paid?
 
     url = notifier.get_update_payment_url[invoice.initiator.to_sym]
+    return notifier.define_for_deposit(invoice, url) if invoice.auction_deposit_prepayment?
+
     parsed_response[:invoice_number_collection] = notifier.invoice_numbers_from_multi_payment(invoice)
 
     notifier.put_request(direction: 'services', path: url, params: parsed_response)
   rescue StandardError => e
     Rails.logger.error e
     notifier.notify(title: 'Error occur in callback handler', error_message: "Error message #{e}")
+  end
+
+  def define_for_deposit(invoice, url)
+    attributes = invoice.description.split(',')
+    domain_name, user_uuid, user_email = attributes.map { |attr| attr.split(' ')[1] }
+
+    params = {
+      domain_name: domain_name,
+      user_uuid: user_uuid,
+      user_email: user_email,
+      transaction_amount: invoice.transaction_amount.to_f,
+      description: 'deposit'
+    }
+
+    put_request(direction: 'services', path: url, params: params)
   end
 
   def notify(title:, error_message:)
@@ -80,9 +96,9 @@ class Notify
 
   def get_update_payment_url
     {
-      registry: ENV['registry_update_payment_url'],
-      auction: ENV['auction_update_payment_url'],
-      eeid: ENV['eeid_update_payment_url']
+      registry: GlobalVariable::REGISTRY_PAYMENT_URL,
+      auction: GlobalVariable::AUCTION_PAYMENT_URL,
+      eeid: GlobalVariable::EEID_PAYMENT_URL
     }
   end
 

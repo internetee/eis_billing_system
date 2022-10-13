@@ -32,4 +32,10 @@ class Invoice < ApplicationRecord
       .with_amount_between(params[:min_amount], params[:max_amount])
       .order(sort_column => sort_direction)
   end
+
+  def auction_deposit_prepayment?
+    return false if description.nil?
+
+    description.split(' ')[0] == 'auction_deposit'
+  end
 end

@@ -4,7 +4,7 @@ RSpec.describe 'Notify' do
 
   before(:each) do
     response_message = {
-      message: 'received',
+      message: 'received'
     }
     stub_request(:put, "#{GlobalVariable::BASE_REGISTRY}/eis_billing/payment_status")
       .to_return(status: 200, body: response_message.to_json, headers: {})
@@ -30,7 +30,7 @@ RSpec.describe 'Notify' do
         payment_state: 'settled',
         transaction_time: Time.zone.now - 1.hour,
         order_reference: invoice.invoice_number,
-        payment_reference: 'test',
+        payment_reference: 'test'
       }
 
       Notify.call(response: JSON.parse(everypay_response.to_json))
@@ -55,7 +55,7 @@ RSpec.describe 'Notify' do
         payment_state: 'settled',
         transaction_time: Time.zone.now - 1.hour,
         order_reference: invoice_three.invoice_number,
-        payment_reference: 'test',
+        payment_reference: 'test'
       }
 
       Notify.call(response: JSON.parse(everypay_response.to_json))
@@ -78,13 +78,50 @@ RSpec.describe 'Notify' do
         payment_state: 'settled',
         transaction_time: Time.zone.now - 1.hour,
         order_reference: 'no_exists',
-        payment_reference: 'test',
+        payment_reference: 'test'
       }
 
       mailer = Notify.call(response: JSON.parse(everypay_response.to_json))
 
       expect(mailer.subject).to eq("Invoice with #{everypay_response[:order_reference]} number not found")
       expect(mailer.body).to include("Invoice with #{everypay_response[:order_reference]} number not found")
+    end
+  end
+
+  context 'auction prepayment' do
+    it 'should handle invoice as auction prepayment deposit' do
+      request_data =  {
+        domain_name: 'toto.ee',
+        user_uuid: 'ffg4e',
+        user_email: 'wow@test.ee',
+        transaction_amount: invoice.transaction_amount.to_f,
+        description: 'deposit'
+      }
+      response_message = {
+        message: 'request successfully received'
+      }
+      stub_request(:put, "#{GlobalVariable::BASE_AUCTION}/eis_billing/payment_status")
+        .with(body: request_data.to_json)
+        .to_return(status: 200, body: response_message.to_json, headers: {})
+
+      invoice.initiator = 'auction'
+      invoice.invoice_number = 1
+      invoice.description = 'auction_deposit toto.ee, user_uuid ffg4e, user_email wow@test.ee'
+      invoice.save
+      invoice.reload
+
+      everypay_response = {
+        payment_state: 'settled',
+        transaction_time: Time.zone.now - 1.hour,
+        order_reference: invoice.invoice_number,
+        payment_reference: 'test'
+      }
+
+      response = Notify.call(response: JSON.parse(everypay_response.to_json))
+      invoice.reload
+
+      expect(response['message']).to eq 'request successfully received' 
+      expect(invoice.status).to eq('paid')
     end
   end
 end

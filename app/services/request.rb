@@ -53,7 +53,7 @@ module Request
 
   def service_options
     {
-      request: { timeout: GlobalVariable::TIMEOUT_IN_SECONDS.seconds || 3 },
+      request: { timeout: GlobalVariable::TIMEOUT_IN_SECONDS || 3 },
       headers: {
         'Authorization' => "Bearer #{generate_token}",
         'Content-Type' => 'application/json',
