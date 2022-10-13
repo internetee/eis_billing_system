@@ -5,8 +5,9 @@ module Api
         def create
           invoice = Invoice.find_by(invoice_number: params[:invoice_number])
           if invoice.nil?
-            return notify(title: "Invoice with #{params[:invoice_number]} number not found",
-                          error_message: "Invoice with #{params[:invoice_number]} number not found")
+            # return notify(title: "Invoice with #{params[:invoice_number]} number not found",
+            #               error_message: "Invoice with #{params[:invoice_number]} number not found")
+            raise ActiveRecord::RecordNotFound, "Invoice with #{params[:invoice_number]} number not found"
           end
 
           if invoice.update(status: params[:status])
