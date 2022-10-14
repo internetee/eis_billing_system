@@ -1,4 +1,4 @@
-class DepositPrepaymentContract < Dry::Validation::Contract
+class BulkPaymentContract < Dry::Validation::Contract
   include BaseContract
 
   params do

@@ -57,6 +57,7 @@ Rails.application.routes.draw do
         resources :reference_number_generator, only: [:create]
         resources :oneoff, only: [:create]
         resources :deposit_prepayment, only: [:create]
+        resources :bulk_payment, only: [:create]
       end
 
       namespace :callback_handler do

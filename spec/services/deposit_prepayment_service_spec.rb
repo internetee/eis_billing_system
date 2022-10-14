@@ -33,12 +33,12 @@ RSpec.describe 'DepositPrepaymentService' do
       end
 
       it 'should return worked payment link' do
-        response = DepositPrepaymentService.call(params: invoice_params)
+        response = Auction::DepositPrepaymentService.call(params: invoice_params)
         expect(response.instance['payment_link']).to eq 'https://one.off'
       end
 
       it 'if payment was successfully generated should be true result' do
-        response = DepositPrepaymentService.call(params: invoice_params)
+        response = Auction::DepositPrepaymentService.call(params: invoice_params)
         expect(response.result?).to be_truthy
       end
     end
@@ -50,12 +50,12 @@ RSpec.describe 'DepositPrepaymentService' do
       end
 
       it 'if some errors occured should return false of result' do
-        response = DepositPrepaymentService.call(params: invoice_params)
+        response = Auction::DepositPrepaymentService.call(params: invoice_params)
         expect(response.result?).to be_falsey
       end
 
       it 'it some errors should return error test' do
-        response = DepositPrepaymentService.call(params: invoice_params)
+        response = Auction::DepositPrepaymentService.call(params: invoice_params)
         expect(response.errors).to include(
           failed_params.to_json['message']
         )
