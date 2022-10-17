@@ -1,12 +1,12 @@
 require 'rails_helper'
 
-RSpec.describe "Api::V1::InvoiceGenerator::InvoiceStatusController", type: :request do
-  describe "Status handler" do
+RSpec.describe 'Api::V1::InvoiceGenerator::InvoiceStatusController', type: :request do
+  describe 'Status handler' do
     let(:invoice) { create(:invoice) }
 
     before { allow_any_instance_of(ApplicationController).to receive(:authorized).and_return(true) }
 
-    it "should update status to cancelled" do
+    it 'should update status to cancelled' do
       params = {
         invoice_number: invoice.invoice_number,
         status: 'cancelled'
@@ -20,7 +20,7 @@ RSpec.describe "Api::V1::InvoiceGenerator::InvoiceStatusController", type: :requ
       expect(invoice.status).to eq('cancelled')
     end
 
-    it "should update status to paid" do
+    it 'should update status to paid' do
       params = {
         invoice_number: invoice.invoice_number,
         status: 'paid'
@@ -36,7 +36,7 @@ RSpec.describe "Api::V1::InvoiceGenerator::InvoiceStatusController", type: :requ
     end
   end
 
-  describe "error handler" do
+  describe 'error handler' do
     let(:invoice) { create(:invoice) }
     let!(:admin) { create(:user) }
 
@@ -49,7 +49,8 @@ RSpec.describe "Api::V1::InvoiceGenerator::InvoiceStatusController", type: :requ
         status: 'another'
       }
 
-      expect { post api_v1_invoice_generator_invoice_status_index_path, params: params }.to change { ActionMailer::Base.deliveries.count }.by(1)
+      expect { post api_v1_invoice_generator_invoice_status_index_path, params: params }
+        .to change { ActionMailer::Base.deliveries.count }.by(1)
     end
 
     it 'should notify if invoice not exists' do
@@ -58,7 +59,8 @@ RSpec.describe "Api::V1::InvoiceGenerator::InvoiceStatusController", type: :requ
         status: 'another'
       }
 
-      expect { post api_v1_invoice_generator_invoice_status_index_path, params: params }.to change { ActionMailer::Base.deliveries.count }.by(1)
+      expect { post api_v1_invoice_generator_invoice_status_index_path, params: params }
+        .to change { ActionMailer::Base.deliveries.count }.by(2)
     end
   end
 end
