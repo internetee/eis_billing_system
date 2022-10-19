@@ -1,10 +1,9 @@
 module Api
   module V1
     module InvoiceGenerator
-      class DepositPrepaymentController < Api::V1::InvoiceGenerator::BaseController
+      class BulkPaymentController < Api::V1::InvoiceGenerator::BaseController
         def create
-          response = Auction::DepositPrepaymentService.call(params: params.to_unsafe_hash)
-
+          response = Auction::BulkPaymentService.call(params: params.to_unsafe_hash)
           if response.result?
             render json: { 'message' => 'Link created',
                            'oneoff_redirect_link' => response.instance['payment_link'] },
