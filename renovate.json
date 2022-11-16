@@ -1,0 +1,43 @@
+{
+  "extends": [
+    "config:base"
+  ],
+  "packageRules": [
+    {
+      "matchUpdateTypes": ["minor", "patch", "pin", "digest"],
+      "automerge": true,
+      "automergeType": "pr"
+    },
+    {
+      "matchDepTypes": ["ruby", "bundler", "Gemfile", "Gemfile.lock"],
+      "addLabels": ["bundler"]
+    },
+    {
+      "matchDepTypes": [".ruby-version"],
+      "addLabels": ["ruby-version"]
+    }
+  ],
+  "docker": {
+    "enabled": false
+  },
+  "ruby": {
+    "stabilityDays": 60
+  },
+  "ignorePaths": [
+    "Dockerfile", "Dockerfile.*"
+  ],
+  "rangeStrategy": "replace",
+  "separateMajorMinor": true,
+  "prCreation": "immediate",
+  "prHourlyLimit": 2,
+  "prConcurrentLimit": 10,
+  "ignoreUnstable": true,
+  "dependencyDashboard": true,
+  "rebaseWhen": "behind-base-branch",
+  "labels": [
+    "dependencies"
+  ],
+  "schedule": [
+    "before 2am"
+  ]
+}
