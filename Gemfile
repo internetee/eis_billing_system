@@ -102,5 +102,5 @@ gem 'simpleidn', '0.2.1' # For punycode
 gem 'faraday'
 
 # specification
-gem 'dry-initializer', '~> 3.0.3'
+gem 'dry-initializer', '~> 3.1.0'
 gem 'dry-validation'
