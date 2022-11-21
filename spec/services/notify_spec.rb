@@ -29,7 +29,7 @@ RSpec.describe 'Notify' do
       everypay_response = {
         payment_state: 'settled',
         transaction_time: Time.zone.now - 1.hour,
-        order_reference: invoice.invoice_number,
+        order_reference: invoice.invoice_number.to_s,
         payment_reference: 'test'
       }
 
@@ -54,7 +54,7 @@ RSpec.describe 'Notify' do
       everypay_response = {
         payment_state: 'settled',
         transaction_time: Time.zone.now - 1.hour,
-        order_reference: invoice_three.invoice_number,
+        order_reference: "ref:#{invoice_three.invoice_number}, #{invoice_three.description.split(' ').join(', ')}",
         payment_reference: 'test'
       }
 
@@ -113,14 +113,14 @@ RSpec.describe 'Notify' do
       everypay_response = {
         payment_state: 'settled',
         transaction_time: Time.zone.now - 1.hour,
-        order_reference: invoice.invoice_number,
+        order_reference: invoice.invoice_number.to_s,
         payment_reference: 'test'
       }
 
       response = Notify.call(response: JSON.parse(everypay_response.to_json))
       invoice.reload
 
-      expect(response['message']).to eq 'request successfully received' 
+      expect(response['message']).to eq 'request successfully received'
       expect(invoice.status).to eq('paid')
     end
   end
