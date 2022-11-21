@@ -2,14 +2,16 @@ module Auction
   module BaseService
     include ApplicationService
 
-    def oneoff_link
+    def oneoff_link(bulk: false)
       invoice_number = InvoiceNumberService.call
       invoice_params = invoice_params(params, invoice_number)
 
       InvoiceInstanceGenerator.create(params: invoice_params)
       response = Oneoff.call(invoice_number: invoice_number.to_s,
                              customer_url: params[:customer_url],
-                             reference_number: params[:reference_number])
+                             reference_number: params[:reference_number],
+                             bulk: bulk,
+                             bulk_invoices: params[:description].to_s.split(' '))
       response.result? ? struct_response(response.instance) : parse_validation_errors(response)
     end
 

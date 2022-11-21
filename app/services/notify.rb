@@ -15,7 +15,14 @@ class Notify
     notifier = new(response: response)
 
     parsed_response = notifier.parse_response(response)
-    invoice = Invoice.find_by(invoice_number: parsed_response[:order_reference])
+
+    order_number = if parsed_response[:order_reference].split(', ').size > 1
+                     parsed_response[:order_reference].split(', ')[0].split(':')[1]
+                   else
+                     parsed_response[:order_reference]
+                   end
+
+    invoice = Invoice.find_by(invoice_number: order_number)
 
     if invoice.nil?
       return notifier.notify(title: "Invoice with #{parsed_response[:order_reference]} number not found",
