@@ -1,4 +1,32 @@
 class Api::V1::EInvoice::EInvoiceController < ApplicationController
+  api! 'Send existing invoice to Omniva EInvoice'
+
+  param :invoice, String, required: true, desc: <<~HERE
+    Contains the data of the invoice that will be sent to Omniva EInvoice
+  HERE
+  param :invoice_subtotal, String, required: true, desc: <<~HERE
+    Contains information about the subtotal of an invoice to be sent
+  HERE
+  param :vat_amount, String, required: true, desc: <<~HERE
+    Tax figure in percent
+  HERE
+  param :invoice_items, String, required: true, desc: <<~HERE
+    Invoice details, those items that form the total bill
+  HERE
+  param :payable, [true, false], required: true, desc: <<~HERE
+    By default it true
+  HERE
+  param :buyer_billing_email, String, required: true
+  param :buyer_e_invoice_iban, String, required: true
+  param :seller_country_code, String, required: true
+  param :buyer_country_code, String, required: true
+  param :initiator, String, desc: <<~HERE
+    Values contains the names of the service that initiates the request. These can be:
+    - registry
+    - eeid
+    - auction
+  HERE
+
   def create
     e_invoice_data = {
       invoice_data: invoice_params[:invoice],

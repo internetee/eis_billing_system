@@ -1,4 +1,6 @@
 class Api::V1::InvoiceGenerator::InvoiceNumberGeneratorController < Api::V1::InvoiceGenerator::BaseController
+  api! 'Returns the closest free invoice number in the range. No parameters required'
+
   def create
     invoice_number = InvoiceNumberService.call
 

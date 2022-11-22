@@ -2,6 +2,14 @@ module Api
   module V1
     module InvoiceGenerator
       class OneoffController < Api::V1::InvoiceGenerator::BaseController
+        api! 'Generating a link to pay a bill through the OneOff endpoint'
+
+        param :invoice_number, String, required: true
+        param :customer_url, String, required: true, desc: <<~HERE
+          The link where the user must be redirected after payment. Along with the transition also on this link comes the data about the payment. This is a kind of redirect_url and callback_url
+        HERE
+        param :reference_number, String, required: false
+
         def create
           response = Oneoff.call(invoice_number: params[:invoice_number],
                                  customer_url: params[:customer_url],

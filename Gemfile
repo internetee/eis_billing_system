@@ -105,6 +105,10 @@ gem 'faraday'
 gem 'dry-initializer', '~> 3.1.0'
 gem 'dry-validation'
 
+<<<<<<< HEAD
 gem 'net-smtp', require: false
 gem 'net-imap', require: false
 gem 'net-pop', require: false
+=======
+gem "apipie-rails", "~> 0.8.2"
+>>>>>>> added docs to billing system
