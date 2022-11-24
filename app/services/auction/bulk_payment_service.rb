@@ -16,7 +16,7 @@ module Auction
       contract = BulkPaymentContract.new
       result = contract.call(params)
 
-      result.success? ? oneoff_link : parse_validation_errors(result)
+      result.success? ? oneoff_link(bulk: true) : parse_validation_errors(result)
     end
   end
 end
