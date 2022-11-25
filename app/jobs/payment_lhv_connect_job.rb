@@ -41,13 +41,13 @@ class PaymentLhvConnectJob < ApplicationJob
 
     sorted_by_ref_number = incoming_transactions.group_by { |x| x[:payment_reference_number] }
     sorted_by_ref_number.each do |s|
-      reference_initiator = Reference.find_by(reference_number: s[0])
+      # reference_initiator = Reference.find_by(reference_number: s[0])
 
-      if reference_initiator.nil?
-        inform_admin(s[0])
+      # if reference_initiator.nil?
+      #   inform_admin(s[0])
 
-        next
-      end
+      #   next
+      # end
 
       Rails.logger.info "Sending to registry >>>>>>>>>>>>>>>>>>>>>>>>>"
       Rails.logger.info s[1]
