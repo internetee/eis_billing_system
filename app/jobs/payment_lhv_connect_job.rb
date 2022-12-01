@@ -28,35 +28,56 @@ class PaymentLhvConnectJob < ApplicationJob
     incoming_transactions = []
 
     api.credit_debit_notification_messages.each do |message|
-      Rails.logger.info message
+      messages_proccess(message, registry_bank_account_iban) do
+        message.credit_transactions.each do |credit_transaction|
+          if credit_transaction.payment_reference_number.nil?
+            credit_transaction.payment_reference_number = parse_reference_number(credit_transaction)
 
-      next unless message.bank_account_iban == registry_bank_account_iban
+            next if credit_transaction.payment_reference_number.nil?
+          end
 
-      next if message.credit_transactions.empty?
-
-      message.credit_transactions.each do |credit_transaction|
-        incoming_transactions << credit_transaction unless credit_transaction.payment_reference_number.nil?
+          incoming_transactions << credit_transaction
+        end
       end
     end
 
     sorted_by_ref_number = incoming_transactions.group_by { |x| x[:payment_reference_number] }
     sorted_by_ref_number.each do |s|
-      reference_initiator = Reference.find_by(reference_number: s[0])
-
-      if reference_initiator.nil?
-        inform_admin(s[0])
-
-        next
-      end
-
-      Rails.logger.info "Sending to registry >>>>>>>>>>>>>>>>>>>>>>>>>"
+      Rails.logger.info "=========== Sending to registry ==========="
       Rails.logger.info s[1]
-      Rails.logger.info ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
+      Rails.logger.info "==========================================="
 
       send_transactions_to_registry(params: s[1])
     end
 
     Rails.logger.info "Transactions processed: #{incoming_transactions.size}"
+  end
+
+  def messages_proccess(message, registry_bank_account_iban, &block)
+    Rails.logger.info message
+    return unless message.bank_account_iban == registry_bank_account_iban
+    return if message.credit_transactions.empty?
+
+    block.call
+  end
+
+  def parse_reference_number(credit_transaction)
+    reference = ref_number_from_description(credit_transaction.payment_description)
+    return unless valid_ref_no?(reference)
+
+    ref = Reference.find_by(reference_number: reference)
+    inform_admin(reference) and return nil if ref.nil?
+
+    reference
+  end
+
+  def ref_number_from_description(description)
+    matches = description.to_s.scan(Billing::ReferenceNo::MULTI_REGEXP).flatten
+    matches.detect { |m| break m if m.length == 7 || valid_ref_no?(m) }
+  end
+
+  def valid_ref_no?(match)
+    return true if Billing::ReferenceNo.valid?(match)
   end
 
   def inform_admin(reference_number)
