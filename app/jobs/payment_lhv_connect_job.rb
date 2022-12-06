@@ -66,7 +66,7 @@ class PaymentLhvConnectJob < ApplicationJob
     return unless valid_ref_no?(reference)
 
     ref = Reference.find_by(reference_number: reference)
-    inform_admin(reference) and return nil if ref.nil?
+    inform_admin(reference: reference, body: credit_transaction) and return nil if ref.nil?
 
     reference
   end
@@ -80,9 +80,9 @@ class PaymentLhvConnectJob < ApplicationJob
     return true if Billing::ReferenceNo.valid?(match)
   end
 
-  def inform_admin(reference_number)
+  def inform_admin(reference:, body:)
     Rails.logger.info "Inform to admin that reference number not found"
-    BillingMailer.inform_admin(reference_number: reference_number).deliver_now
+    BillingMailer.inform_admin(reference_number: reference, body: body).deliver_now
   end
 
   def open_ssl_keystore

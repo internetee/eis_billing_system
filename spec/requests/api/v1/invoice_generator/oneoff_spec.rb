@@ -54,6 +54,7 @@ RSpec.describe Api::V1::InvoiceGenerator::OneoffController, type: :request do
 
   describe "errors" do
     let(:invoice) { create(:invoice) }
+    ENV['allowed_base_urls'] = 'https://registry.test, https://registrar_center.test, https://eeid.test, https://auction_center.test, https://auction.test'
 
     it "shoud return 422 unprocessable_entity status" do
       payload = {
