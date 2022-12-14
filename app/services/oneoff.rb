@@ -25,6 +25,15 @@ class Oneoff
   end
 
   def call
+    if @invoice.nil?
+      errors = "Invoice with #{invoice_number} not found in internal system"
+      w = wrap(result: false, instance: nil, errors: errors)
+      p '======='
+      p w
+      p '========='
+      return w
+    end
+
     contract = OneoffParamsContract.new
     result = contract.call(invoice_number: invoice_number,
                            customer_url: customer_url,

@@ -7,9 +7,11 @@ module Api
 
           if invoice.nil?
             message = "Invoice with #{params[:invoice_number]} number not found in Invoice Status Controller"
-            NotifierMailer.inform_admin("Invoice with #{params[:invoice_number]} number not found",
-                                         message).deliver_now
-            raise ActiveRecord::RecordNotFound, "Invoice with #{params[:invoice_number]} number not found"
+            NotifierMailer.inform_admin(title: "Invoice with #{params[:invoice_number]} number not found",
+                                        error_message: message).deliver_now
+            # raise ActiveRecord::RecordNotFound, "Invoice with #{params[:invoice_number]} number not found"
+
+            render json: { 'message' => message } and return
           end
 
           if invoice.update(status: params[:status])
