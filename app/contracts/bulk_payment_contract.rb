@@ -10,8 +10,8 @@ class BulkPaymentContract < Dry::Validation::Contract
 
   rule(:customer_url) do
     customer_url = "#{URI.parse(value).scheme}://#{URI.parse(value).host}"
-    urls = Rails.env.development? ? development_case : ALLOWED_BASE_URL
-    result = urls.any? { |url| url.include? customer_url }
+    # urls = Rails.env.development? ? development_case : ALLOWED_BASE_URL
+    result = ALLOWED_BASE_URL.any? { |url| url.include? customer_url }
 
     key.failure(I18n.t('api_errors.customer_url_error')) unless result
   end

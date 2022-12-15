@@ -65,3 +65,6 @@ secret_access_word: ''
 secret_word: ''
 
 e_invoice_provider_test_mode: 'true'
+
+development:
+  allowed_base_urls: 'https://registry.test, https://registrar_center.test, https://eeid.test, https://auction_center.test, https://auction.test'
