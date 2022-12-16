@@ -76,7 +76,7 @@ class Notify
   end
 
   def invoice_numbers_from_multi_payment(invoice)
-    return if !invoice.auction? || invoice.description == PREPENDED
+    return if !invoice.initiator == AUCTION || invoice.description == PREPENDED || invoice.description == ''
 
     numbers = invoice.description.split(' ')
     results = Invoice.where(invoice_number: numbers).pluck(:invoice_number, :payment_reference)
