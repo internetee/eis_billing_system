@@ -364,7 +364,7 @@ GEM
       rubyzip (>= 1.2.2, < 3.0)
       websocket (~> 1.0)
     simple_po_parser (1.1.5)
-    simplecov (0.21.2)
+    simplecov (0.22.0)
       docile (~> 1.1)
       simplecov-html (~> 0.11)
       simplecov_json_formatter (~> 0.1)
@@ -456,7 +456,7 @@ DEPENDENCIES
   rspec-rails
   rubocop-rails
   selenium-webdriver
-  simplecov (= 0.21.2)
+  simplecov (= 0.22.0)
   simpleidn (= 0.2.1)
   spring
   sprockets-rails
