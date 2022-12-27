@@ -95,7 +95,7 @@ gem 'sprockets-rails'
 gem 'pg_search'
 
 # Use Pagy for pagination
-gem "pagy", "~> 5.5"
+gem "pagy", "~> 6.0"
 
 gem 'simpleidn', '0.2.1' # For punycode
 
