@@ -10,18 +10,18 @@ class DashboardController < ParentController
     @max_amount = 200_000
   end
 
-  def search
-    @invoices = Invoice.search(params)
+  # def search
+  #   @invoices = Invoice.search(params)
 
-    respond_to do |format|
-      format.turbo_stream do
-        render turbo_stream: [
-          turbo_stream.update('invoices', partial: 'dashboard/invoices',
-                                          locals: { invoices: @invoices }),
-        ]
-      end
-    end
-  end
+  #   respond_to do |format|
+  #     format.turbo_stream do
+  #       render turbo_stream: [
+  #         turbo_stream.update('invoices', partial: 'dashboard/invoices',
+  #                                         locals: { invoices: @invoices }),
+  #       ]
+  #     end
+  #   end
+  # end
 
   def description
     @description = Invoice.find(params[:invoice_id]).description

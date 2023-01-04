@@ -1,6 +1,13 @@
 <%= tag.tr id: dom_id(invoice), class: 'bg-white' do %>
+<%#= turbo_frame_tag dom_id(invoice), class: 'bg-white' do %>
+<%#= tag.tr do %>
   <td class="px-6 py-1 border-b border-gray-200"><%= invoice.invoice_number %></td>
-  <td class="px-6 py-1 border-b border-gray-200"><%= invoice.status %></td>
+  <td class="px-6 py-1 border-b border-gray-200">
+    <%= form_with url: dashboards_invoice_status_path(invoice.id), method: :patch, 
+                                                                   data: { controller: 'autosave', target: 'autosave.form'} do |f| %>
+      <%= f.select :status, options_for_select(Invoice.statuses.invert.values, invoice.status), {}, :selected => invoice.status, data: { action: 'autosave#save', target: 'autosave.select' } %>
+    <% end %>
+  </td>
   <td class="px-6 py-1 border-b border-gray-200"><%= invoice.initiator %></td>
   <td class="px-6 py-1 break-all border-b border-gray-200"><%= invoice.payment_reference %></td>
   <td class="px-6 py-1 border-b border-gray-200"><%= invoice.transaction_time %></td>
@@ -26,4 +33,5 @@
   <td class="px-6 py-1 break-all border-b border-gray-200"><%= invoice.sent_at_omniva.to_formatted_s(:long) unless invoice.sent_at_omniva.nil? %></td>
   <td class="px-6 py-1 break-all border-b border-gray-200"><%= invoice.in_directo %></td>
   <td class="px-6 py-1 break-all border-b border-gray-200"><%= invoice.created_at.to_formatted_s(:long) %></td>
+<%# end %>
 <% end %>

@@ -23,6 +23,10 @@ Rails.application.routes.draw do
     end
   end
 
+  namespace :dashboards do
+    resources :invoice_status, only: %i[update]
+  end
+
   resources :everypay, only: [:index] do
     collection do
       post :everypay_data

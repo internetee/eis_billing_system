@@ -103,6 +103,8 @@
             </tr>
           </thead>
           <tbody id="invoices">
+            <%= render 'shared/flash' if turbo_frame_request? %>
+
             <%= render @invoices %>
           </tbody>
         </table>

@@ -5,15 +5,15 @@ class SessionsController < ParentController
     user = User.find_by(email: params[:email])
     if user.present? && user.authenticate(params[:password])
       session[:user_id] = user.id
-      redirect_to root_path, notice: 'Logged in successfully'
+      redirect_to root_path, status: :see_other, flash: { notice: 'Logged in successfully' }
     else
-      flash.now[:alert] = 'Invalid email or password'
-      render :new
+      flash.now[:alert] = 'Wrong username/password'
+      render :new, status: :unprocessable_entity
     end
   end
 
   def destroy
     session[:user_id] = nil
-    redirect_to sign_in_path, notice: 'Logged Out'
+    redirect_to sign_in_path, flash: { notice: 'Logged out' }
   end
 end
