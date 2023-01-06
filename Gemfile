@@ -43,7 +43,7 @@ end
 
 group :test do
   # Use system testing [https://guides.rubyonrails.org/testing.html#system-testing]
-  gem 'faker', git: 'https://github.com/faker-ruby/faker.git', branch: 'master'
+  gem 'faker'
   gem 'selenium-webdriver'
   gem 'simplecov', '0.21.2', require: false
   gem 'webdrivers'
