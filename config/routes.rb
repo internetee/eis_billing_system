@@ -7,10 +7,6 @@ Rails.application.routes.draw do
   post 'sign_in', to: 'sessions#create', as: 'log_in'
   delete 'logout', to: 'sessions#destroy'
 
-  resources :directo, only: [:show]
-  resources :everypay_response, only: [:show]
-  get 'description', to: 'dashboard#description', as: 'invoice_description'
-
   resources :users, only: [:index, :destroy, :edit, :update, :new] do
     collection do
       post :search
@@ -24,7 +20,15 @@ Rails.application.routes.draw do
   end
 
   namespace :dashboards do
-    resources :invoice_status, only: %i[update]
+    resources :invoice_status, only: :update
+    resource :invoice_synchronize, only: :update
+  end
+
+  namespace :invoice_details do
+    resources :payment_references, only: [:show]
+    resources :everypay_response, only: [:show]
+    resources :directo, only: [:show]
+    resources :descriptions, only: [:show]
   end
 
   resources :everypay, only: [:index] do
@@ -51,6 +55,10 @@ Rails.application.routes.draw do
       namespace :import_data do
         resources :reference_data, only: [:create]
         resources :invoice_data, only: [:create]
+      end
+
+      namespace :invoice do
+        resource :invoice_synchronize, only: :update
       end
 
       namespace :invoice_generator do

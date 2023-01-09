@@ -3,7 +3,8 @@ module Api
     module InvoiceGenerator
       class InvoiceStatusController < Api::V1::InvoiceGenerator::BaseController
         def create
-          invoice = Invoice.find_by(invoice_number: params[:invoice_number])
+          invoice = ::Invoice.find_by(invoice_number: params[:invoice_number])
+
           if invoice.nil?
             message = "Invoice with #{params[:invoice_number]} number not found in Invoice Status Controller"
             NotifierMailer.inform_admin(title: "Invoice with #{params[:invoice_number]} number not found",
