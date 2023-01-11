@@ -2,8 +2,6 @@ class InvoiceDataSenderService
   include Request
   include ApplicationService
 
-  INVOICE_UPDATE_ENDPOINT = ''
-
   attr_reader :invoice
 
   def initialize(invoice:)

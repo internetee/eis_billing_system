@@ -3,7 +3,6 @@ class Notify
 
   SETTLED = 'settled'.freeze
   PREPENDED = 'prepended'.freeze
-  AUCTION = 'auction'.freeze
 
   attr_reader :response
 
@@ -76,7 +75,7 @@ class Notify
   end
 
   def invoice_numbers_from_multi_payment(invoice)
-    return if !invoice.initiator == AUCTION || invoice.description == PREPENDED
+    return if !invoice.auction? || invoice.description == PREPENDED
 
     numbers = invoice.description.split(' ')
     results = Invoice.where(invoice_number: numbers).pluck(:invoice_number, :payment_reference)
