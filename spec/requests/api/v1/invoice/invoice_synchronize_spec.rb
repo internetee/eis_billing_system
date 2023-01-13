@@ -11,7 +11,7 @@ RSpec.describe "Api::V1::Invoice::InvoiceSynchronizeController", type: :request 
     }
     allow_any_instance_of(InvoiceDataSenderService).to receive(:base_request).and_return(mock_response)
 
-    patch api_v1_invoice_invoice_synchronize_path(id: invoice.id)
+    patch api_v1_invoice_invoice_synchronize_path(id: invoice.id, status: 'paid')
 
     message = JSON.parse(response.body).with_indifferent_access[:message]
     expect(message).to match 'Invoice data was successfully updated'
@@ -26,7 +26,7 @@ RSpec.describe "Api::V1::Invoice::InvoiceSynchronizeController", type: :request 
     }
     allow_any_instance_of(InvoiceDataSenderService).to receive(:base_request).and_return(mock_response)
 
-    patch api_v1_invoice_invoice_synchronize_path(id: invoice.id)
+    patch api_v1_invoice_invoice_synchronize_path(id: invoice.id, status: 'paid')
 
     message = JSON.parse(response.body).with_indifferent_access[:error]
 

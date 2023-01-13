@@ -4,7 +4,7 @@ module Api
       class InvoiceSynchronizesController < ApplicationController
         def update
           invoice = ::Invoice.find(params[:id])
-          response = invoice.synchronize
+          response = invoice.synchronize(status: params[:status])
 
           if response.result?
             render json: {

@@ -30,7 +30,7 @@ RSpec.describe Invoice, type: :model do
       }
       allow_any_instance_of(InvoiceDataSenderService).to receive(:base_request).and_return(mock_response)
 
-      response = invoice.synchronize
+      response = invoice.synchronize(status: 'paid')
 
       expect(response.result?).to eq true
     end
@@ -43,7 +43,7 @@ RSpec.describe Invoice, type: :model do
       }
       allow_any_instance_of(InvoiceDataSenderService).to receive(:base_request).and_return(mock_response)
 
-      response = invoice.synchronize
+      response = invoice.synchronize(status: 'paid')
 
       expect(response.result?).to eq false
     end

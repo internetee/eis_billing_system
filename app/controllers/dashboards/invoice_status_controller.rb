@@ -14,7 +14,9 @@ class Dashboards::InvoiceStatusController < ParentController
       respond_to do |format|
         format.turbo_stream do
           flash.now[:alert] = resp.errors['message']
-          render turbo_stream: [render_turbo_flash]
+          render turbo_stream: [
+            render_turbo_flash
+          ]
         end
       end
     end

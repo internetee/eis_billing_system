@@ -10,7 +10,7 @@ RSpec.describe 'InvoiceDataSenderService' do
 
       expect(invoice.initiator).to eq 'registry'
 
-      invoice_sender = InvoiceDataSenderService.new(invoice: invoice)
+      invoice_sender = InvoiceDataSenderService.new(invoice: invoice, status: 'paid')
       initiator = invoice_sender.send(:to_whom)
 
       expect(initiator).to eq "#{GlobalVariable::BASE_REGISTRY}/eis_billing/invoices"
@@ -22,7 +22,7 @@ RSpec.describe 'InvoiceDataSenderService' do
 
       expect(invoice.initiator).to eq 'auction'
 
-      invoice_sender = InvoiceDataSenderService.new(invoice: invoice)
+      invoice_sender = InvoiceDataSenderService.new(invoice: invoice, status: 'paid')
       initiator = invoice_sender.send(:to_whom)
 
       expect(initiator).to eq "#{GlobalVariable::BASE_AUCTION}/#"
@@ -34,7 +34,7 @@ RSpec.describe 'InvoiceDataSenderService' do
 
       expect(invoice.initiator).to eq 'eeid'
 
-      invoice_sender = InvoiceDataSenderService.new(invoice: invoice)
+      invoice_sender = InvoiceDataSenderService.new(invoice: invoice, status: 'paid')
       initiator = invoice_sender.send(:to_whom)
 
       expect(initiator).to eq "#{GlobalVariable::BASE_EEID}/#"
@@ -50,7 +50,7 @@ RSpec.describe 'InvoiceDataSenderService' do
       }
       allow_any_instance_of(InvoiceDataSenderService).to receive(:base_request).and_return(response)
 
-      response = InvoiceDataSenderService.call(invoice: invoice)
+      response = InvoiceDataSenderService.call(invoice: invoice, status: 'paid')
 
       expect(response.result?).to eq true
       expect(response.instance[:message]).to eq 'Invoice data updated successfully'
@@ -64,7 +64,7 @@ RSpec.describe 'InvoiceDataSenderService' do
       }
       allow_any_instance_of(InvoiceDataSenderService).to receive(:base_request).and_return(response)
 
-      response = InvoiceDataSenderService.call(invoice: invoice)
+      response = InvoiceDataSenderService.call(invoice: invoice, status: 'paid')
 
       expect(response.result?).to eq false
       expect(response.errors[:message]).to eq 'Could not update the invoice'
