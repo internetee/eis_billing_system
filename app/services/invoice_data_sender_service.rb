@@ -2,14 +2,15 @@ class InvoiceDataSenderService
   include Request
   include ApplicationService
 
-  attr_reader :invoice
+  attr_reader :invoice, :status
 
-  def initialize(invoice:)
+  def initialize(invoice:, status:)
     @invoice = invoice
+    @status = status
   end
 
-  def self.call(invoice:)
-    new(invoice: invoice).call
+  def self.call(invoice:, status:)
+    new(invoice: invoice, status: status).call
   end
 
   def call
@@ -20,7 +21,7 @@ class InvoiceDataSenderService
 
   def base_request
     uri = URI to_whom
-    put_request direction: 'service', path: uri, params: { invoice: invoice.to_h }
+    put_request direction: 'service', path: uri, params: { invoice: invoice.to_h, status: status }
   end
 
   def to_whom

@@ -5,11 +5,18 @@ class Dashboards::InvoiceStatusController < ParentController
     @invoice = Invoice.find(params[:id])
     temporary_unavailable and return unless @invoice.registry?
 
-    if @invoice.update(status: params[:status]) && @invoice.synchronize.result?
+    resp = @invoice.synchronize(status: params[:status])
+    if resp.result?
+      @invoice.update(status: params[:status])
+
       redirect_to dashboard_index_path, status: :see_other, flash: { notice: 'Invoice status updated successfully' }
     else
-      flash.now[:alert] = @invoice.errors.full_messages
-      render 'dashboard/index', status: :unprocessable_entity
+      respond_to do |format|
+        format.turbo_stream do
+          flash.now[:alert] = resp.errors['message']
+          render turbo_stream: [render_turbo_flash]
+        end
+      end
     end
   end
 
