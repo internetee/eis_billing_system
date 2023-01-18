@@ -8,6 +8,7 @@ class Invoice < ApplicationRecord
     }
   }
 
+  enum affiliation: %i[regular auction_deposit]
   enum status: %i[unpaid paid cancelled failed]
 
   scope :with_status, ->(status) {

@@ -2,8 +2,10 @@ module Auction
   module BaseService
     include ApplicationService
 
+    AUCTION_DEPOSIT = 'auction_deposit'.freeze
+
     def oneoff_link(bulk: false)
-      invoice_number = InvoiceNumberService.call
+      invoice_number = InvoiceNumberService.call(invoice_auction_deposit: true)
       invoice_params = invoice_params(params, invoice_number)
 
       InvoiceInstanceGenerator.create(params: invoice_params)
@@ -20,7 +22,8 @@ module Auction
         invoice_number: invoice_number,
         custom_field2: params[:custom_field2].to_s,
         transaction_amount: params[:transaction_amount].to_s,
-        custom_field1: params[:description].to_s
+        custom_field1: params[:description].to_s,
+        affiliation: params[:affiliation].to_s
       }
     end
   end
