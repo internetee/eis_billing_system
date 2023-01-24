@@ -4,7 +4,6 @@ class RefundContract < Dry::Validation::Contract
   params do
     required(:amount).filled(:decimal)
     required(:payment_reference).filled(:string)
-    required(:timestamp).filled(:date)
   end
 
   rule(:payment_reference) do

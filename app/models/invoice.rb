@@ -9,7 +9,7 @@ class Invoice < ApplicationRecord
   }
 
   enum affiliation: %i[regular auction_deposit]
-  enum status: %i[unpaid paid cancelled failed]
+  enum status: %i[unpaid paid cancelled failed refunded]
 
   scope :with_status, ->(status) {
     where(status: status) if status.present?

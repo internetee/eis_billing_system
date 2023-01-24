@@ -1,23 +1,22 @@
 class RefundService
   include Request
   include ApplicationService
-  include ActionView::Helpers::NumberHelper 
+  include ActionView::Helpers::NumberHelper
 
-  attr_reader :amount, :payment_reference, :timestamp
+  attr_reader :amount, :payment_reference
 
-  def initialize(amount:, payment_reference:, timestamp:)
+  def initialize(amount:, payment_reference:)
     @amount = amount
     @payment_reference = payment_reference
-    @timestamp = timestamp
   end
 
-  def self.call(amount:, payment_reference:, timestamp:)
-    new(amount: amount, payment_reference: payment_reference, timestamp: timestamp).call
+  def self.call(amount:, payment_reference:)
+    new(amount: amount, payment_reference: payment_reference).call
   end
 
   def call
     contract = RefundContract.new
-    result = contract.call(amount: amount, payment_reference: payment_reference, timestamp: timestamp)
+    result = contract.call(amount: amount, payment_reference: payment_reference)
 
     if result.success?
       response = base_request
@@ -40,7 +39,7 @@ class RefundService
       'amount' => number_with_precision(amount, precision: 2),
       'payment_reference' => payment_reference,
       'nonce' => nonce,
-      'timestamp' => timestamp
+      'timestamp' => "#{Time.zone.now.to_formatted_s(:iso8601)}"
     }
   end
 
