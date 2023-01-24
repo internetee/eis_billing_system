@@ -25,7 +25,8 @@ module Api
 
         def load_invoice
           @invoice = Invoice.find_by(invoice_number: params[:invoice_number])
-        rescue ActiveRecord::RecordNotFound
+          return if @invoice.present?
+
           render json: {
             error: 'Invoice not found'
           }, status: :not_found

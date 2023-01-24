@@ -3,7 +3,10 @@ require 'rails_helper'
 RSpec.describe "Refund::Auction", type: :request do
   let(:invoice) { create(:invoice) }
 
-  before { allow_any_instance_of(ApplicationController).to receive(:authorized).and_return(true) }
+  before(:each) do 
+    allow_any_instance_of(ApplicationController).to receive(:authorized).and_return(true)
+    invoice.reload
+  end
 
   refund_response = {
     'api_username' => 'abc12345',
@@ -35,14 +38,14 @@ RSpec.describe "Refund::Auction", type: :request do
 
     invoice.reload
 
-    post api_v1_refund_auction_index_path, params: { invoice_id: invoice.id }
+    post api_v1_refund_auction_index_path, params: { invoice_number: invoice.invoice_number }
 
     expect(response.status).to eq 200
     expect(JSON.parse(response.body)['message']).to eq 'Invoice was refunded'
   end
 
   it 'invoice not exists' do
-    post api_v1_refund_auction_index_path, params: { invoice_id: 'invalid' }
+    post api_v1_refund_auction_index_path, params: { invoice_number: 'invalid' }
 
     expect(response.status).to eq 404
     expect(JSON.parse(response.body)['error']).to eq 'Invoice not found'
@@ -54,7 +57,7 @@ RSpec.describe "Refund::Auction", type: :request do
 
     invoice.reload
 
-    post api_v1_refund_auction_index_path, params: { invoice_id: invoice.id }
+    post api_v1_refund_auction_index_path, params: { invoice_number: invoice.invoice_number }
 
     expect(response.status).to eq 422
     expect(JSON.parse(response.body)['error']['message']).to eq 'Open banking payments cannot be refunded'
@@ -62,11 +65,11 @@ RSpec.describe "Refund::Auction", type: :request do
 
   it 'arise some error from everypay' do
     stub_request(:post, "#{GlobalVariable::BASE_ENDPOINT}#{GlobalVariable::REFUND_ENDPOINT}")
-    .to_return(status: 200, body: refund_failed.to_json, headers: {})
+      .to_return(status: 200, body: refund_failed.to_json, headers: {})
 
     invoice.reload
 
-    post api_v1_refund_auction_index_path, params: { invoice_id: invoice.id }
+    post api_v1_refund_auction_index_path, params: { invoice_number: invoice.invoice_number }
 
     expect(response.status).to eq 422
     expect(JSON.parse(response.body)['error']['message']).to eq 'The timestamp is not valid'
