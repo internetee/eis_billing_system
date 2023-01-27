@@ -24,7 +24,7 @@ module Api
         private
 
         def load_invoice
-          @invoice = Invoice.find_by(invoice_number: params[:invoice_number])
+          @invoice = Invoice.find_by(invoice_number: params[:params][:invoice_number])
           return if @invoice.present?
 
           render json: {

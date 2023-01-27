@@ -38,14 +38,14 @@ RSpec.describe "Refund::Auction", type: :request do
 
     invoice.reload
 
-    post api_v1_refund_auction_index_path, params: { invoice_number: invoice.invoice_number }
+    post api_v1_refund_auction_index_path, params: { params: { invoice_number: invoice.invoice_number } }
 
     expect(response.status).to eq 200
     expect(JSON.parse(response.body)['message']).to eq 'Invoice was refunded'
   end
 
   it 'invoice not exists' do
-    post api_v1_refund_auction_index_path, params: { invoice_number: 'invalid' }
+    post api_v1_refund_auction_index_path, params: { params: { invoice_number: 'invalid' } }
 
     expect(response.status).to eq 404
     expect(JSON.parse(response.body)['error']).to eq 'Invoice not found'
@@ -57,7 +57,7 @@ RSpec.describe "Refund::Auction", type: :request do
 
     invoice.reload
 
-    post api_v1_refund_auction_index_path, params: { invoice_number: invoice.invoice_number }
+    post api_v1_refund_auction_index_path, params: { params: { invoice_number: invoice.invoice_number } }
 
     expect(response.status).to eq 422
     expect(JSON.parse(response.body)['error']['message']).to eq 'Open banking payments cannot be refunded'
@@ -69,7 +69,7 @@ RSpec.describe "Refund::Auction", type: :request do
 
     invoice.reload
 
-    post api_v1_refund_auction_index_path, params: { invoice_number: invoice.invoice_number }
+    post api_v1_refund_auction_index_path, params: { params: { invoice_number: invoice.invoice_number } }
 
     expect(response.status).to eq 422
     expect(JSON.parse(response.body)['error']['message']).to eq 'The timestamp is not valid'
