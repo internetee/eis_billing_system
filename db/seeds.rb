@@ -34,6 +34,6 @@ ActiveRecord::Base.transaction do
   SettingEntry.create(code: 'registry_juridical_name', value: 'Eesti Interneti SA', format: 'string', group: 'contacts')
   SettingEntry.create(code: 'directo_monthly_number_last', value: '309901', format: 'integer', group: 'billing')
   SettingEntry.create(code: 'registry_bank_account_iban_lhv', value: 'EE177700771001155322', format: 'string', group: 'billing')
-  SettingEntry.create(code: 'invoice_number_auction_deposit_min', value: '10001', format: 'integer', group: 'billing')
-  SettingEntry.create(code: 'invoice_number_auction_deposit_max', value: '20000', format: 'integer', group: 'billing')
+  SettingEntry.create(code: 'invoice_number_auction_deposit_min', value: ENV['deposit_min_num'].to_i, format: 'integer', group: 'billing')
+  SettingEntry.create(code: 'invoice_number_auction_deposit_max', value: ENV['deposit_max_num'].to_i, format: 'integer', group: 'billing')
 end
