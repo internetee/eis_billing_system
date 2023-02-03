@@ -24,7 +24,7 @@ class Invoice < ApplicationRecord
   }
 
   def self.search(params={})
-    sort_column = params[:sort].presence_in(%w{ invoice_number status }) || "id"
+    sort_column = params[:sort].presence_in(%w{ invoice_number status affiliation }) || "id"
     sort_direction = params[:direction].presence_in(%w{ asc desc }) || "desc"
 
     self
