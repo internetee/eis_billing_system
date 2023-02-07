@@ -21,18 +21,18 @@ class InvoiceStateMachine
     end
   end
 
-  def available_statuses
-    case invoice.status
-    when :paid && !invoice.payment_reference.presence
-      [:paid]
-    when :unpaid
-      [:unpaid, :paid, :cancelled]
-    when :cancelled
-      [:cancelled]
-    else
-      [:unpaid, :paid, :cancelled]
-    end
-  end
+  # def available_statuses
+  #   case invoice.status
+  #   when :paid && !invoice.payment_reference.presence
+  #     [:paid]
+  #   when :unpaid
+  #     [:unpaid, :paid, :cancelled]
+  #   when :cancelled
+  #     [:cancelled]
+  #   else
+  #     [:unpaid, :paid, :cancelled]
+  #   end
+  # end
 
   private
 

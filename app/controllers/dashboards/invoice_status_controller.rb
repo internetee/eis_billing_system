@@ -7,7 +7,7 @@ class Dashboards::InvoiceStatusController < ParentController
 
     resp = @invoice.synchronize(status: params[:status])
     if resp.result?
-      # @invoice.update(status: params[:status])
+      @invoice.update(status: params[:status])
 
       redirect_to dashboard_index_path, status: :see_other, flash: { notice: 'Invoice status updated successfully' }
     else

@@ -14,10 +14,6 @@ class InvoiceDataSenderService
   end
 
   def call
-    resp = InvoiceStateMachine.new(invoice: invoice, status: status).call
-
-    return parse_validation_errors(resp) if resp.errors.present?
-    # InvoiceStateMachine.new(invoice: invoice, status: status).call
     struct_response(base_request)
   end
 
@@ -41,3 +37,9 @@ class InvoiceDataSenderService
     end
   end
 end
+
+# resp = InvoiceStateMachine.new(invoice: invoice, status: status).call
+
+# return parse_validation_errors(resp) if resp.errors.present?
+# # InvoiceStateMachine.new(invoice: invoice, status: status).call
+# struct_response(base_request)
