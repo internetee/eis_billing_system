@@ -10,16 +10,7 @@ module ApplicationService
   end
 
   def parse_validation_errors(result)
-    errors = if result.instance_of?(::Invoice)
-               result.errors.to_hash[:base].join
-             else
-               result.errors.to_h[:message]
-             end
-    wrap(result: false, instance: nil, errors: errors)
-  end
-
-  def parse_model_validation_errors(result)
-    wrap(result: false, instance: nil, errors: result.errors.to_hash)
+    wrap(result: false, instance: nil, errors: result.errors.to_h)
   end
 
   def wrap(**kwargs)
