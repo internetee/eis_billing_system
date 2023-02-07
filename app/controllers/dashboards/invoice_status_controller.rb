@@ -7,13 +7,13 @@ class Dashboards::InvoiceStatusController < ParentController
 
     resp = @invoice.synchronize(status: params[:status])
     if resp.result?
-      @invoice.update(status: params[:status])
+      # @invoice.update(status: params[:status])
 
       redirect_to dashboard_index_path, status: :see_other, flash: { notice: 'Invoice status updated successfully' }
     else
       respond_to do |format|
         format.turbo_stream do
-          flash.now[:alert] = resp.errors['message']
+          flash.now[:alert] = resp.errors
           render turbo_stream: [
             render_turbo_flash
           ]

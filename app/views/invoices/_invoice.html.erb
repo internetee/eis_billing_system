@@ -3,7 +3,8 @@
   <td class="px-6 py-1 border-b border-gray-200">
     <%= form_with url: dashboards_invoice_status_path(invoice.id), method: :patch, 
                                                                    data: { controller: 'autosave', target: 'autosave.form'} do |f| %>
-      <%= f.select :status, options_for_select(Invoice.statuses.invert.values, invoice.status), {},
+                                                                   <%# Invoice.statuses.invert.values %>
+      <%= f.select :status, options_for_select(InvoiceStateMachine.new(invoice: invoice, status: invoice.status).available_statuses, invoice.status), {},
           selected: invoice.status, disabled: !invoice.registry?,
           class: "#{'bg-gray-200' unless invoice.registry? }" ,data: { action: 'autosave#save', target: 'autosave.select' } %>
     <% end %>
