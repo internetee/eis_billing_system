@@ -4,7 +4,7 @@ RSpec.describe 'Notify' do
 
   before(:each) do
     response_message = {
-      message: 'received'
+      message: 'request successfully received'
     }
     stub_request(:put, "#{GlobalVariable::BASE_REGISTRY}/eis_billing/payment_status")
       .to_return(status: 200, body: response_message.to_json, headers: {})
@@ -97,12 +97,6 @@ RSpec.describe 'Notify' do
         transaction_amount: invoice.transaction_amount.to_f,
         description: 'deposit'
       }
-      response_message = {
-        message: 'request successfully received'
-      }
-      stub_request(:put, "#{GlobalVariable::BASE_AUCTION}/eis_billing/payment_status")
-        .with(body: request_data.to_json)
-        .to_return(status: 200, body: response_message.to_json, headers: {})
 
       invoice.initiator = 'auction'
       invoice.invoice_number = 1

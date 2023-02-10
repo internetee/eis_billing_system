@@ -1,3 +1,4 @@
 en:
   api_errors:
     customer_url_error: 'this url not supported'
+    invalid_payment_reference: Reference number is invalid

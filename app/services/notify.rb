@@ -53,7 +53,9 @@ class Notify
       user_uuid: user_uuid,
       user_email: user_email,
       transaction_amount: invoice.transaction_amount.to_f,
-      description: 'deposit'
+      invoice_number: invoice.invoice_number,
+      description: 'deposit',
+      affiliation: 1
     }
 
     put_request(direction: 'services', path: url, params: params)

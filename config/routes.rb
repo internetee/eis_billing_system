@@ -60,6 +60,10 @@ Rails.application.routes.draw do
         resources :bulk_payment, only: [:create]
       end
 
+      namespace :refund do
+        resources :auction, only: [:create]
+      end
+
       namespace :callback_handler do
         match '/callback', via: %i[get], to: 'callback_handler#callback', as: :callback
       end

@@ -8,7 +8,8 @@ class Invoice < ApplicationRecord
     }
   }
 
-  enum status: %i[unpaid paid cancelled failed]
+  enum affiliation: %i[regular auction_deposit]
+  enum status: %i[unpaid paid cancelled failed refunded]
 
   scope :with_status, ->(status) {
     where(status: status) if status.present?
@@ -23,7 +24,7 @@ class Invoice < ApplicationRecord
   }
 
   def self.search(params={})
-    sort_column = params[:sort].presence_in(%w{ invoice_number status }) || "id"
+    sort_column = params[:sort].presence_in(%w{ invoice_number status affiliation }) || "id"
     sort_direction = params[:direction].presence_in(%w{ asc desc }) || "desc"
 
     self
