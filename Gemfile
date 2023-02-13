@@ -106,3 +106,5 @@ gem 'dry-initializer', '~> 3.1.0'
 gem 'dry-validation'
 
 gem 'net-smtp', require: false
+gem 'net-imap', require: false
+gem 'net-pop', require: false
