@@ -25,7 +25,7 @@ class SendEInvoiceJob < ApplicationJob
       invoice&.update(sent_at_omniva: Time.zone.now)
     else
       Rails.logger.info 'FAILED IN EINVOICE OMNIVA TRANSFER'
-      NotifierMailer.inform_admin(title: 'Failed e-invoice delivering', error_message: message).deliver_now
+      NotifierMailer.inform_admin('Failed e-invoice delivering', message).deliver_now
     end
   end
 
@@ -41,6 +41,6 @@ class SendEInvoiceJob < ApplicationJob
       This job will retry.
     TEXT
     Rails.logger.error message
-    NotifierMailer.inform_admin(title: 'Failed e-invoice delivering', error_message: message).deliver_now
+    NotifierMailer.inform_admin('Failed e-invoice delivering', message).deliver_now
   end
 end
