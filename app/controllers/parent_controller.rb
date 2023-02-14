@@ -3,8 +3,8 @@ class ParentController < ActionController::Base
 
   include AbstractController::Rendering
   include ActionView::Layouts
-  append_view_path "#{Rails.root}/app/views"
-  layout 'application.html.erb'
+  # append_view_path "#{Rails.root}/app/views/layouts"
+  layout "application"
   skip_before_action :verify_authenticity_token
 
   helper_method :turbo_frame_request?
