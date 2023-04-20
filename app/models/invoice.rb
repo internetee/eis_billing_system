@@ -1,5 +1,10 @@
 class Invoice < ApplicationRecord
   include PgSearch::Model
+  include Synchronization
+
+  REGISTRY = 'registry'.freeze
+  AUCTION = 'auction'.freeze
+  EEID = 'eeid'.freeze
 
   pg_search_scope :search_by_number, against: [:invoice_number],
   using: {
@@ -38,5 +43,31 @@ class Invoice < ApplicationRecord
     return false if description.nil?
 
     description.split(' ')[0] == 'auction_deposit'
+  end
+
+  def registry?
+    initiator == REGISTRY
+  end
+
+  def eeid?
+    initiator == EEID
+  end
+
+  def auction?
+    initiator == AUCTION
+  end
+
+  def to_h
+    {
+      invoice_number: invoice_number,
+      initiator: initiator,
+      payment_reference: payment_reference,
+      transaction_amount: transaction_amount,
+      status: status,
+      in_directo: in_directo,
+      everypay_response: everypay_response,
+      transaction_time: transaction_time,
+      sent_at_omniva: sent_at_omniva
+    }
   end
 end

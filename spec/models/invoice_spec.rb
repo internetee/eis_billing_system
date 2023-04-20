@@ -23,5 +23,29 @@ RSpec.describe Invoice, type: :model do
 
       expect(invoice.auction_deposit_prepayment?).to eq true
     end
+
+    it 'should send data for synchronization and get success result' do
+      mock_response = {
+        'message' => 'Invoice data was successfully updated'
+      }
+      allow_any_instance_of(InvoiceDataSenderService).to receive(:base_request).and_return(mock_response)
+
+      response = invoice.synchronize(status: 'paid')
+
+      expect(response.result?).to eq true
+    end
+
+    it 'should send data for synchronization and get error' do
+      mock_response = {
+        'error' => {
+          'message' => 'Something went wrong'
+        }
+      }
+      allow_any_instance_of(InvoiceDataSenderService).to receive(:base_request).and_return(mock_response)
+
+      response = invoice.synchronize(status: 'paid')
+
+      expect(response.result?).to eq false
+    end
   end
 end

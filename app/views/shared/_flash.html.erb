@@ -1,4 +1,5 @@
-<div id="flash">
+<turbo-frame-tag id="flash" action="replace">
+<div data-controller='autohide'>
   <% if flash.any? %>
       <% flash.each do |type, msg| %>
       <div>
@@ -19,3 +20,4 @@
       <% end %>
   <% end %>
 </div>
+</turbo-frame-tag>

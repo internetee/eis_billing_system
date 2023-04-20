@@ -65,6 +65,9 @@ module EisBillingSystem
       openssl_verify_mode:  ENV['smtp_openssl_verify_mode']
     }
 
+    config.middleware.use ActionDispatch::Cookies
+    config.middleware.use ActionDispatch::Flash
+
     config.action_dispatch.trusted_proxies = %w(127.0.0.1/32).map { |proxy| IPAddr.new(proxy) }
   end
 end

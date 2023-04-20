@@ -6,7 +6,6 @@ module Api
           response = Oneoff.call(invoice_number: params[:invoice_number],
                                  customer_url: params[:customer_url],
                                  reference_number: params[:reference_number])
-
           if response.result?
             render json: { 'message' => 'Link created',
                            'oneoff_redirect_link' => response.instance['payment_link'] },

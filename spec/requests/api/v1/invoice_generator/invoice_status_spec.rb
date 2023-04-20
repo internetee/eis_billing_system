@@ -4,7 +4,9 @@ RSpec.describe 'Api::V1::InvoiceGenerator::InvoiceStatusController', type: :requ
   describe 'Status handler' do
     let(:invoice) { create(:invoice) }
 
-    before { allow_any_instance_of(ApplicationController).to receive(:authorized).and_return(true) }
+    before(:each) do
+      allow_any_instance_of(ApplicationController).to receive(:authorized).and_return(true)
+    end
 
     it 'should update status to cancelled' do
       params = {

@@ -7,6 +7,8 @@ class ParentController < ActionController::Base
   layout 'application.html.erb'
   skip_before_action :verify_authenticity_token
 
+  helper_method :turbo_frame_request?
+
   before_action :set_current_user
 
   def render_turbo_flash

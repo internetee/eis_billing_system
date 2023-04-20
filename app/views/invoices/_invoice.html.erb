@@ -1,30 +1,49 @@
 <%= tag.tr id: dom_id(invoice), class: 'bg-white' do %>
   <td class="px-6 py-1 border-b border-gray-200"><%= invoice.invoice_number %></td>
-  <td class="px-6 py-1 border-b border-gray-200"><%= invoice.status %></td>
+  <td class="px-6 py-1 border-b border-gray-200">
+    <%= form_with url: dashboards_invoice_status_path(invoice.id), method: :patch, 
+                                                                   data: { controller: 'autosave', target: 'autosave.form'} do |f| %>
+      <%= f.select :status, options_for_select(Invoice.statuses.invert.values, invoice.status), {},
+          selected: invoice.status, disabled: !invoice.registry?,
+          class: "#{'bg-gray-200' unless invoice.registry? }" ,data: { action: 'autosave#save', target: 'autosave.select' } %>
+    <% end %>
+  </td>
   <td class="px-6 py-1 border-b border-gray-200"><%= invoice.initiator %></td>
-  <td class="px-6 py-1 break-all border-b border-gray-200"><%= invoice.payment_reference %></td>
+  
+  <td class="px-6 py-1 break-all border-b border-gray-200">
+    <%= link_to invoice_details_payment_reference_path(invoice), class: 'w-6 h-6 p-2 rounded-full bg-blue-300 hover:bg-blue-500 text-black border-gray-300 flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black text-center', data: { turbo_frame: 'modal' } do %>
+      <i class="fa-solid fa-info"></i>
+    <% end %>
+  </td>
+
+
   <td class="px-6 py-1 border-b border-gray-200"><%= invoice.transaction_time %></td>
   <td class="px-6 py-1 border-b border-gray-200"><%= invoice.transaction_amount %></td>
   <td class="px-6 py-1 border-b border-gray-200"><%= invoice.affiliation %></td>
   <td class="px-6 py-1 border-b border-gray-200">
-    <%= link_to everypay_response_path(invoice), class: 'w-6 h-6 p-2 rounded-full bg-blue-300 hover:bg-blue-500 text-black border-gray-300 flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black text-center', data: { turbo_frame: 'modal' } do %>
+    <%= link_to invoice_details_everypay_response_path(invoice), class: 'w-6 h-6 p-2 rounded-full bg-blue-300 hover:bg-blue-500 text-black border-gray-300 flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black text-center', data: { turbo_frame: 'modal' } do %>
       <i class="fa-solid fa-info"></i>
     <% end %>
-    <%#= invoice.everypay_response %>
+
   </td>
   <td class="px-6 py-1 break-all border-b border-gray-200">
-    <%= link_to directo_path(invoice), class: 'w-6 h-6 p-2 rounded-full bg-blue-300 hover:bg-blue-500 text-black border-gray-300 flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black text-center', data: { turbo_frame: 'modal' } do %>
+    <%= link_to invoice_details_directo_path(invoice), class: 'w-6 h-6 p-2 rounded-full bg-blue-300 hover:bg-blue-500 text-black border-gray-300 flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black text-center', data: { turbo_frame: 'modal' } do %>
       <i class="fa-solid fa-info"></i>
     <% end %>
-    <%#= invoice.directo_data %>
+
   </td>
     <td class="px-6 py-1 break-all border-b border-gray-200">
-    <%= link_to invoice_description_path(invoice_id: invoice.id), class: 'w-6 h-6 p-2 rounded-full bg-blue-300 hover:bg-blue-500 text-black border-gray-300 flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black text-center', data: { turbo_frame: 'modal' } do %>
+    <%= link_to invoice_details_description_path(invoice), class: 'w-6 h-6 p-2 rounded-full bg-blue-300 hover:bg-blue-500 text-black border-gray-300 flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black text-center', data: { turbo_frame: 'modal' } do %>
       <i class="fa-solid fa-info"></i>
     <% end %>
-    <%#= invoice.directo_data %>
+
   </td>
   <td class="px-6 py-1 break-all border-b border-gray-200"><%= invoice.sent_at_omniva.to_formatted_s(:long) unless invoice.sent_at_omniva.nil? %></td>
   <td class="px-6 py-1 break-all border-b border-gray-200"><%= invoice.in_directo %></td>
   <td class="px-6 py-1 break-all border-b border-gray-200"><%= invoice.created_at.to_formatted_s(:long) %></td>
+  <td class="px-6 py-1 break-all border-b border-gray-200 text-center">
+    <%= button_to dashboards_invoice_synchronize_path(id: invoice.id), method: :put do %>
+      <i class="fa-solid fa-arrows-rotate"></i>
+    <% end if invoice.registry? %>
+  </td>
 <% end %>
