@@ -7,6 +7,7 @@ class InvoiceInstanceGenerator
                     initiator: params[:custom_field2].to_s,
                     transaction_amount: params[:transaction_amount].to_s,
                     description: params.fetch(:custom_field1, 'reload balance').to_s,
-                    affiliation: params.fetch(:affiliation, REGULAR).to_s == AUCTION_DEPOSIT ? 1 : 0)
+                    affiliation: params.fetch(:affiliation, REGULAR).to_s == AUCTION_DEPOSIT ? 1 : 0,
+                    status: params[:transaction_amount].to_s == '0.0' ? :paid : :unpaid )
   end
 end
