@@ -62,7 +62,7 @@ RSpec.describe 'Api::V1::InvoiceGenerator::InvoiceStatusController', type: :requ
       }
 
       expect { post api_v1_invoice_generator_invoice_status_index_path, params: params }
-        .to change { ActionMailer::Base.deliveries.count }.by(2)
+        .to change { ActionMailer::Base.deliveries.count }.by(1)
     end
   end
 end

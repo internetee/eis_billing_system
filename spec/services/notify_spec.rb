@@ -1,3 +1,5 @@
+require 'rails_helper'
+
 RSpec.describe 'Notify' do
   let(:invoice) { create(:invoice) }
   let(:user) { create(:user) }
@@ -43,8 +45,14 @@ RSpec.describe 'Notify' do
       invoice_one.save
       invoice_two.save
 
+      invoice_one.update(initiator: 'auction')
+      invoice_two.update(initiator: 'auction')
+      invoice_three.update(initiator: 'auction')
+
       invoice_three.description = "#{invoice_one.invoice_number} #{invoice_two.invoice_number}"
       invoice_three.save
+
+      invoice_one.reload && invoice_two.reload && invoice_three.reload
 
       expect(invoice_three.description).to eq("#{invoice_one.invoice_number} #{invoice_two.invoice_number}")
       expect(invoice_one.status).to eq('unpaid')

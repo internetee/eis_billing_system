@@ -3,6 +3,7 @@ class Notify
 
   SETTLED = 'settled'.freeze
   PREPENDED = 'prepended'.freeze
+  AUCTION = 'auction'.freeze
 
   attr_reader :response
 
@@ -11,7 +12,7 @@ class Notify
   end
 
   def self.call(response:)
-    notifier = new(response: response)
+    notifier = new(response:)
 
     parsed_response = notifier.parse_response(response)
 
@@ -29,7 +30,7 @@ class Notify
     end
     return if invoice.paid?
 
-    notifier.update_invoice_state(parsed_response: parsed_response, invoice: invoice)
+    notifier.update_invoice_state(parsed_response:, invoice:)
     return unless invoice.paid?
 
     url = notifier.get_update_payment_url[invoice.initiator.to_sym]
@@ -76,7 +77,7 @@ class Notify
   end
 
   def invoice_numbers_from_multi_payment(invoice)
-    return if !invoice.auction? || invoice.description == PREPENDED
+    return if !invoice.initiator == AUCTION || invoice.description == PREPENDED || invoice.description == ''
 
     numbers = invoice.description.split(' ')
     results = Invoice.where(invoice_number: numbers).pluck(:invoice_number, :payment_reference)

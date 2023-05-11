@@ -68,9 +68,7 @@ RSpec.describe Oneoff do
                                       customer_url: GlobalVariable::BASE_REGISTRY,
                                       reference_number: nil)
 
-      expect(response.errors).to a_hash_including(
-        invoice_number: ['must be filled']
-      )
+      expect(response.errors).to eq 'Internal error: called invoice withour number. Please contact to administrator'
     end
   end
 end

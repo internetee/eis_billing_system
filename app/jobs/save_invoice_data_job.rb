@@ -61,6 +61,7 @@ class SaveInvoiceDataJob < ApplicationJob
     invoice.in_directo = attrs[:in_directo]
     invoice.sent_at_omniva = attrs[:e_invoice_sent_at]
     invoice.transaction_time = attrs[:transaction_time]
+    invoice.description = attrs.fetch(:description, 'prepended')
 
     invoice.save!
   end
