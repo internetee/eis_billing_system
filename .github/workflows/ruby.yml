@@ -15,8 +15,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-18.04]
-        ruby: [ '3.0.3' ]
+        os: [ubuntu-20.04]
+        ruby: [ '3.2.0' ]
     runs-on: ${{ matrix.os }}
     continue-on-error: ${{ endsWith(matrix.ruby, 'head') || matrix.ruby == 'debug' }}
     steps:

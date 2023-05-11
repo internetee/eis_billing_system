@@ -63,8 +63,7 @@ class Notify
   def notify(title:, error_message:)
     # return if Rails.env.development?
 
-    NotifierMailer.inform_admin(title: title,
-                                error_message: error_message).deliver_now
+    NotifierMailer.inform_admin(title, error_message).deliver_now
   end
 
   def update_invoice_state(parsed_response:, invoice:)

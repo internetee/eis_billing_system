@@ -8,8 +8,7 @@ class DirectoInvoiceForwardJob < ApplicationJob
     @client = new_directo_client
     monthly ? send_monthly_invoices : send_receipts
   rescue StandardError => e
-    NotifierMailer.inform_admin(title: 'Directo error occur',
-                                error_message: e.message).deliver_now
+    NotifierMailer.inform_admin('Directo error occur', e.message).deliver_now
   end
 
   private

@@ -58,6 +58,7 @@ RSpec.describe 'DirectoInvoiceForwardJob', type: :job do
   ]
 
   let!(:admin) { create(:user) }
+  let(:invoice) { create(:invoice) }
   before(:each) do
     ActiveJob::Base.queue_adapter = :test
     ActionMailer::Base.delivery_method = :test
@@ -65,7 +66,7 @@ RSpec.describe 'DirectoInvoiceForwardJob', type: :job do
 
   describe 'error handler' do
     it 'should notify if StandardError occur' do
-      expect { DirectoInvoiceForwardJob.perform_now(invoice_data: 'some', initiator: 'registry')}
+      expect { DirectoInvoiceForwardJob.perform_now(invoice_data: 'error', initiator: 'registry')}
               .to change { ActionMailer::Base.deliveries.count }.by(1)
     end
   end
