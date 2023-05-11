@@ -2,6 +2,11 @@ module Api
   module V1
     module InvoiceGenerator
       class InvoiceStatusController < Api::V1::InvoiceGenerator::BaseController
+        api! 'Invoice status updates'
+
+        param :invoice_number, String, required: true
+        param :status, String, required: true
+
         def create
           invoice = ::Invoice.find_by(invoice_number: params[:invoice_number])
 

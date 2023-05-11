@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  apipie
   root 'dashboard#index'
 
   get 'sign_up', to: 'registrations#new'

@@ -1,4 +1,6 @@
 class Api::V1::InvoiceGenerator::ReferenceNumberGeneratorController < ApplicationController
+  api! 'Returns the reference number for user. No parameters required'
+
   def create
     initiator = params['initiator']
     reference_number = nil

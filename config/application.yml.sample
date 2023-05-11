@@ -71,3 +71,7 @@ development:
 
   deposit_min_num: 10001
   deposit_max_num: 14001
+
+apipie_login: test
+apipie_password: test
+
