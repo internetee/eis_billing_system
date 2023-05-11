@@ -5,10 +5,12 @@ class Dashboards::InvoiceSynchronizesController < ParentController
 
     respond_to do |format|
       format.turbo_stream do
-        if @invoice.synchronize(status: @invoice.status).result?
+        res = @invoice.synchronize(status: @invoice.status)
+
+        if res.result?
           flash[:notice] = 'Invoice data was successfully updated'
         else
-          flash[:alert] = response.errors['message']
+          flash[:alert] = res.errors['message']
         end
 
         render turbo_stream: [render_turbo_flash]
