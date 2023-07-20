@@ -108,6 +108,7 @@ GEM
     bcrypt (3.1.18)
     bootsnap (1.16.0)
       msgpack (~> 1.2)
+    brakeman (6.0.0)
     builder (3.2.4)
     bundle-audit (0.1.0)
       bundler-audit
@@ -413,6 +414,7 @@ DEPENDENCIES
   apipie-rails (~> 1.2.0)
   bcrypt (~> 3.1.7)
   bootsnap (>= 1.4.4)
+  brakeman
   bundle-audit
   byebug
   capistrano
