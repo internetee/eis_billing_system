@@ -48,12 +48,12 @@ group :development, :test do
   gem 'rspec-rails'
   gem 'factory_bot_rails'
   gem 'rubocop-rails', require: false
+  gem 'bundle-audit', require: false
 end
 
 group :development do
   gem 'listen', '~> 3.3'
   gem 'spring'
-  gem 'bundle-audit', require: false
 end
 
 group :test do
