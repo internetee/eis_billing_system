@@ -32,12 +32,12 @@ jobs:
           bundle config set deployment '[secure]'
           bundle env
           head -n1 $(which bundle)
-      - name: Set ENV for codeclimate (pull_request)
-        run: |
-          git fetch --no-tags --prune --depth=1 origin +refs/heads/$GITHUB_HEAD_REF:refs/remotes/origin/$GITHUB_HEAD_REF
-          echo "GIT_BRANCH=$GITHUB_HEAD_REF" >> $GITHUB_ENV
-          echo "GIT_COMMIT_SHA=$(git rev-parse origin/$GITHUB_HEAD_REF)" >> $GITHUB_ENV
-        if: github.event_name == 'pull_request'
+      # - name: Set ENV for codeclimate (pull_request)
+      #   run: |
+      #     git fetch --no-tags --prune --depth=1 origin +refs/heads/$GITHUB_HEAD_REF:refs/remotes/origin/$GITHUB_HEAD_REF
+      #     echo "GIT_BRANCH=$GITHUB_HEAD_REF" >> $GITHUB_ENV
+      #     echo "GIT_COMMIT_SHA=$(git rev-parse origin/$GITHUB_HEAD_REF)" >> $GITHUB_ENV
+      #   if: github.event_name == 'pull_request'
 
 #       - name: Set ENV for codeclimate (push)
 #         run: |
@@ -53,6 +53,10 @@ jobs:
       #     curl -LSs 'https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64' >./cc-test-reporter;
       #     chmod +x ./cc-test-reporter
       #     ./cc-test-reporter before-build
+      
+      - name: Bundle Audit Check
+        run: bundle exec bundle-audit check --update
+      
       - name: Run Tests
         env:
           PG_DATABASE: postgres
