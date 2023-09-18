@@ -1,4 +1,4 @@
-class RefundService
+class CaptureService
   include Request
   include ApplicationService
   include ActionView::Helpers::NumberHelper
@@ -11,16 +11,12 @@ class RefundService
   end
 
   def self.call(amount:, payment_reference:)
-    new(amount: amount, payment_reference: payment_reference).call
+    new(amount:, payment_reference:).call
   end
 
   def call
-    contract = RefundContract.new
-    result = contract.call(amount: amount, payment_reference: payment_reference)
-
-    puts '------ REFUND SERVICE ------'
-    puts result.inspect
-    puts '------ END REFUND SERVICE ------'
+    contract = CaptureContract.new
+    result = contract.call(amount:, payment_reference:)
 
     if result.success?
       response = base_request
@@ -33,7 +29,7 @@ class RefundService
   private
 
   def base_request
-    uri = URI("#{GlobalVariable::BASE_ENDPOINT}#{GlobalVariable::REFUND_ENDPOINT}")
+    uri = URI("#{GlobalVariable::BASE_ENDPOINT}#{GlobalVariable::CAPTURE_ENDPOINT}")
     post(direction: 'everypay', path: uri, params: body)
   end
 

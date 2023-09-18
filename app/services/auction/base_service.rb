@@ -4,7 +4,7 @@ module Auction
 
     AUCTION_DEPOSIT = 'auction_deposit'.freeze
 
-    def oneoff_link(bulk: false)
+    def oneoff_link(bulk: false, deposit_banklink: false)
       invoice_number = InvoiceNumberService.call(invoice_auction_deposit: true)
       invoice_params = invoice_params(params, invoice_number)
 
@@ -13,6 +13,7 @@ module Auction
                              customer_url: params[:customer_url],
                              reference_number: params[:reference_number],
                              bulk: bulk,
+                             deposit_banklink: deposit_banklink,
                              bulk_invoices: params[:description].to_s.split(' '))
       response.result? ? struct_response(response.instance) : parse_validation_errors(response)
     end

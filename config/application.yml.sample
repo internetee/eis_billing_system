@@ -49,7 +49,8 @@ linkpay_prefix: 'https://igw-demo.every-pay.com/lp'
 linkpay_token: ''
 api_username: ''
 everypay_base: https://igw-demo.every-pay.com/api/v4
-account_name: ''
+account_name: 'EUR3D1'
+deposit_account_name: 'EUR3D4'
 
 timeout_is_sec: 3
 

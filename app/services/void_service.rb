@@ -1,26 +1,24 @@
-class RefundService
+class VoidService
   include Request
   include ApplicationService
-  include ActionView::Helpers::NumberHelper
 
-  attr_reader :amount, :payment_reference
+  attr_reader :payment_reference
 
-  def initialize(amount:, payment_reference:)
-    @amount = amount
+  def initialize(payment_reference:)
     @payment_reference = payment_reference
   end
 
-  def self.call(amount:, payment_reference:)
-    new(amount: amount, payment_reference: payment_reference).call
+  def self.call(payment_reference:)
+    new(payment_reference: payment_reference).call
   end
 
   def call
-    contract = RefundContract.new
-    result = contract.call(amount: amount, payment_reference: payment_reference)
+    contract = VoidContract.new
+    result = contract.call(payment_reference: payment_reference)
 
-    puts '------ REFUND SERVICE ------'
+    puts '-------- VOID SERVICE --------'
     puts result.inspect
-    puts '------ END REFUND SERVICE ------'
+    puts '-------- END VOID SERVICE --------'
 
     if result.success?
       response = base_request
@@ -33,14 +31,13 @@ class RefundService
   private
 
   def base_request
-    uri = URI("#{GlobalVariable::BASE_ENDPOINT}#{GlobalVariable::REFUND_ENDPOINT}")
+    uri = URI("#{GlobalVariable::BASE_ENDPOINT}#{GlobalVariable::VOID_ENDPOINT}")
     post(direction: 'everypay', path: uri, params: body)
   end
 
   def body
     {
       'api_username' => GlobalVariable::API_USERNAME,
-      'amount' => number_with_precision(amount, precision: 2),
       'payment_reference' => payment_reference,
       'nonce' => nonce,
       'timestamp' => "#{Time.zone.now.to_formatted_s(:iso8601)}"

@@ -8,6 +8,7 @@ class GlobalVariable
   BASE_ENDPOINT = ENV['everypay_base'] || 'https://igw-demo.every-pay.com/api/v4'
   ONEOFF_ENDPOINT = '/payments/oneoff'.freeze
   ACCOUNT_NAME = ENV['account_name']
+  DEPOSIT_ACCOUNT_NAME = ENV['deposit_account_name']
 
   INITIATOR = 'billing'.freeze
   BILLING_SECRET = ENV['billing_secret']
@@ -25,4 +26,6 @@ class GlobalVariable
   ALLOWED_DEV_BASE_URLS = ENV['allowed_base_urls']
 
   REFUND_ENDPOINT = '/payments/refund'.freeze
+  VOID_ENDPOINT = '/payments/void'.freeze
+  CAPTURE_ENDPOINT = '/payments/capture'.freeze
 end
