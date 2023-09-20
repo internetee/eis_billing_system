@@ -75,6 +75,7 @@ Rails.application.routes.draw do
 
       namespace :refund do
         resources :auction, only: [:create]
+        resources :capture, only: [:create]
       end
 
       namespace :callback_handler do

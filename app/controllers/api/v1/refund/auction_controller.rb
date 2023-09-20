@@ -1,12 +1,17 @@
 module Api
   module V1
     module Refund
+      # rubocop:disable Metrics
       class AuctionController < ApplicationController
         before_action :load_invoice
 
         def create
-          response = RefundService.call(amount: @invoice.transaction_amount,
-                                        payment_reference: @invoice.payment_reference)
+          response = if @invoice.payment_method == 'card'
+                       VoidService.call(payment_reference: @invoice.payment_reference)
+                     else
+                       RefundService.call(amount: @invoice.transaction_amount,
+                                          payment_reference: @invoice.payment_reference)
+                     end
 
           if response.result?
             @invoice.update(status: 'refunded')

@@ -18,7 +18,7 @@ module Auction
       contract = DepositPrepaymentContract.new
       result = contract.call(params)
 
-      result.success? ? oneoff_link : parse_validation_errors(result)
+      result.success? ? oneoff_link(deposit_banklink: true) : parse_validation_errors(result)
     end
   end
 end

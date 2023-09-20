@@ -1,44 +1,47 @@
 class InvalidParams < StandardError; end
 
+# rubocop:disable Metrics
 class Oneoff
   include Request
   include ApplicationService
 
-  attr_reader :invoice_number, :customer_url, :reference_number, :bulk, :bulk_invoices
+  attr_reader :invoice_number, :customer_url, :reference_number, :bulk, :deposit_banklink, :bulk_invoices
 
-  def initialize(invoice_number:, customer_url:, reference_number:, bulk: false, bulk_invoices: [])
-    @invoice = Invoice.find_by(invoice_number: invoice_number)
+  def initialize(invoice_number:, customer_url:, reference_number:, bulk: false, deposit_banklink: false, bulk_invoices: [])
+    @invoice = Invoice.find_by(invoice_number:)
 
     @invoice_number = invoice_number
     @customer_url = customer_url
     @reference_number = reference_number
     @bulk = bulk
     @bulk_invoices = bulk_invoices
+    @deposit_banklink = deposit_banklink
   end
 
-  def self.call(invoice_number:, customer_url:, reference_number:, bulk: false, bulk_invoices: [])
-    new(invoice_number: invoice_number,
-        customer_url: customer_url,
-        reference_number: reference_number,
-        bulk: bulk,
-        bulk_invoices: bulk_invoices).call
+  def self.call(invoice_number:, customer_url:, reference_number:, bulk: false, deposit_banklink: false, bulk_invoices: [])
+    new(invoice_number:,
+        customer_url:,
+        reference_number:,
+        bulk:,
+        deposit_banklink:,
+        bulk_invoices:).call
   end
 
   def call
     if @invoice.nil?
-      if invoice_number.nil?
-        errors = 'Internal error: called invoice withour number. Please contact to administrator'
-      else
-        errors = "Invoice with #{invoice_number} not found in internal system"
-      end
+      errors = if invoice_number.nil?
+                'Internal error: called invoice withour number. Please contact to administrator'
+              else
+                "Invoice with #{invoice_number} not found in internal system"
+               end
 
-      return wrap(result: false, instance: nil, errors: errors)
+      return wrap(result: false, instance: nil, errors:)
     end
 
     contract = OneoffParamsContract.new
-    result = contract.call(invoice_number: invoice_number,
-                           customer_url: customer_url,
-                           reference_number: reference_number)
+    result = contract.call(invoice_number:,
+                           customer_url:,
+                           reference_number:)
     if result.success?
       response = base_request
       struct_response(response)
@@ -59,11 +62,11 @@ class Oneoff
 
     {
       'api_username' => GlobalVariable::API_USERNAME,
-      'account_name' => GlobalVariable::ACCOUNT_NAME,
+      'account_name' => deposit_banklink ? GlobalVariable::DEPOSIT_ACCOUNT_NAME : GlobalVariable::ACCOUNT_NAME,
       'amount' => @invoice.transaction_amount.to_f,
-      'order_reference' => "#{ bulk ? bulk_description : @invoice.invoice_number }",
+      'order_reference' => "#{bulk ? bulk_description : @invoice.invoice_number}",
       'token_agreement' => 'unscheduled',
-      'nonce' => "#{rand(10 ** 30).to_s.rjust(30,'0')}",
+      'nonce' => "#{rand(10**30).to_s.rjust(30, '0')}",
       'timestamp' => "#{Time.zone.now.to_formatted_s(:iso8601)}",
       # 'email' => Setting.registry_email,
       'customer_url' => customer_url,
