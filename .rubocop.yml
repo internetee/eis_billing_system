@@ -6,6 +6,7 @@ AllCops:
     - 'spec/**/*'
     - 'db/**/*'
     - 'config/**/*'
+    - 'spec/**/*'
     - 'bin/*'
     - 'config.ru'
     - 'Gemfile'

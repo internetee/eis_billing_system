@@ -1,5 +1,5 @@
 FactoryBot.define do
   factory :white_code do
-    code { "MyString" }
+    code { "60001019906" }
   end
 end

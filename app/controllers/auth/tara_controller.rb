@@ -5,7 +5,7 @@ module Auth
     allow_unauthenticated
 
     def callback
-      expires_now
+      expires_now && reset_session
 
       unless in_white_list?
         flash[:alert] = I18n.t('.access_denied')

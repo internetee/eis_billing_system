@@ -2,9 +2,12 @@ require 'rails_helper'
 
 RSpec.describe "InvoiceStatus", type: :request do
   let(:user) { create(:user) }
+  let(:white_code) { create(:white_code) }
+
   before(:each) do
-    Current.user = user
-    allow_any_instance_of(ParentController).to receive(:require_user_logged_in!).and_return(Current.user)
+    user.reload && white_code.reload
+
+    login user
 
     mock_response = {
       'message' => 'Invoice data was successfully updated'
