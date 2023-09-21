@@ -1,6 +1,4 @@
 class InvoiceDetails::EverypayResponseController < ParentController
-  before_action :require_user_logged_in!
-
   def show
     everypay = Invoice.find(params[:id])
     @everypay = everypay.everypay_response

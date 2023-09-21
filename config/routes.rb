@@ -2,17 +2,9 @@ Rails.application.routes.draw do
   apipie
   root 'dashboard#index'
 
-  get 'sign_up', to: 'registrations#new'
-  post 'sign_up', to: 'registrations#create'
   get 'sign_in', to: 'sessions#new'
-  post 'sign_in', to: 'sessions#create', as: 'log_in'
   delete 'logout', to: 'sessions#destroy'
-
-  resources :users, only: [:index, :destroy, :edit, :update, :new] do
-    collection do
-      post :search
-    end
-  end
+  resources :white_codes
 
   resources :dashboard do
     collection do
@@ -39,6 +31,13 @@ Rails.application.routes.draw do
   end
 
   resources :references, only: [:index]
+
+  namespace 'auth' do
+    resources :invitations, only: %i[show edit create update destroy]
+    match '/:provider/callback', via: %i[get post], to: 'tara#callback', as: :tara_callback
+    match '/tara/cancel', via: %i[get post delete], to: 'tara#cancel', as: :tara_cancel
+    get '/failure', to: 'tara#cancel'
+  end
   
   namespace :api, defaults: { format: :json } do
     namespace :v1 do

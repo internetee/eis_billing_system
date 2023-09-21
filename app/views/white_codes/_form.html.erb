@@ -1,0 +1,14 @@
+          
+<%= turbo_frame_tag 'admin_form' do %>
+  <h1 class='text-center font-bold text-2xl'>Create Admin</h1>
+  <%= form_with model: white_code, url: url do |f| %>
+    <div class="my-2">
+      <%= f.label 'code', class: "text-sm font-bold" %><br>
+      <%= f.text_field :code, autofocus: true, required: true, class: "w-full px-3 py-2 mt-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded focus:outline-none focus:ring-indigo-500  focus:border-indigo-500 focus:z-10 sm:text-sm", placeholder: "" %>
+    </div>
+
+    <div class="my-2 text-center">
+      <%= f.submit f.object.new_record? ? '+ Add identity code to white list' : 'Update white code', class: "h-10 py-2 mt-4 px-4 border border-transparent text-sm font-semibold rounded-md text-white bg-violet-700 hover:bg-violet-800 transition duration-150 ease-in-out shadow-md cursor-pointer" %>
+    </div>
+  <% end %>
+<% end %>
