@@ -3,6 +3,7 @@ require: rubocop-rails
 AllCops:
   Exclude:
     - 'test/**/*'
+    - 'spec/**/*'
     - 'db/**/*'
     - 'config/**/*'
     - 'bin/*'

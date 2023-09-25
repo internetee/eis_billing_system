@@ -1,3 +1,4 @@
+# rubocop:disable Metrics
 module Api
   module V1
     module InvoiceGenerator
