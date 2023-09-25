@@ -1,5 +1,14 @@
 require 'rails_helper'
 
 RSpec.describe WhiteCode, type: :model do
-  pending "add some examples to (or delete) #{__FILE__}"
+  it 'should validate length of code' do
+    w = WhiteCode.new(code: '123456789')
+    expect(w.valid?).to be false
+
+    w.code = '1234567890123'
+    expect(w.valid?).to be false
+
+    w.code = '1234567890'
+    expect(w.valid?).to be true
+  end
 end

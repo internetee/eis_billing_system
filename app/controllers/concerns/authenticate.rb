@@ -69,4 +69,13 @@ module Authenticate
     Current.user = nil
     Current.app_session = nil
   end
+
+  def render_forbidden_error
+    flash[:alert] = I18n.t('.access_denied')
+    render 'errors/403', status: :forbidden
+  end
 end
+
+class NotAuthorizedError < StandardError
+end
+

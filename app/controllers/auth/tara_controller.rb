@@ -4,13 +4,12 @@ module Auth
   class TaraController < ParentController
     allow_unauthenticated
 
+    rescue_from NotAuthorizedError, with: :render_forbidden_error
+
     def callback
       expires_now && reset_session
 
-      unless in_white_list?
-        flash[:alert] = I18n.t('.access_denied')
-        redirect_to sign_in_path, status: :see_other and return
-      end
+      raise NotAuthorizedError unless in_white_list?
 
       session[:omniauth_hash] = user_hash.delete_if { |key, _| key == 'credentials' }
       @user = User.from_omniauth(user_hash)

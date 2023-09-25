@@ -12,6 +12,8 @@ Rails.application.routes.draw do
     end
   end
 
+  resource :errors, only: [:show]
+
   namespace :dashboards do
     resources :invoice_status, only: :update
     resource :invoice_synchronize, only: :update
