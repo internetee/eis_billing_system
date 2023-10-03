@@ -61,8 +61,8 @@ gem 'pdfkit'
 gem 'money'
 gem 'countries', :require => 'countries/global'
 
-#payment features
-gem 'e_invoice', github: 'internetee/e_invoice', branch: :master
+# payment features
+gem 'e_invoice', github: 'internetee/e_invoice', branch: 'master'
 gem 'directo', github: 'internetee/directo', branch: 'master'
 gem 'lhv', github: 'internetee/lhv', branch: 'master'
 
