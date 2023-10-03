@@ -38,6 +38,11 @@ class Api::V1::EInvoice::EInvoiceController < ApplicationController
       buyer_e_invoice_iban: invoice_params[:buyer_e_invoice_iban],
       seller_country_code: invoice_params[:seller_country_code],
       buyer_country_code: invoice_params[:buyer_country_code],
+      balance_date: invoice_params[:balance_date],
+      balance_begin: invoice_params[:balance_begin],
+      inbound: invoice_params[:inbound],
+      outbound: invoice_params[:outbound],
+      balance_end: invoice_params[:balance_end],
       initiator: invoice_params[:initiator],
     }
 
