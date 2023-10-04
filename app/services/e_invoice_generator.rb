@@ -1,6 +1,8 @@
 class EInvoiceGenerator
   attr_reader :invoice, :payable, :items, :buyer_billing_email,
-              :buyer_e_invoice_iban, :invoice_subtotal, :invoice_vat_amount,
+              :buyer_e_invoice_iban, :invoice_subtotal, :invoice_balance_date,
+              :invoice_balance_begin, :invoice_inbound, :invoice_outbound,
+              :invoice_balance_end, :invoice_vat_amount,
               :seller_country_code, :buyer_country_code, :e_invoice_data
 
   def initialize(e_invoice_data)
@@ -8,6 +10,11 @@ class EInvoiceGenerator
     @payable = e_invoice_data[:payable]
     @invoice_subtotal = e_invoice_data[:invoice_subtotal]
     @invoice_vat_amount = e_invoice_data[:vat_amount]
+    @invoice_balance_date = e_invoice_data[:balance_date]
+    @invoice_balance_begin = e_invoice_data[:balance_begin]
+    @invoice_inbound = e_invoice_data[:inbound]
+    @invoice_outbound = e_invoice_data[:outbound]
+    @invoice_balance_end = e_invoice_data[:balance_end]
     @items = e_invoice_data[:invoice_items]
     @buyer_billing_email = e_invoice_data[:buyer_billing_email]
     @buyer_e_invoice_iban = e_invoice_data[:buyer_e_invoice_iban]
@@ -71,10 +78,16 @@ class EInvoiceGenerator
       i.subtotal = invoice_subtotal
       i.vat_amount = invoice_vat_amount
       i.total = invoice[:total]
+      i.total_to_pay = invoice[:total_to_pay]
       i.currency = invoice[:currency]
       i.delivery_channel = %i[internet_bank portal]
       i.payable = payable
       i.monthly_invoice = invoice[:monthly_invoice]
+      i.balance_date = invoice_balance_date
+      i.balance_begin = invoice_balance_begin
+      i.inbound = invoice_inbound
+      i.outbound = invoice_outbound
+      i.balance_end = invoice_balance_end
     end
 
     EInvoice::EInvoice.new(date: Time.zone.today, invoice: e_invoice_invoice)
