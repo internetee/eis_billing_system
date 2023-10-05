@@ -71,6 +71,7 @@ Rails.application.routes.draw do
         resources :oneoff, only: [:create]
         resources :deposit_prepayment, only: [:create]
         resources :bulk_payment, only: [:create]
+        resources :deposit_status, only: [:create]
       end
 
       namespace :refund do
