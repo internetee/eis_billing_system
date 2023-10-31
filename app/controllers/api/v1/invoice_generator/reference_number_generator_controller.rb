@@ -3,14 +3,17 @@ class Api::V1::InvoiceGenerator::ReferenceNumberGeneratorController < Applicatio
 
   def create
     initiator = params['initiator']
+    owner = params['owner']
+    email = params['email']
     reference_number = nil
+
     loop do
       reference_number = generate
 
-      reference = Reference.find_by(reference_number: reference_number)
+      reference = Reference.find_by(reference_number:)
       next unless reference.nil?
 
-      Reference.create!(reference_number: reference_number, initiator: initiator)
+      Reference.create!(reference_number:, initiator:, email:, owner:)
       break
     end
 
