@@ -11,7 +11,7 @@ class GlobalVariable
 
   INITIATOR = 'billing'.freeze
   BILLING_SECRET = ENV['billing_secret']
-  TIMEOUT_IN_SECONDS = ENV['timeout_is_sec'].to_i
+  TIMEOUT_IN_SECONDS = ENV['timeout_is_sec']&.to_i || 10
 
   BASE_REGISTRY = ENV['base_registry'] || 'http://registry:300'
   BASE_REGISTRAR = ENV['base_registrar'] || 'http://registrar_center:300'
