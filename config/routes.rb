@@ -60,6 +60,7 @@ Rails.application.routes.draw do
 
       namespace :invoice do
         resource :invoice_synchronize, only: :update
+        resource :update_invoice_data, only: :update
       end
 
       namespace :invoice_generator do
