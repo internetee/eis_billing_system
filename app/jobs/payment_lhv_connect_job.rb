@@ -43,7 +43,7 @@ class PaymentLhvConnectJob < ApplicationJob
 
     sorted_by_ref_number = incoming_transactions.group_by { |x| x[:payment_reference_number] }
     sorted_by_ref_number.each do |s|
-      Rails.logger.info '=========== Sending to registry ==========='
+      Rails.logger.info '=========== Sending transaction ==========='
       Rails.logger.info s[1]
       Rails.logger.info '==========================================='
 
@@ -95,7 +95,7 @@ class PaymentLhvConnectJob < ApplicationJob
   def send_transactions(params:, payment_reference_number:)
     reference = Reference.find_by(reference_number: payment_reference_number)
 
-    uri = URI.parse(url[reference.initiator])
+    uri = URI.parse(url[reference.initiator.to_sym])
     http = Net::HTTP.new(uri.host, uri.port)
   
     if Rails.env.development? || Rails.env.test?
@@ -106,7 +106,7 @@ class PaymentLhvConnectJob < ApplicationJob
       http.verify_mode = OpenSSL::SSL::VERIFY_PEER
     end
 
-    res = http.post(url[reference.initiator], params.to_json, headers)
+    res = http.post(url[reference.initiator.to_sym], params.to_json, headers)
 
     Rails.logger.info '>>>>>>'
     Rails.logger.info res.body
