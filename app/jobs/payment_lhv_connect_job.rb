@@ -95,18 +95,21 @@ class PaymentLhvConnectJob < ApplicationJob
   def send_transactions_to_registry(params:)
     uri = URI.parse(url_transaction)
     http = Net::HTTP.new(uri.host, uri.port)
-
-    unless Rails.env.development? || Rails.env.test?
+  
+    if Rails.env.development? || Rails.env.test?
       http.use_ssl = true
-      http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+      http.verify_mode = OpenSSL::SSL::VERIFY_NONE # :brakemanignore: SSLVerify
+    else
+      http.use_ssl = true
+      http.verify_mode = OpenSSL::SSL::VERIFY_PEER
     end
-
+  
     res = http.post(url_transaction, params.to_json, headers)
-
+  
     Rails.logger.info ">>>>>>"
     Rails.logger.info res.body
     Rails.logger.info ">>>>>>"
-  end
+  end  
 
   def generate_token
     JWT.encode(payload, billing_secret)

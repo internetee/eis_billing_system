@@ -4,9 +4,7 @@ class EverypayController < ParentController
   def index; end
 
   def everypay_data
-    payment_reference = params[:payment_reference]
-
-    response = EverypayResponse.call(payment_reference)
+    response = EverypayResponse.call(params[:payment_reference])
     Notify.call(response: response)
 
     respond_to do |format|
@@ -18,4 +16,5 @@ class EverypayController < ParentController
       end
     end
   end
+
 end
