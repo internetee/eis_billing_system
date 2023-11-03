@@ -39,11 +39,9 @@ class Notify
     parsed_response[:invoice_number_collection] = notifier.invoice_numbers_from_multi_payment(invoice)
 
     notifier.put_request(direction: 'services', path: url, params: parsed_response)
-  rescue  Net::ReadTimeout => e
-    Rails.logger.error "Timeout error: #{e}. path: #{url}, params: #{parsed_response}, class: Notify, method: call"
   rescue StandardError => e
     Rails.logger.error e
-    notifier.notify(title: 'Error occur in callback handler', error_message: "Error message #{e}")
+    notifier.notify(title: 'Error occur in callback handler', error_message: "Error message #{e}. path: #{url}, params: #{parsed_response}, class: Notify, method: call")
   end
 
   def define_for_deposit(invoice, url)
@@ -51,16 +49,16 @@ class Notify
     domain_name, user_uuid, user_email = attributes.map { |attr| attr.split(' ')[1] }
 
     params = {
-      domain_name: domain_name,
-      user_uuid: user_uuid,
-      user_email: user_email,
+      domain_name:,
+      user_uuid:,
+      user_email:,
       transaction_amount: invoice.transaction_amount.to_f,
       invoice_number: invoice.invoice_number,
       description: 'deposit',
       affiliation: 1
     }
 
-    put_request(direction: 'services', path: url, params: params)
+    put_request(direction: 'services', path: url, params:)
   end
 
   def notify(title:, error_message:)
@@ -73,7 +71,7 @@ class Notify
     status = parsed_response[:payment_state] == SETTLED ? :paid : :failed
 
     invoice.update(payment_reference: parsed_response[:payment_reference],
-                   status: status,
+                   status:,
                    transaction_time: parsed_response[:transaction_time],
                    everypay_response: parsed_response)
   end
@@ -93,7 +91,7 @@ class Notify
   end
 
   def set_description_for_multiple_payment(parent_invoice:, invoice_number:)
-    invoice = Invoice.find_by(invoice_number: invoice_number)
+    invoice = Invoice.find_by(invoice_number:)
 
     invoice.payment_reference = parent_invoice.payment_reference
     invoice.status = parent_invoice.status
