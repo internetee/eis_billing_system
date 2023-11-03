@@ -1,8 +1,5 @@
 class InvoiceDetails::DirectoController < ParentController
   require 'rexml/document'
-
-  before_action :require_user_logged_in!
-
   def show
     directo = Invoice.find(params[:id])
 

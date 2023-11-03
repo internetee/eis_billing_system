@@ -1,0 +1,25 @@
+<div class="container mx-auto">
+    <div class='flex flex-row'>
+      <div class='basis-3/4'>
+        <table class="min-w-full">
+          <thead class='py-2'>
+            <tr>
+              <th class="px-6 py-2 border-b border-gray-200 bg-gray-50 text-left text-md leading-4 text-gray-500 uppercase tracking-wider">Code</th>
+              <th class="px-2 py-2 border-b border-gray-200 bg-gray-50 text-left leading-4 text-gray-500 uppercase tracking-wider text-right">
+                <%= link_to 'New identity code to white list', new_white_code_path, class: 'h-10 py-2 my-1 px-4 border border-transparent text-sm font-semibold rounded-md text-white bg-violet-700 hover:bg-violet-800 transition duration-150 ease-in-out shadow-md cursor-pointer', data: { turbo_frame: 'admin_form' } %>
+              </th>
+            </tr>
+          </thead>
+          <tbody id="white_codes" class='bg-white'>
+              <%= render @white_codes %>
+          </tbody>
+        </table>
+      </div>
+
+      <div class='ml-4 bases-1/4 p-6 bg-white' id="new_user">
+        <%= turbo_frame_tag 'admin_form' do %>
+          <%= render partial: 'form', locals: { white_code: @new_white_code, url: white_codes_path } %>
+        <% end %>
+      </div>
+    </div>
+</div>

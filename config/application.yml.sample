@@ -66,11 +66,21 @@ secret_word: ''
 
 e_invoice_provider_test_mode: 'true'
 
+
+deposit_min_num: 10001
+deposit_max_num: 14001
+
 development:
   allowed_base_urls: 'https://registry.test, https://registrar_center.test, https://eeid.test, https://auction_center.test, https://auction.test'
+  tara_redirect_uri: 'https://eis_billing_system.test/auth/tara/callback'
+  tara_identifier: ''
+  tara_secret: ''
 
-  deposit_min_num: 10001
-  deposit_max_num: 14001
+staging:
+  tara_redirect_uri: 'https://st-billing.infra.tld.ee/auth/tara/callback'
+  tara_identifier: ''
+  tara_secret: ''
+
 
 apipie_login: test
 apipie_password: test

@@ -1,6 +1,4 @@
 class Dashboards::InvoiceStatusController < ParentController
-  before_action :require_user_logged_in!
-
   def update
     @invoice = Invoice.find(params[:id])
     temporary_unavailable and return unless @invoice.registry?

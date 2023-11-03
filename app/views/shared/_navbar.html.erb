@@ -22,8 +22,8 @@
               <i class="fa-solid fa-money-bill"></i> <span class="ml-2">Get data from Everypay</span>
             <% end %>
 
-            <%= link_to users_path, class: 'px-6 py-1 flex flex-col md:flex-row md:items-center' do %>
-              <i class="fa-solid fa-users"></i> <span class="ml-2">Admins</span>
+            <%= link_to white_codes_path, class: 'px-6 py-1 flex flex-col md:flex-row md:items-center' do %>
+              <i class="fa-solid fa-users"></i> <span class="ml-2">White list</span>
             <% end %>
 
             <%= link_to logout_path, method: :destroy, data: { "turbo-method": 'delete' }, class: 'px-6 py-1 flex flex-col md:flex-row md:items-center' do %>

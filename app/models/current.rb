@@ -1,4 +1,3 @@
 class Current < ActiveSupport::CurrentAttributes
-  # makes Current.user accessible in view files.
-  attribute :user
+  attribute :user, :app_session
 end

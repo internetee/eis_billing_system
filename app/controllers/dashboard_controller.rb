@@ -1,6 +1,4 @@
 class DashboardController < ParentController
-  before_action :require_user_logged_in!
-
   def index
     @pagy, @invoices = pagy(Invoice.search(params),
                             items: params[:per_page] ||= 25,

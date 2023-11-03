@@ -1,0 +1,3 @@
+<%= turbo_frame_tag 'admin_form' do %>
+    <%= render partial: 'white_codes/form', locals: { white_code: @white_code, url: new_white_code_path } %>
+<% end %>
