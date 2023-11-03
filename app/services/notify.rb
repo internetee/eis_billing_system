@@ -39,6 +39,8 @@ class Notify
     parsed_response[:invoice_number_collection] = notifier.invoice_numbers_from_multi_payment(invoice)
 
     notifier.put_request(direction: 'services', path: url, params: parsed_response)
+  rescue  Net::ReadTimeout => e
+    Rails.logger.error "Timeout error: #{e}. path: #{url}, params: #{parsed_response}, class: Notify, method: call"
   rescue StandardError => e
     Rails.logger.error e
     notifier.notify(title: 'Error occur in callback handler', error_message: "Error message #{e}")
