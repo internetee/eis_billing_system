@@ -3,6 +3,7 @@ module Api
     module CallbackHandler
       class CallbackHandlerController < ApplicationController
         skip_before_action :authorized
+        rescue_from JSON::ParserError, with: :render_wrong_format
 
         api! 'Receives data from Everypay, when the payment was made by the customer'
 
@@ -40,6 +41,12 @@ module Api
           result = Notify.call(response: response)
 
           render status: :ok, json: { message: result }
+        end
+
+        private
+
+        def render_wrong_format
+          render status: :unprocessable_entity, json: { message: 'Wrong format' }
         end
       end
     end
