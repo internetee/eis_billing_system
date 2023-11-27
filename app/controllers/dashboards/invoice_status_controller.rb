@@ -4,6 +4,7 @@ class Dashboards::InvoiceStatusController < ParentController
     temporary_unavailable and return unless @invoice.allow_to_synchronize?
 
     resp = @invoice.synchronize(status: params[:status])
+
     if resp.result?
       @invoice.update(status: params[:status])
 
