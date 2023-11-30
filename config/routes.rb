@@ -5,6 +5,7 @@ Rails.application.routes.draw do
   get 'sign_in', to: 'sessions#new'
   delete 'logout', to: 'sessions#destroy'
   resources :white_codes
+  resources :invoice_creators, only: %i[new create index show]
 
   resources :dashboard do
     collection do

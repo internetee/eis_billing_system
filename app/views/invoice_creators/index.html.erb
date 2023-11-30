@@ -1,0 +1,29 @@
+<div class="container mx-auto">
+    <div class='flex flex-row'>
+      <%= link_to 'New Invoice', new_invoice_creator_path,
+                    class: 'h-10 py-2 my-1 px-4 border border-transparent text-sm font-semibold rounded-md text-white bg-violet-700 hover:bg-violet-800 transition duration-150 ease-in-out shadow-md cursor-pointer' %>
+    </div>
+
+ <div>
+    <table class="min-w-full mt-6">
+      <thead>
+        <tr>
+          <th class="px-6 py-1 border-b border-gray-200 bg-gray-50 text-left text-xs text-gray-500 uppercase">Invoice number</th>
+          <th class="px-6 py-1 border-b border-gray-200 bg-gray-50 text-left text-xs text-gray-500 uppercase">Status</th>
+          <th class="px-6 py-1 border-b border-gray-200 bg-gray-50 text-left text-xs text-gray-500 uppercase">transaction_amount</th>
+          <th class="px-6 py-1 border-b border-gray-200 bg-gray-50 text-left text-xs text-gray-500 uppercase">Linkpay URL</th>
+        </tr>
+      </thead>
+      <tbody id="invoices">
+        <% @invoices.each do |invoice| %>
+        <tr>
+          <td class="px-6 py-1 border-b border-gray-200"><%= invoice.invoice_number %></td>
+          <td class="px-6 py-1 border-b border-gray-200"><%= invoice.status %></td>
+          <td class="px-6 py-1 border-b border-gray-200"><%= invoice.transaction_amount %></td>
+          <td class="px-6 py-1 border-b border-gray-200 break-all"><%= invoice.everypay_response["linkpay"] if invoice.everypay_response.present? %></td>
+        </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>
