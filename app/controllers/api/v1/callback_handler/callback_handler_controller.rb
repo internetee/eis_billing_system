@@ -36,11 +36,6 @@ module Api
         param :event_name, String, desc: event_descr
 
         def callback
-
-          puts '============ CALLBACK'
-          puts params
-          puts '============ CALLBACK'
-
           payment_reference = params[:payment_reference]
           response = EverypayResponse.call(payment_reference)
           result = Notify.call(response: response)

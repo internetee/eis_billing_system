@@ -15,7 +15,6 @@ class Notify
     notifier = new(response:)
 
     parsed_response = notifier.parse_response(response)
-
     order_number = if parsed_response[:order_reference].split(', ').size > 1
                      parsed_response[:order_reference].split(', ')[0].split(':')[1]
                    else
@@ -32,6 +31,7 @@ class Notify
 
     notifier.update_invoice_state(parsed_response:, invoice:)
     return unless invoice.paid?
+    return if invoice.billing_system?
 
     url = notifier.get_update_payment_url[invoice.initiator.to_sym]
     return notifier.define_for_deposit(invoice, url) if invoice.auction_deposit_prepayment?
