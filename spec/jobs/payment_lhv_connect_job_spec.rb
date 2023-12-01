@@ -48,7 +48,7 @@ RSpec.describe 'PaymentLhvConnectJob', type: :job do
       allow_any_instance_of(Net::HTTP).to receive(:post).and_return('200 - ok')
       allow_any_instance_of(PaymentLhvConnectJob).to receive(:open_ssl_keystore).and_return(openssl_struct)
 
-      expect_any_instance_of(PaymentLhvConnectJob).to receive(:send_transactions_to_registry).with(params: [params_for_sending])
+      expect_any_instance_of(PaymentLhvConnectJob).to receive(:send_transactions).with(params: [params_for_sending], payment_reference_number: '2')
       PaymentLhvConnectJob.perform_now
     end
 
@@ -62,7 +62,7 @@ RSpec.describe 'PaymentLhvConnectJob', type: :job do
       openssl_struct = OpenStruct.new(key: 'key', certificate: 'certificate')
       allow_any_instance_of(PaymentLhvConnectJob).to receive(:open_ssl_keystore).and_return(openssl_struct)
 
-      expect_any_instance_of(PaymentLhvConnectJob).not_to receive(:send_transactions_to_registry).with(params: [])
+      expect_any_instance_of(PaymentLhvConnectJob).not_to receive(:send_transactions).with(params: [], payment_reference_number: nil)
       PaymentLhvConnectJob.perform_now
     end
   end
@@ -103,7 +103,7 @@ RSpec.describe 'PaymentLhvConnectJob', type: :job do
         end
       end
 
-      expect_any_instance_of(PaymentLhvConnectJob).to receive(:send_transactions_to_registry).with(params: [params_for_sending])
+      expect_any_instance_of(PaymentLhvConnectJob).to receive(:send_transactions).with(params: [params_for_sending], payment_reference_number: ref)
       PaymentLhvConnectJob.perform_now
     end
   end

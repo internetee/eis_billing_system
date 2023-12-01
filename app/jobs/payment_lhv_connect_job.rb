@@ -22,7 +22,7 @@ class PaymentLhvConnectJob < ApplicationJob
     api = Lhv::ConnectApi.new
     api.cert = cert
     api.key = key
-    # api.ca_file = ENV['lhv_ca_file']
+
     api.dev_mode = ENV['lhv_dev_mode'] == 'true'
 
     incoming_transactions = []
@@ -43,11 +43,11 @@ class PaymentLhvConnectJob < ApplicationJob
 
     sorted_by_ref_number = incoming_transactions.group_by { |x| x[:payment_reference_number] }
     sorted_by_ref_number.each do |s|
-      Rails.logger.info "=========== Sending to registry ==========="
+      Rails.logger.info '=========== Sending transaction ==========='
       Rails.logger.info s[1]
-      Rails.logger.info "==========================================="
+      Rails.logger.info '==========================================='
 
-      send_transactions_to_registry(params: s[1])
+      send_transactions(params: s[1], payment_reference_number: s[0])
     end
 
     Rails.logger.info "Transactions processed: #{incoming_transactions.size}"
@@ -66,7 +66,7 @@ class PaymentLhvConnectJob < ApplicationJob
     return unless valid_ref_no?(reference)
 
     ref = Reference.find_by(reference_number: reference)
-    inform_admin(reference: reference, body: credit_transaction) and return nil if ref.nil?
+    inform_admin(reference:, body: credit_transaction) and return nil if ref.nil?
 
     reference
   end
@@ -77,12 +77,12 @@ class PaymentLhvConnectJob < ApplicationJob
   end
 
   def valid_ref_no?(match)
-    return true if Billing::ReferenceNo.valid?(match)
+    true if Billing::ReferenceNo.valid?(match)
   end
 
   def inform_admin(reference:, body:)
-    Rails.logger.info "Inform to admin that reference number not found"
-    BillingMailer.inform_admin(reference_number: reference, body: body).deliver_now
+    Rails.logger.info 'Inform to admin that reference number not found'
+    BillingMailer.inform_admin(reference_number: reference, body:).deliver_now
   end
 
   def open_ssl_keystore
@@ -92,8 +92,10 @@ class PaymentLhvConnectJob < ApplicationJob
   end
 
   # https://registry.test/eis_billing/lhv_connect_transactions
-  def send_transactions_to_registry(params:)
-    uri = URI.parse(url_transaction)
+  def send_transactions(params:, payment_reference_number:)
+    reference = Reference.find_by(reference_number: payment_reference_number)
+
+    uri = URI.parse(url[reference.initiator.to_sym])
     http = Net::HTTP.new(uri.host, uri.port)
   
     if Rails.env.development? || Rails.env.test?
@@ -103,13 +105,13 @@ class PaymentLhvConnectJob < ApplicationJob
       http.use_ssl = true
       http.verify_mode = OpenSSL::SSL::VERIFY_PEER
     end
-  
-    res = http.post(url_transaction, params.to_json, headers)
-  
-    Rails.logger.info ">>>>>>"
+
+    res = http.post(url[reference.initiator.to_sym], params.to_json, headers)
+
+    Rails.logger.info '>>>>>>'
     Rails.logger.info res.body
-    Rails.logger.info ">>>>>>"
-  end  
+    Rails.logger.info '>>>>>>'
+  end
 
   def generate_token
     JWT.encode(payload, billing_secret)
@@ -121,13 +123,24 @@ class PaymentLhvConnectJob < ApplicationJob
 
   def headers
     {
-    'Authorization' => "Bearer #{generate_token}",
-    'Content-Type' => 'application/json',
+      'Authorization' => "Bearer #{generate_token}",
+      'Content-Type' => 'application/json'
     }
   end
 
-  def url_transaction
+  def url
+    {
+      registry: registry_url_transaction,
+      auction: auction_url_transaction
+    }
+  end
+
+  def registry_url_transaction
     "#{ENV['base_registry']}/eis_billing/lhv_connect_transactions"
+  end
+
+  def auction_url_transaction
+    "#{ENV['base_auction']}/eis_billing/lhv_connect_transactions"
   end
 
   def billing_secret
@@ -139,6 +152,6 @@ class PaymentLhvConnectJob < ApplicationJob
                    currency: 'EUR',
                    date: Time.zone.today,
                    payment_reference_number: '7366488',
-                   payment_description: "description 7366488")
+                   payment_description: 'description 7366488')
   end
 end
