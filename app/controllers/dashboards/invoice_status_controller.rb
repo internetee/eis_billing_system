@@ -1,9 +1,10 @@
 class Dashboards::InvoiceStatusController < ParentController
   def update
     @invoice = Invoice.find(params[:id])
-    temporary_unavailable and return unless @invoice.registry?
+    temporary_unavailable and return unless @invoice.allow_to_synchronize?
 
     resp = @invoice.synchronize(status: params[:status])
+
     if resp.result?
       @invoice.update(status: params[:status])
 

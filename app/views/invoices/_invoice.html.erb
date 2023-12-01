@@ -4,8 +4,8 @@
     <%= form_with url: dashboards_invoice_status_path(invoice.id), method: :patch, 
                                                                    data: { controller: 'autosave', target: 'autosave.form'} do |f| %>
       <%= f.select :status, options_for_select(Invoice.statuses.invert.values, invoice.status), {},
-          selected: invoice.status, disabled: !invoice.registry?,
-          class: "#{'bg-gray-200' unless invoice.registry? }" ,data: { action: 'autosave#save', target: 'autosave.select' } %>
+          selected: invoice.status, disabled: !invoice.allow_to_synchronize?,
+          class: "#{'bg-gray-200' unless invoice.allow_to_synchronize? }" ,data: { action: 'autosave#save', target: 'autosave.select' } %>
     <% end %>
   </td>
   <td class="px-6 py-1 border-b border-gray-200"><%= invoice.initiator %></td>
@@ -44,6 +44,6 @@
   <td class="px-6 py-1 break-all border-b border-gray-200 text-center">
     <%= button_to dashboards_invoice_synchronize_path(id: invoice.id), method: :put do %>
       <i class="fa-solid fa-arrows-rotate"></i>
-    <% end if invoice.registry? %>
+    <% end if invoice.allow_to_synchronize? %>
   </td>
 <% end %>

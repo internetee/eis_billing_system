@@ -31,7 +31,7 @@ class InvoiceDataSenderService
     when 'eeid'
       "#{GlobalVariable::BASE_EEID}/#"
     when 'auction'
-      "#{GlobalVariable::BASE_AUCTION}/#"
+      "#{GlobalVariable::BASE_AUCTION}/eis_billing/invoices"
     else
       false
     end
