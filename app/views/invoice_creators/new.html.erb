@@ -1,0 +1,18 @@
+<div class="container mx-auto">
+  <div class='ml-4 p-6 bg-white'>
+    <%= form_with url: invoice_creators_path do |form| %>
+
+      <%= form.fields_for @invoice do |f|%>
+        <%= render 'invoice_creators/invoice_form', f: f %>
+      <% end %>
+
+      <%= form.fields_for :linkpay do |f| %>
+        <%= render 'invoice_creators/linkpay_form', f: f %>
+      <% end %>
+
+      <div class="my-2 text-center">
+        <%= form.submit 'Create', class: "h-10 py-2 mt-4 px-4 border border-transparent text-sm font-semibold rounded-md text-white bg-violet-700 hover:bg-violet-800 transition duration-150 ease-in-out shadow-md cursor-pointer" %>
+      </div>
+    <% end %>
+  </div>
+</div>

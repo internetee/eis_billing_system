@@ -5,6 +5,7 @@ Rails.application.routes.draw do
   get 'sign_in', to: 'sessions#new'
   delete 'logout', to: 'sessions#destroy'
   resources :white_codes
+  resources :invoice_creators, only: %i[new create index show]
 
   resources :dashboard do
     collection do
@@ -22,6 +23,7 @@ Rails.application.routes.draw do
   namespace :invoice_details do
     resources :payment_references, only: [:show]
     resources :everypay_response, only: [:show]
+    resources :linkpay_informations, only: [:show]
     resources :directo, only: [:show]
     resources :descriptions, only: [:show]
   end

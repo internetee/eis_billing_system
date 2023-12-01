@@ -65,6 +65,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_10_31_100825) do
     t.string "description"
     t.datetime "sent_at_omniva", precision: nil
     t.integer "affiliation", default: 0
+    t.jsonb "linkpay_info", default: {}
     t.index ["status"], name: "index_invoices_on_status"
   end
 

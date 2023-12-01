@@ -5,6 +5,7 @@ class Invoice < ApplicationRecord
   REGISTRY = 'registry'.freeze
   AUCTION = 'auction'.freeze
   EEID = 'eeid'.freeze
+  BILLING_SYSTEM = 'billing_system'.freeze
 
   pg_search_scope :search_by_number, against: [:invoice_number],
                                      using: {
@@ -13,7 +14,7 @@ class Invoice < ApplicationRecord
                                        }
                                      }
 
-  enum affiliation: { regular: 0, auction_deposit: 1 }
+  enum affiliation: { regular: 0, auction_deposit: 1, linkpay: 2 }
   enum status: { unpaid: 0, paid: 1, cancelled: 2, failed: 3, refunded: 4, overdue: 5 }
 
   scope :with_status, lambda { |status|
@@ -54,6 +55,10 @@ class Invoice < ApplicationRecord
 
   def auction?
     initiator == AUCTION
+  end
+
+  def billing_system?
+    initiator == BILLING_SYSTEM
   end
 
   def to_h
