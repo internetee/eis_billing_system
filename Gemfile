@@ -6,7 +6,7 @@ ruby '3.2.0'
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails', branch: 'main'
 gem 'rails', '~> 7.0.7.1'
 gem 'pg', '~> 1.1'
-gem 'puma', '~> 6.3.1'
+gem 'puma', '~> 6.4.0'
 gem 'redis', '~> 5.0'
 gem 'bcrypt', '~> 3.1.7'
 gem 'bootsnap', '>= 1.4.4', require: false
