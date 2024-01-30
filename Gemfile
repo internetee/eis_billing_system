@@ -17,7 +17,7 @@ gem 'pdfkit'
 gem 'money'
 gem 'countries', :require => 'countries/global'
 gem 'e_invoice', github: 'internetee/e_invoice', branch: :master
-gem 'directo', github: 'internetee/directo', branch: 'master'
+gem 'directo', github: 'internetee/directo', branch: 'change-directo-code'
 gem 'lhv', github: 'internetee/lhv', branch: 'master'
 gem 'strong_migrations'
 gem 'figaro'

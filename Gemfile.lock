@@ -1,9 +1,9 @@
 GIT
   remote: https://github.com/internetee/directo.git
-  revision: a5e0269919b210a9c6c59065648cc5a221166c4c
-  branch: master
+  revision: c886fccb9ca2e5f481124f07e65613a5b64cab74
+  branch: change-directo-code
   specs:
-    directo (1.0.2)
+    directo (1.0.1)
       money (~> 6.13)
       nokogiri (~> 1.10)
 
@@ -271,6 +271,7 @@ GEM
     marcel (1.0.2)
     method_source (1.0.0)
     mini_mime (1.1.5)
+    mini_portile2 (2.8.5)
     minitest (5.20.0)
     money (6.16.0)
       i18n (>= 0.6.4, <= 2)
@@ -288,6 +289,9 @@ GEM
       net-protocol
     net-ssh (7.2.0)
     nio4r (2.7.0)
+    nokogiri (1.15.4)
+      mini_portile2 (~> 2.8.2)
+      racc (~> 1.4)
     nokogiri (1.15.4-x86_64-linux)
       racc (~> 1.4)
     nori (2.6.0)
@@ -503,6 +507,7 @@ GEM
     zeitwerk (2.6.12)
 
 PLATFORMS
+  ruby
   x86_64-linux
 
 DEPENDENCIES
