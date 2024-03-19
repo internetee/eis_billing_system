@@ -119,7 +119,7 @@ GEM
     akami (1.3.1)
       gyoku (>= 0.4.0)
       nokogiri
-    apipie-rails (1.2.3)
+    apipie-rails (1.3.0)
       actionpack (>= 5.0)
       activesupport (>= 5.0)
     ast (2.4.2)
@@ -532,7 +532,7 @@ PLATFORMS
   x86_64-linux
 
 DEPENDENCIES
-  apipie-rails (~> 1.2.0)
+  apipie-rails (~> 1.3.0)
   bcrypt (~> 3.1.7)
   bootsnap (>= 1.4.4)
   brakeman
