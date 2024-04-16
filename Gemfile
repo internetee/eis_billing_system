@@ -30,7 +30,7 @@ gem "hotwire-rails"
 gem 'importmap-rails'
 gem 'sprockets-rails'
 gem 'pg_search'
-gem "pagy", "~> 6.0"
+gem "pagy", "~> 7.0"
 gem 'simpleidn', '0.2.1'
 gem 'faraday'
 gem 'dry-initializer', '~> 3.1.0'

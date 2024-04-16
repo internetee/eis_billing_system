@@ -329,7 +329,7 @@ GEM
       validate_email
       validate_url
       webfinger (~> 2.0)
-    pagy (6.1.0)
+    pagy (7.0.11)
     parallel (1.23.0)
     parser (3.2.2.4)
       ast (~> 2.4.1)
@@ -566,7 +566,7 @@ DEPENDENCIES
   omniauth (>= 2.0.0)
   omniauth-rails_csrf_protection
   omniauth-tara!
-  pagy (~> 6.0)
+  pagy (~> 7.0)
   pdfkit
   pg (~> 1.1)
   pg_search
