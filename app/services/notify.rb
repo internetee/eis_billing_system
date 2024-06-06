@@ -30,7 +30,7 @@ class Notify
     return if invoice.paid?
 
     notifier.update_invoice_state(parsed_response:, invoice:)
-    return unless invoice.paid?
+    return if !invoice.paid? && !invoice.partially_paid?
     return if invoice.billing_system?
 
     url = notifier.get_update_payment_url[invoice.initiator.to_sym]
@@ -68,7 +68,8 @@ class Notify
   end
 
   def update_invoice_state(parsed_response:, invoice:)
-    status = parsed_response[:payment_state] == SETTLED ? :paid : :failed
+    paid_status = invoice.fully_paid?(parsed_response[:initial_amount]) ? :paid : :partially_paid
+    status = parsed_response[:payment_state] == SETTLED ? paid_status : :failed
 
     invoice.update(payment_reference: parsed_response[:payment_reference],
                    status:,

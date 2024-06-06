@@ -4,22 +4,24 @@ class Oneoff
   include Request
   include ApplicationService
 
-  attr_reader :invoice_number, :customer_url, :reference_number, :bulk, :bulk_invoices
+  attr_reader :invoice_number, :customer_url, :reference_number, :amount, :bulk, :bulk_invoices
 
-  def initialize(invoice_number:, customer_url:, reference_number:, bulk: false, bulk_invoices: [])
+  def initialize(invoice_number:, customer_url:, reference_number:, amount: nil, bulk: false, bulk_invoices: [])
     @invoice = Invoice.find_by(invoice_number: invoice_number)
 
     @invoice_number = invoice_number
     @customer_url = customer_url
     @reference_number = reference_number
+    @amount = amount
     @bulk = bulk
     @bulk_invoices = bulk_invoices
   end
 
-  def self.call(invoice_number:, customer_url:, reference_number:, bulk: false, bulk_invoices: [])
+  def self.call(invoice_number:, customer_url:, reference_number:, amount: nil, bulk: false, bulk_invoices: [])
     new(invoice_number: invoice_number,
         customer_url: customer_url,
         reference_number: reference_number,
+        amount: amount,
         bulk: bulk,
         bulk_invoices: bulk_invoices).call
   end
@@ -52,6 +54,7 @@ class Oneoff
 
   def base_request
     uri = URI("#{GlobalVariable::BASE_ENDPOINT}#{GlobalVariable::ONEOFF_ENDPOINT}")
+
     post(direction: 'everypay', path: uri, params: body)
   end
 
@@ -61,12 +64,12 @@ class Oneoff
     {
       'api_username' => GlobalVariable::API_USERNAME,
       'account_name' => GlobalVariable::ACCOUNT_NAME,
-      'amount' => @invoice.transaction_amount.to_f,
+      'amount' => amount ? amount.to_f : @invoice.transaction_amount.to_f,
       'order_reference' => bulk ? bulk_description.to_s : @invoice.invoice_number.to_s,
       # 'token_agreement' => 'unscheduled',
       'request_token' => false,
-      'nonce' => "#{rand(10 ** 30).to_s.rjust(30,'0')}",
-      'timestamp' => "#{Time.zone.now.to_formatted_s(:iso8601)}",
+      'nonce' => rand(10**30).to_s.rjust(30, '0'),
+      'timestamp' => Time.zone.now.to_formatted_s(:iso8601),
       'customer_url' => customer_url,
       'preferred_country' => 'EE',
       'locale' => 'en',

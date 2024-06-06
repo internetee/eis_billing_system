@@ -15,7 +15,7 @@ class Invoice < ApplicationRecord
                                      }
 
   enum affiliation: { regular: 0, auction_deposit: 1, linkpay: 2 }
-  enum status: { unpaid: 0, paid: 1, cancelled: 2, failed: 3, refunded: 4, overdue: 5 }
+  enum status: { unpaid: 0, paid: 1, cancelled: 2, failed: 3, refunded: 4, overdue: 5, partially_paid: 6 }
 
   scope :with_status, lambda { |status|
     where(status:) if status.present?
@@ -59,6 +59,10 @@ class Invoice < ApplicationRecord
 
   def billing_system?
     initiator == BILLING_SYSTEM
+  end
+
+  def fully_paid?(amount)
+    amount.to_f >= transaction_amount.to_f
   end
 
   def to_h

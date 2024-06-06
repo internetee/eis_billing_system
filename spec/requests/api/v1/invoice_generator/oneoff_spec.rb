@@ -18,7 +18,7 @@ RSpec.describe Api::V1::InvoiceGenerator::OneoffController, type: :request do
         .to_return(status: 200, body: payment_link.to_json, headers: {})
     end
 
-    it 'should return the payment link if intiiator is eeid' do
+    it 'should return the payment link if initiator is eeid' do
       payload = {
         invoice_number: invoice.invoice_number,
         customer_url: customer_url_eeid,

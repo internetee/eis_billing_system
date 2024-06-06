@@ -32,13 +32,35 @@ RSpec.describe 'Notify' do
         payment_state: 'settled',
         transaction_time: Time.zone.now - 1.hour,
         order_reference: invoice.invoice_number.to_s,
-        payment_reference: 'test'
+        payment_reference: 'test',
+        initial_amount: invoice.transaction_amount
       }
 
       Notify.call(response: JSON.parse(everypay_response.to_json))
       invoice.reload
 
       expect(invoice.status).to eq('paid')
+    end
+
+    it 'should mark single invoice as partially_paid if settled and not fully paid' do
+      invoice.initiator = 'auction'
+      invoice.invoice_number = 3
+      invoice.save
+      expect(invoice.initiator).to eq('auction')
+      expect(invoice.status).to eq('unpaid')
+
+      everypay_response = {
+        payment_state: 'settled',
+        transaction_time: Time.zone.now - 1.hour,
+        order_reference: invoice.invoice_number.to_s,
+        payment_reference: 'test',
+        initial_amount: invoice.transaction_amount.to_f - 1
+      }
+
+      Notify.call(response: JSON.parse(everypay_response.to_json))
+      invoice.reload
+
+      expect(invoice.status).to eq('partially_paid')
     end
 
     it 'should mark multiple invoices as paid' do
@@ -63,7 +85,8 @@ RSpec.describe 'Notify' do
         payment_state: 'settled',
         transaction_time: Time.zone.now - 1.hour,
         order_reference: "ref:#{invoice_three.invoice_number}, #{invoice_three.description.split(' ').join(', ')}",
-        payment_reference: 'test'
+        payment_reference: 'test',
+        initial_amount: invoice_three.transaction_amount
       }
 
       Notify.call(response: JSON.parse(everypay_response.to_json))
@@ -116,7 +139,8 @@ RSpec.describe 'Notify' do
         payment_state: 'settled',
         transaction_time: Time.zone.now - 1.hour,
         order_reference: invoice.invoice_number.to_s,
-        payment_reference: 'test'
+        payment_reference: 'test',
+        initial_amount: invoice.transaction_amount
       }
 
       response = Notify.call(response: JSON.parse(everypay_response.to_json))

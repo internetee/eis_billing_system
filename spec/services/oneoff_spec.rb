@@ -1,4 +1,6 @@
 RSpec.describe Oneoff do
+  payment_link = { 'payment_link' => 'https://everypay.ee' }
+
   describe 'successful case' do
     let(:invoice) { create(:invoice) }
     let(:customer_url_registry) { GlobalVariable::BASE_REGISTRY }
@@ -6,8 +8,6 @@ RSpec.describe Oneoff do
     let(:customer_url_eeid) { GlobalVariable::BASE_EEID }
     let(:customer_url_auction) { GlobalVariable::BASE_AUCTION }
     let(:reference) { create(:reference) }
-
-    payment_link = { 'payment_link' => 'https://everypay.ee' }
 
     before(:each) do
       stub_request(:post, "#{GlobalVariable::BASE_ENDPOINT}#{GlobalVariable::ONEOFF_ENDPOINT}")
@@ -46,6 +46,25 @@ RSpec.describe Oneoff do
       response = described_class.call(invoice_number: invoice.invoice_number.to_s,
                                       customer_url: customer_url_registrar,
                                       reference_number: nil)
+      expect(response.instance).to a_hash_including(payment_link)
+    end
+  end
+
+  describe 'with custom amount' do
+    let(:invoice) { create(:invoice) }
+    let(:customer_url_auction) { GlobalVariable::BASE_AUCTION }
+
+    before do
+      stub_request(:post, "#{GlobalVariable::BASE_ENDPOINT}#{GlobalVariable::ONEOFF_ENDPOINT}")
+        .with(body: /"amount":100.0/)
+        .to_return(status: 200, body: payment_link.to_json, headers: {})
+    end
+
+    it 'should generate oneoff link for auction' do
+      response = described_class.call(invoice_number: invoice.invoice_number.to_s,
+                                      customer_url: customer_url_auction,
+                                      reference_number: nil,
+                                      amount: 100)
       expect(response.instance).to a_hash_including(payment_link)
     end
   end

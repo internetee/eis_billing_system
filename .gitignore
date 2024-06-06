@@ -42,7 +42,9 @@ EESTIINTERNETISA.p12
 
 docker-compose.yml
 
-vendor/gems
+Dockerfile.dev
+
+# vendor/gems
 /public/assets
 /public/packs
 /public/packs-test
