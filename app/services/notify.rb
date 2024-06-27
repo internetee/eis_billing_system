@@ -29,7 +29,7 @@ class Notify
     end
     return if invoice.paid?
 
-    notifier.update_invoice_state(parsed_response:, invoice:)
+    return unless notifier.update_invoice_state(parsed_response:, invoice:)
     return if !invoice.paid? && !invoice.partially_paid?
     return if invoice.billing_system?
 
@@ -71,10 +71,18 @@ class Notify
     paid_status = invoice.fully_paid?(parsed_response[:initial_amount]) ? :paid : :partially_paid
     status = parsed_response[:payment_state] == SETTLED ? paid_status : :failed
 
-    invoice.update(payment_reference: parsed_response[:payment_reference],
-                   status:,
-                   transaction_time: parsed_response[:transaction_time],
-                   everypay_response: parsed_response)
+    invoice.payment_reference_in_params = parsed_response.key?(:payment_reference)
+    invoice.assign_attributes(
+      payment_reference: parsed_response[:payment_reference],
+      status:,
+      transaction_time: parsed_response[:transaction_time],
+      everypay_response: parsed_response
+    )
+
+    return true if invoice.save
+
+    Rails.logger.info("Error saving invoice #{invoice.invoice_number}: #{invoice.errors.full_messages.to_sentence}")
+    false
   end
 
   def invoice_numbers_from_multi_payment(invoice)

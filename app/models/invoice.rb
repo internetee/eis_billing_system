@@ -29,6 +29,10 @@ class Invoice < ApplicationRecord
     where(transaction_amount: low.to_f..high.to_f) if low.present? && high.present?
   }
 
+  validate :payment_reference_must_change, if: :payment_reference_present_in_params?
+
+  attr_accessor :payment_reference_in_params
+
   def self.search(params = {})
     sort_column = params[:sort].presence_in(%w[invoice_number status affiliation]) || 'id'
     sort_direction = params[:direction].presence_in(%w[asc desc]) || 'desc'
@@ -77,5 +81,17 @@ class Invoice < ApplicationRecord
       transaction_time:,
       sent_at_omniva:
     }
+  end
+
+  private
+
+  def payment_reference_present_in_params?
+    payment_reference_in_params
+  end
+
+  def payment_reference_must_change
+    if payment_reference.present? && payment_reference == payment_reference_was
+      errors.add(:payment_reference, 'must be different from the existing payment reference')
+    end
   end
 end
