@@ -42,27 +42,6 @@ RSpec.describe 'Notify' do
       expect(invoice.status).to eq('paid')
     end
 
-    it 'should mark single invoice as partially_paid if settled and not fully paid' do
-      invoice.initiator = 'auction'
-      invoice.invoice_number = 3
-      invoice.save
-      expect(invoice.initiator).to eq('auction')
-      expect(invoice.status).to eq('unpaid')
-
-      everypay_response = {
-        payment_state: 'settled',
-        transaction_time: Time.zone.now - 1.hour,
-        order_reference: invoice.invoice_number.to_s,
-        payment_reference: 'test',
-        initial_amount: invoice.transaction_amount.to_f - 1
-      }
-
-      Notify.call(response: JSON.parse(everypay_response.to_json))
-      invoice.reload
-
-      expect(invoice.status).to eq('partially_paid')
-    end
-
     it 'should mark multiple invoices as paid' do
       invoice_one.save
       invoice_two.save
@@ -98,6 +77,51 @@ RSpec.describe 'Notify' do
       expect(invoice_three.status).to eq('paid')
       expect(invoice_one.status).to eq('paid')
       expect(invoice_two.status).to eq('paid')
+    end
+  end
+
+  describe 'partial payment process' do
+    let(:everypay_response) do 
+      {
+        payment_state: 'settled',
+        transaction_time: Time.zone.now - 1.hour,
+        order_reference: invoice.invoice_number.to_s,
+        payment_reference: 'test',
+        initial_amount: invoice.transaction_amount.to_f - 1
+      }
+    end
+
+    it 'should mark single invoice as partially_paid if settled and not fully paid' do
+      invoice.initiator = 'auction'
+      invoice.invoice_number = 3
+      invoice.save
+      expect(invoice.initiator).to eq('auction')
+      expect(invoice.status).to eq('unpaid')
+
+      Notify.call(response: JSON.parse(everypay_response.to_json))
+      invoice.reload
+
+      expect(invoice.status).to eq('partially_paid')
+      
+    end
+
+    it 'should not update invoice state if payment_reference is the same' do
+      invoice.save
+      expect(invoice.status).to eq('unpaid')
+
+      Notify.call(response: JSON.parse(everypay_response.to_json))
+      invoice.reload
+
+      expect(invoice.status).to eq('partially_paid')
+      expect(invoice.payment_reference).to eq('test')
+      updated_at = invoice.updated_at
+
+      Notify.call(response: JSON.parse(everypay_response.to_json))
+
+      expect(Rails.logger).to have_received(:info).with(
+        "Error saving invoice #{invoice.invoice_number}: Payment reference must be different from the existing payment reference"
+      )
+      expect(invoice.updated_at).to eq(updated_at)
     end
   end
 
