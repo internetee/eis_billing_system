@@ -90,8 +90,8 @@ class Invoice < ApplicationRecord
   end
 
   def payment_reference_must_change
-    if payment_reference.present? && payment_reference == payment_reference_was
-      errors.add(:payment_reference, 'must be different from the existing payment reference')
-    end
+    return unless payment_reference.present? && payment_reference == payment_reference_was
+
+    errors.add(:payment_reference, 'must be different from the existing payment reference')
   end
 end
