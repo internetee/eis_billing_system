@@ -15,7 +15,7 @@ class Invoice < ApplicationRecord
                                      }
 
   enum affiliation: { regular: 0, auction_deposit: 1, linkpay: 2 }
-  enum status: { unpaid: 0, paid: 1, cancelled: 2, failed: 3, refunded: 4, overdue: 5 }
+  enum status: { unpaid: 0, paid: 1, cancelled: 2, failed: 3, refunded: 4, overdue: 5, partially_paid: 6 }
 
   scope :with_status, lambda { |status|
     where(status:) if status.present?
@@ -28,6 +28,10 @@ class Invoice < ApplicationRecord
   scope :with_amount_between, lambda { |low, high|
     where(transaction_amount: low.to_f..high.to_f) if low.present? && high.present?
   }
+
+  validate :payment_reference_must_change, if: :payment_reference_present_in_params?
+
+  attr_accessor :payment_reference_in_params
 
   def self.search(params = {})
     sort_column = params[:sort].presence_in(%w[invoice_number status affiliation]) || 'id'
@@ -61,6 +65,10 @@ class Invoice < ApplicationRecord
     initiator == BILLING_SYSTEM
   end
 
+  def fully_paid?(amount)
+    amount.to_f >= transaction_amount.to_f
+  end
+
   def to_h
     {
       invoice_number:,
@@ -73,5 +81,17 @@ class Invoice < ApplicationRecord
       transaction_time:,
       sent_at_omniva:
     }
+  end
+
+  private
+
+  def payment_reference_present_in_params?
+    payment_reference_in_params
+  end
+
+  def payment_reference_must_change
+    return unless payment_reference.present? && payment_reference == payment_reference_was
+
+    errors.add(:payment_reference, 'must be different from the existing payment reference')
   end
 end

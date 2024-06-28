@@ -69,6 +69,7 @@ RSpec.configure do |config|
 
   config.before(:each) do
     DatabaseCleaner.strategy = :transaction
+    allow(Rails.logger).to receive(:info)
   end
 
   config.before(:each, :js => true) do
