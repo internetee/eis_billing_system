@@ -39,6 +39,9 @@ class ApplicationController < ActionController::API
     when 'auction'
       @initiator = 'auction'
       true
+    when 'business_registry'
+      @initiator = 'business_registry'
+      true
     else
       false
     end

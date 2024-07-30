@@ -6,6 +6,7 @@ class Invoice < ApplicationRecord
   AUCTION = 'auction'.freeze
   EEID = 'eeid'.freeze
   BILLING_SYSTEM = 'billing_system'.freeze
+  BUSINESS_REGISTRY = 'business_registry'.freeze
 
   pg_search_scope :search_by_number, against: [:invoice_number],
                                      using: {
@@ -59,6 +60,10 @@ class Invoice < ApplicationRecord
 
   def billing_system?
     initiator == BILLING_SYSTEM
+  end
+
+  def business_registry?
+    initiator == BUSINESS_REGISTRY
   end
 
   def to_h
