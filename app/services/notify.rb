@@ -4,6 +4,7 @@ class Notify
   SETTLED = 'settled'.freeze
   PREPENDED = 'prepended'.freeze
   AUCTION = 'auction'.freeze
+  BUSINESS_REGISTRY = 'business_registry'.freeze
 
   attr_reader :response
 
