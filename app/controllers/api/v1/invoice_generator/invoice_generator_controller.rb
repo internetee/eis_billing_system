@@ -21,6 +21,7 @@ module Api
           - registry
           - eeid
           - auction
+          - business_registry
 
           In this case, only the auction has the possibility of multiple payment
         HERE
@@ -30,8 +31,8 @@ module Api
         param :invoice_number, String, required: true
 
         def create
-          InvoiceInstanceGenerator.create(params: params)
-          link = EverypayLinkGenerator.create(params: params)
+          InvoiceInstanceGenerator.create(params:)
+          link = EverypayLinkGenerator.create(params:)
 
           render json: { 'message' => 'Link created', 'everypay_link' => link }, status: :created
         rescue StandardError => e
