@@ -606,8 +606,5 @@ DEPENDENCIES
   webmock
   wkhtmltopdf-binary
 
-RUBY VERSION
-   ruby 3.2.2p0
-
 BUNDLED WITH
    2.4.13
