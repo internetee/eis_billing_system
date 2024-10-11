@@ -12,22 +12,22 @@ class PaymentLhvConnectJob < ApplicationJob
 
   private
 
-  def payment_process
-    registry_bank_account_iban = Setting.registry_bank_account_iban_lhv || 'EE177700771001155322'
-
+  def api_lhv
     keystore = open_ssl_keystore
-    key = keystore.key
-    cert = keystore.certificate
-
     api = Lhv::ConnectApi.new
-    api.cert = cert
-    api.key = key
-
+    api.cert = keystore.certificate
+    api.key = keystore.key
     api.dev_mode = ENV['lhv_dev_mode'] == 'true'
 
+    api
+  end
+
+  def registry_bank_account_iban = Setting.registry_bank_account_iban_lhv || 'EE177700771001155322'
+
+  def payment_process
     incoming_transactions = []
 
-    api.credit_debit_notification_messages.each do |message|
+    api_lhv.credit_debit_notification_messages.each do |message|
       messages_proccess(message, registry_bank_account_iban) do
         message.credit_transactions.each do |credit_transaction|
           if credit_transaction.payment_reference_number.nil?
@@ -35,6 +35,8 @@ class PaymentLhvConnectJob < ApplicationJob
 
             next if credit_transaction.payment_reference_number.nil?
           end
+
+          next if card_payment_entry?(credit_transaction)
 
           incoming_transactions << credit_transaction
         end
@@ -97,14 +99,13 @@ class PaymentLhvConnectJob < ApplicationJob
 
     uri = URI.parse(url[reference.initiator.to_sym])
     http = Net::HTTP.new(uri.host, uri.port)
-  
-    if Rails.env.development? || Rails.env.test?
-      http.use_ssl = true
-      http.verify_mode = OpenSSL::SSL::VERIFY_NONE # :brakemanignore: SSLVerify
-    else
-      http.use_ssl = true
-      http.verify_mode = OpenSSL::SSL::VERIFY_PEER
-    end
+
+    http.use_ssl = true
+    http.verify_mode = if Rails.env.development? || Rails.env.test?
+                         OpenSSL::SSL::VERIFY_NONE # :brakemanignore: SSLVerify
+                       else
+                         OpenSSL::SSL::VERIFY_PEER
+                       end
 
     res = http.post(url[reference.initiator.to_sym], params.to_json, headers)
 
@@ -153,5 +154,9 @@ class PaymentLhvConnectJob < ApplicationJob
                    date: Time.zone.today,
                    payment_reference_number: '7366488',
                    payment_description: 'description 7366488')
+  end
+
+  def card_payment_entry?(transaction)
+    transaction.payment_description.to_s.start_with?('Kaardimaksete tulu')
   end
 end
