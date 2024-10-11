@@ -36,7 +36,7 @@ class PaymentLhvConnectJob < ApplicationJob
             next if credit_transaction.payment_reference_number.nil?
           end
 
-          next if card_payment_entry?(credit_transaction)
+          next if should_skip_transaction?(credit_transaction)
 
           incoming_transactions << credit_transaction
         end
@@ -156,7 +156,16 @@ class PaymentLhvConnectJob < ApplicationJob
                    payment_description: 'description 7366488')
   end
 
+  def should_skip_transaction?(transaction)
+    card_payment_entry?(transaction) || auction_portal_payment?(transaction)
+  end
+
   def card_payment_entry?(transaction)
     transaction.payment_description.to_s.start_with?('Kaardimaksete tulu')
+  end
+
+  def auction_portal_payment?(transaction)
+    transaction.payment_description.to_s.start_with?('billing.internet.ee/EE') ||
+      transaction.payment_description.to_s.start_with?('www.internet.ee/EE')
   end
 end
