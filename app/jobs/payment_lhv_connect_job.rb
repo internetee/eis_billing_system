@@ -157,7 +157,9 @@ class PaymentLhvConnectJob < ApplicationJob
   end
 
   def should_skip_transaction?(transaction)
-    card_payment_entry?(transaction) || auction_portal_payment?(transaction)
+    card_payment_entry?(transaction) ||
+      auction_portal_payment?(transaction) ||
+      account_interest_entry?(transaction)
   end
 
   def card_payment_entry?(transaction)
@@ -167,5 +169,9 @@ class PaymentLhvConnectJob < ApplicationJob
   def auction_portal_payment?(transaction)
     transaction.payment_description.to_s.start_with?('billing.internet.ee/EE') ||
       transaction.payment_description.to_s.start_with?('www.internet.ee/EE')
+  end
+
+  def account_interest_entry?(transaction)
+    transaction.payment_description.to_s.start_with?('Konto intress')
   end
 end

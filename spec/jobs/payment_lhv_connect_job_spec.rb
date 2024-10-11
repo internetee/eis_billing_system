@@ -187,5 +187,56 @@ RSpec.describe 'PaymentLhvConnectJob', type: :job do
       )
       PaymentLhvConnectJob.perform_now
     end
+
+    it 'should skip card payment entries, auction portal payments, and account interest entries' do
+      date = Time.zone.now - 4.hours
+      card_payment = OpenStruct.new(
+        amount: '20.74',
+        currency: 'EUR',
+        date: date,
+        payment_reference_number: nil,
+        payment_description: 'Kaardimaksete tulu 24.09.2024'
+      )
+      auction_payment = OpenStruct.new(
+        amount: '123.0',
+        currency: 'EUR',
+        date: date,
+        payment_reference_number: nil,
+        payment_description: 'billing.internet.ee/EE, st994341, Ref:11111, 140001, 140002'
+      )
+      account_interest = OpenStruct.new(
+        amount: '1.0',
+        currency: 'EUR',
+        date: date,
+        payment_reference_number: nil,
+        payment_description: 'Konto intress EE557700771000598731, 01.09.2024 - 30.09.2024, intressimäär 1.00%.'
+      )
+      regular_payment = OpenStruct.new(
+        amount: '10.0',
+        currency: 'EUR',
+        date: date,
+        payment_reference_number: '123',
+        payment_description: 'Regular payment'
+      )
+
+      Lhv::ConnectApi.class_eval do
+        define_method :credit_debit_notification_messages do
+          message = OpenStruct.new(
+            bank_account_iban: Setting.registry_bank_account_iban_lhv || 'EE177700771001155322',
+            credit_transactions: [card_payment, auction_payment, account_interest, regular_payment]
+          )
+          [message]
+        end
+      end
+
+      openssl_struct = OpenStruct.new(key: 'key', certificate: 'certificate')
+      allow_any_instance_of(PaymentLhvConnectJob).to receive(:open_ssl_keystore).and_return(openssl_struct)
+
+      expect_any_instance_of(PaymentLhvConnectJob).to receive(:send_transactions).with(
+        params: [regular_payment],
+        payment_reference_number: '123'
+      )
+      PaymentLhvConnectJob.perform_now
+    end
   end
 end
