@@ -3,8 +3,8 @@ class InvoiceInstanceGenerator
   REGULAR = 'regular'.freeze
 
   def self.create(params:)
-    description = if params[:reserved_domain_name].present? && params[:token].present?
-                    "Reserved domain name: #{params[:reserved_domain_name]}, Token: #{params[:token]}"
+    description = if params[:reserved_domain_names].present?
+                    "Reserved domain names: #{params[:reserved_domain_names].join(', ')}"
                   else
                     params.fetch(:custom_field1, 'reload balance').to_s
                   end
