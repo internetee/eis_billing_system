@@ -21,7 +21,7 @@ RUN sed -i -e 's/# et_EE.UTF-8 UTF-8/et_EE.UTF-8 UTF-8/' /etc/locale.gen && \
 
 ENV LANG et_EE.UTF-8
 RUN curl https://www.postgresql.org/media/keys/ACCC4CF8.asc -s | apt-key add -
-RUN sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt/ buster-pgdg main" > /etc/apt/sources.list.d/pgdg.list'
+RUN sh -c 'echo "deb https://apt-archive.postgresql.org/pub/repos/apt bionic-pgdg main" > /etc/apt/sources.list.d/pgdg.list'
 RUN apt-get update > /dev/null && apt-get install -y --no-install-recommends > /dev/null \
     postgresql-client-13=* \
     libpq-dev \
