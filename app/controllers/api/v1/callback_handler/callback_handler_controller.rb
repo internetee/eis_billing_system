@@ -38,9 +38,14 @@ module Api
         def callback
           payment_reference = params[:payment_reference]
           response = EverypayResponse.call(payment_reference)
+
+          puts '===='
+          p response
+          puts '===='
+
           result = Notify.call(response: response)
 
-          render status: :ok, json: { message: result }
+          render status: :ok, json: { message: result, user_unique_id: response['linkpay_customer_data']['custom_field_1'] }
         end
 
         private

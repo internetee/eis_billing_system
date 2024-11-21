@@ -4,7 +4,7 @@ class InvoiceInstanceGenerator
 
   def self.create(params:)
     description = if params[:reserved_domain_names].present?
-                    "Reserved domain names: #{params[:reserved_domain_names].join(', ')}"
+                    "Reserved domain names: #{params[:reserved_domain_names].join(', ')}; User unique id: #{params[:custom_field1]}"
                   else
                     params.fetch(:custom_field1, 'reload balance').to_s
                   end
