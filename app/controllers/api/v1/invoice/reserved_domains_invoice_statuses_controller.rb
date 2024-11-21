@@ -25,7 +25,11 @@ module Api
         private
 
         def set_invoice
-          @invoice = ::Invoice.find_by(invoice_number: params[:invoice_number])
+          user_unique_id = params[:user_unique_id]
+          invoice_number = params[:invoice_number]
+          description_pattern = "%User unique id: #{user_unique_id}%"
+          @invoice = ::Invoice.where('invoice_number = ? AND description LIKE ?', invoice_number,
+                                     description_pattern).first
 
           raise ActiveRecord::RecordNotFound, 'Invoice not found' if @invoice.nil?
         end
