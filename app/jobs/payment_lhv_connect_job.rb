@@ -97,7 +97,7 @@ class PaymentLhvConnectJob < ApplicationJob
 
     uri = URI.parse(url[reference.initiator.to_sym])
     http = Net::HTTP.new(uri.host, uri.port)
-  
+
     if Rails.env.development? || Rails.env.test?
       http.use_ssl = true
       http.verify_mode = OpenSSL::SSL::VERIFY_NONE # :brakemanignore: SSLVerify
