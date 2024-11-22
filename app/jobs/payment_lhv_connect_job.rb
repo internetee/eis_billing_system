@@ -113,12 +113,22 @@ class PaymentLhvConnectJob < ApplicationJob
     uri = URI.parse(url[reference.initiator.to_sym])
     http = Net::HTTP.new(uri.host, uri.port)
 
+<<<<<<< HEAD
     http.use_ssl = true
     http.verify_mode = if Rails.env.development? || Rails.env.test?
                          OpenSSL::SSL::VERIFY_NONE # :brakemanignore: SSLVerify
                        else
                          OpenSSL::SSL::VERIFY_PEER
                        end
+=======
+    if Rails.env.development? || Rails.env.test?
+      http.use_ssl = true
+      http.verify_mode = OpenSSL::SSL::VERIFY_NONE # :brakemanignore: SSLVerify
+    else
+      http.use_ssl = true
+      http.verify_mode = OpenSSL::SSL::VERIFY_PEER
+    end
+>>>>>>> 6c2af38 (little fix)
 
     res = http.post(url[reference.initiator.to_sym], params.to_json, headers)
 
