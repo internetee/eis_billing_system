@@ -30,13 +30,13 @@ class PaymentLhvConnectJob < ApplicationJob
     api_lhv.credit_debit_notification_messages.each do |message|
       messages_proccess(message, registry_bank_account_iban) do
         message.credit_transactions.each do |credit_transaction|
+          next if should_skip_transaction?(credit_transaction)
+
           if credit_transaction.payment_reference_number.nil?
             credit_transaction.payment_reference_number = parse_reference_number(credit_transaction)
 
             next if credit_transaction.payment_reference_number.nil?
           end
-
-          next if should_skip_transaction?(credit_transaction)
 
           incoming_transactions << credit_transaction
         end
@@ -163,15 +163,36 @@ class PaymentLhvConnectJob < ApplicationJob
   end
 
   def card_payment_entry?(transaction)
-    transaction.payment_description.to_s.start_with?('Kaardimaksete tulu')
+    if transaction.payment_description.to_s.start_with?('Kaardimaksete tulu')
+      skip_logging(transaction)
+      true
+    else
+      false
+    end
   end
 
   def auction_portal_payment?(transaction)
-    transaction.payment_description.to_s.start_with?('billing.internet.ee/EE') ||
-      transaction.payment_description.to_s.start_with?('www.internet.ee/EE')
+    if transaction.payment_description.to_s.start_with?('billing.internet.ee/EE') ||
+       transaction.payment_description.to_s.start_with?('www.internet.ee/EE')
+      skip_logging(transaction)
+      true
+    else
+      false
+    end
   end
 
   def account_interest_entry?(transaction)
-    transaction.payment_description.to_s.start_with?('Konto intress')
+    if transaction.payment_description.to_s.start_with?('Konto intress')
+      skip_logging(transaction)
+      true
+    else
+      false
+    end
+  end
+
+  def skip_logging(transaction)
+    Rails.logger.info '>>>>>>'
+    Rails.logger.info "Transaction is skipped, because description is: #{transaction.payment_description}"
+    Rails.logger.info '>>>>>>'
   end
 end

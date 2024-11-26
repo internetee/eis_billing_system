@@ -47,3 +47,5 @@ vendor/gems
 /public/packs
 /public/packs-test
 /public/assets/
+
+.DS_Store
