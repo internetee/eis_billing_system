@@ -28,7 +28,7 @@ gem 'importmap-rails'
 gem 'sprockets-rails'
 gem 'pg_search'
 gem "pagy", "~> 6.0"
-gem 'simpleidn', '0.2.1'
+gem 'simpleidn', '0.2.3'
 gem 'faraday'
 gem 'dry-initializer', '~> 3.1.0'
 gem 'dry-validation'
