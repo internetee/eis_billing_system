@@ -61,7 +61,7 @@ end
 group :test do
   gem 'faker'
   gem 'selenium-webdriver'
-  gem 'simplecov', '0.21.2', require: false
+  gem 'simplecov', '0.22.0', require: false
   gem 'webdrivers'
   gem 'webmock'
   gem 'database_cleaner'
