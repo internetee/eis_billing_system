@@ -2,7 +2,9 @@ class InvoicesController < ParentController
   def update
     @invoice = Invoice.find(params[:id])
     @invoice.update(invoice_params)
-    redirect_to invoice_creators_path, notice: 'Invoice was successfully updated.', status: :see_other
+
+    flash.now[:notice] = 'Invoice was successfully updated.'
+    render turbo_stream: turbo_stream.replace('flash', partial: 'shared/flash')
   end
 
   def edit

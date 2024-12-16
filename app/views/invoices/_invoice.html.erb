@@ -32,15 +32,16 @@
     <% end %>
 
   </td>
-  <td class="px-6 py-1 break-all border-b border-gray-200">
-    <%= link_to edit_invoice_path(invoice), class: 'w-6 h-6 p-2 rounded-full bg-blue-300 hover:bg-blue-500 text-black border-gray-300 flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black text-center', data: { turbo_frame: 'modal' } do %>
-      <i class="fa-solid fa-info"></i>
-    <% end %>
+  <td class="px-6 py-1 break-all border-b border-gray-200 space-x-2">
+    <div class="flex items-center justify-center">
+      <%= link_to edit_invoice_path(invoice), class: 'w-6 h-6 p-2 rounded-full bg-green-300 hover:bg-green-500 text-white border-gray-300 flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-white text-center', data: { turbo_frame: 'modal' } do %>
+        <i class="fa-solid fa-pen"></i>
+      <% end %>
 
-    <%= link_to invoice_details_description_path(invoice), class: 'w-6 h-6 p-2 rounded-full bg-blue-300 hover:bg-blue-500 text-black border-gray-300 flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black text-center', data: { turbo_frame: 'modal' } do %>
-      <i class="fa-solid fa-info"></i>
-    <% end %>
-
+      <%= link_to invoice_details_description_path(invoice), class: 'w-6 h-6 p-2 rounded-full bg-blue-300 hover:bg-blue-500 text-black border-gray-300 flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black text-center', data: { turbo_frame: 'modal' } do %>
+        <i class="fa-solid fa-info"></i>
+      <% end %>
+    </div>
   </td>
   <td class="px-6 py-1 break-all border-b border-gray-200"><%= invoice.sent_at_omniva.to_formatted_s(:long) unless invoice.sent_at_omniva.nil? %></td>
   <td class="px-6 py-1 break-all border-b border-gray-200"><%= invoice.in_directo %></td>
