@@ -1,0 +1,8 @@
+<%= render 'shared/modal', title: 'Edit Description' do %>
+<div class="flex flex-col items-center justify-center h-screen">
+  <%= form_with model: @invoice, url: invoice_path(@invoice), method: :patch do |form| %>
+    <%= form.text_area :description, class: 'w-full h-32 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500' %>
+      <%= form.submit 'Update Description', class: 'mt-4 bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50' %>
+    <% end %>
+  </div>
+<% end %>
