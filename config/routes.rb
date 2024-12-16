@@ -6,6 +6,7 @@ Rails.application.routes.draw do
   delete 'logout', to: 'sessions#destroy'
   resources :white_codes
   resources :invoice_creators, only: %i[new create index show]
+  resources :invoices, only: %i[edit update]
 
   resources :dashboard do
     collection do
