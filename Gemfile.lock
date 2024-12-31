@@ -467,8 +467,7 @@ GEM
       simplecov_json_formatter (~> 0.1)
     simplecov-html (0.12.3)
     simplecov_json_formatter (0.1.4)
-    simpleidn (0.2.1)
-      unf (~> 0.1.4)
+    simpleidn (0.2.3)
     smart_properties (1.17.0)
     spring (4.1.1)
     sprockets (4.2.1)
@@ -502,9 +501,6 @@ GEM
     tzinfo (2.0.6)
       concurrent-ruby (~> 1.0)
     unaccent (0.4.0)
-    unf (0.1.4)
-      unf_ext
-    unf_ext (0.0.8.2)
     unicode-display_width (2.5.0)
     uri (0.13.0)
     validate_email (0.1.6)
@@ -588,7 +584,7 @@ DEPENDENCIES
   rubocop-rails
   selenium-webdriver
   simplecov (= 0.21.2)
-  simpleidn (= 0.2.1)
+  simpleidn (= 0.2.3)
   spring
   sprockets-rails
   strong_migrations
