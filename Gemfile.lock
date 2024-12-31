@@ -349,7 +349,7 @@ GEM
     psych (5.2.0)
       stringio
     public_suffix (5.0.3)
-    puma (6.4.3)
+    puma (6.5.0)
       nio4r (~> 2.0)
     racc (1.8.1)
     rack (2.2.10)
@@ -581,7 +581,7 @@ DEPENDENCIES
   pdfkit
   pg (~> 1.1)
   pg_search
-  puma (~> 6.4.0)
+  puma (~> 6.5.0)
   rails (~> 7.1.5.1)
   redis (~> 5.0)
   rexml (~> 3.3.9)
