@@ -1,7 +1,7 @@
 source 'https://rubygems.org'
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails', branch: 'main'
-gem 'rails', '~> 7.1.4.1'
+gem 'rails', '~> 7.1.5.1'
 gem 'pg', '~> 1.1'
 gem 'puma', '~> 6.4.0'
 gem 'redis', '~> 5.0'
@@ -35,7 +35,7 @@ gem 'dry-validation'
 gem 'net-smtp', require: false
 gem 'net-imap', require: false
 gem 'net-pop', require: false
-gem "apipie-rails", "~> 1.3.0"
+gem "apipie-rails", "~> 1.4.0"
 gem 'omniauth', '>=2.0.0'
 gem 'omniauth-rails_csrf_protection'
 gem 'omniauth-tara', github: 'internetee/omniauth-tara'
