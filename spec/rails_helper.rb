@@ -7,9 +7,11 @@ SimpleCov.start 'rails' do
   add_filter %r{^/db/}
   add_filter %r{^/vendor/}
   
-  # Specify the correct output format
-  coverage_dir 'coverage'
-  formatter SimpleCov::Formatter::JSONFormatter
+  # Use the default formatter instead of JSONFormatter
+  formatter SimpleCov::Formatter::MultiFormatter.new([
+    SimpleCov::Formatter::SimpleFormatter,
+    SimpleCov::Formatter::HTMLFormatter
+  ])
 end
 puts "required simplecov"
 

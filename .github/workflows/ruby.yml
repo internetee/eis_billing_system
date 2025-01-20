@@ -118,7 +118,7 @@ jobs:
           chmod +x ./cc-test-reporter
           ./cc-test-reporter before-build
           bundle exec rspec
-          ./cc-test-reporter format-coverage --input-type simplecov --output coverage/codeclimate.json coverage/.resultset.json
+          ./cc-test-reporter format-coverage coverage/.resultset.json --input-type simplecov
           ./cc-test-reporter upload-coverage
 
       - uses: actions/upload-artifact@v3.1.2
