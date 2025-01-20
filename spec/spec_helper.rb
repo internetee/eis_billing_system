@@ -16,23 +16,11 @@
 
 require 'database_cleaner'
 require 'webmock/rspec'
-require 'simplecov'
 
 WebMock.disable_net_connect!(allow_localhost: true)
 
 # require all the files from /spec/support directory
 Dir["./spec/support/**/*.rb"].sort.each { |f| require f }
-
-SimpleCov.start 'rails' do
-  enable_coverage :branch
-  primary_coverage :branch
-  
-  add_filter '/test/'
-  add_filter '/spec/'
-  add_filter '/config/'
-  add_filter '/vendor/'
-  add_filter '/db/'
-end
 
 RSpec.configure do |config|
   # rspec-expectations config goes here. You can use an alternate
