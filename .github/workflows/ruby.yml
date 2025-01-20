@@ -118,7 +118,12 @@ jobs:
           chmod +x ./cc-test-reporter
           ./cc-test-reporter before-build
           bundle exec rspec
-          ./cc-test-reporter format-coverage coverage/.resultset.json --input-type simplecov
+          # Convert coverage data to JSON format that Code Climate expects
+          ./cc-test-reporter format-coverage \
+            --input-type simplecov \
+            --debug \
+            --prefix /home/runner/work/eis_billing_system/eis_billing_system \
+            coverage/.resultset.json
           ./cc-test-reporter upload-coverage
 
       - uses: actions/upload-artifact@v3.1.2
