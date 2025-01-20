@@ -1,5 +1,9 @@
 require 'simplecov'
-SimpleCov.start 'rails'
+SimpleCov.start 'rails' do
+  enable_coverage :branch
+  track_files "app/**/*.rb"
+  add_filter %r{^/spec/}
+end
 puts "required simplecov"
 
 # This file is copied to spec/ when you run 'rails generate rspec:install'

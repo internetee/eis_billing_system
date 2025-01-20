@@ -107,16 +107,17 @@ jobs:
           bundle exec rake db:schema:load
           bundle exec rake db:seed
           bundle exec rspec spec
-      - name: Save coverage
+
+      - name: Format coverage
         run: |
-          ./cc-test-reporter format-coverage --input-type simplecov \
-            --output coverage/codeclimate.${{ matrix.ruby }}.json \
-            coverage/.resultset.json
+          ./cc-test-reporter before-build
+          ./cc-test-reporter format-coverage -t simplecov -o coverage/codeclimate.json coverage/.resultset.json
+          ./cc-test-reporter after-build --exit-code $?
 
       - uses: actions/upload-artifact@v3.1.2
         with:
           name: coverage-${{ matrix.ruby }}
-          path: coverage/codeclimate.${{ matrix.ruby }}.json
+          path: coverage/codeclimate.json
 
       - name: Dependabot
         if: ${{ github.event.label.name == 'dependencies' }}
