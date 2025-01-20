@@ -74,13 +74,13 @@ jobs:
             echo "GIT_BRANCH=$GITHUB_HEAD_REF" >> $GITHUB_ENV
             echo "GIT_COMMIT_SHA=$(git rev-parse origin/$GITHUB_HEAD_REF)" >> $GITHUB_ENV
         if: github.event_name == 'pull_request'
-    
+
       - name: Set ENV for codeclimate (push)
         run: |
             echo "GIT_BRANCH=$GITHUB_REF" >> $GITHUB_ENV
             echo "GIT_COMMIT_SHA=$GITHUB_SHA" >> $GITHUB_ENV
         if: github.event_name == 'push'
-  
+
       - name: Prepare CodeClimate
         env:
           CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
@@ -108,28 +108,28 @@ jobs:
           bundle exec rake db:seed
           bundle exec rspec spec
 
-      - name: Format coverage
-        env:
-          GIT_BRANCH: ${{ github.ref }}
-          GIT_COMMIT_SHA: ${{ github.sha }}
-          CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
-        run: |
-          curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
-          chmod +x ./cc-test-reporter
-          ./cc-test-reporter before-build
-          bundle exec rspec
-          # Convert coverage data to JSON format that Code Climate expects
-          ./cc-test-reporter format-coverage \
-            --input-type simplecov \
-            --debug \
-            --prefix /home/runner/work/eis_billing_system/eis_billing_system \
-            coverage/.resultset.json
-          ./cc-test-reporter upload-coverage
+      # - name: Format coverage
+      #   env:
+      #     GIT_BRANCH: ${{ github.ref }}
+      #     GIT_COMMIT_SHA: ${{ github.sha }}
+      #     CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
+      #   run: |
+      #     curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+      #     chmod +x ./cc-test-reporter
+      #     ./cc-test-reporter before-build
+      #     bundle exec rspec
+      #     # Convert coverage data to JSON format that Code Climate expects
+      #     ./cc-test-reporter format-coverage \
+      #       --input-type simplecov \
+      #       --debug \
+      #       --prefix /home/runner/work/eis_billing_system/eis_billing_system \
+      #       coverage/.resultset.json
+      #     ./cc-test-reporter upload-coverage
 
-      - uses: actions/upload-artifact@v3.1.2
-        with:
-          name: coverage-${{ matrix.ruby }}
-          path: coverage/codeclimate.json
+      # - uses: actions/upload-artifact@v3.1.2
+      #   with:
+      #     name: coverage-${{ matrix.ruby }}
+      #     path: coverage/codeclimate.json
 
       - name: Dependabot
         if: ${{ github.event.label.name == 'dependencies' }}
