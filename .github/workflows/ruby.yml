@@ -109,10 +109,17 @@ jobs:
           bundle exec rspec spec
 
       - name: Format coverage
+        env:
+          GIT_BRANCH: ${{ github.ref }}
+          GIT_COMMIT_SHA: ${{ github.sha }}
+          CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
         run: |
+          curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+          chmod +x ./cc-test-reporter
           ./cc-test-reporter before-build
-          ./cc-test-reporter format-coverage -t simplecov -o coverage/codeclimate.json coverage/.resultset.json
-          ./cc-test-reporter after-build --exit-code $?
+          bundle exec rspec
+          ./cc-test-reporter format-coverage --input-type simplecov --output coverage/codeclimate.json coverage/.resultset.json
+          ./cc-test-reporter upload-coverage
 
       - uses: actions/upload-artifact@v3.1.2
         with:
@@ -123,33 +130,33 @@ jobs:
         if: ${{ github.event.label.name == 'dependencies' }}
         run: bundle exec rails assets:precompile
 
-  upload_coverage:
-    strategy:
-      fail-fast: false
-      matrix:
-        ruby: [ '2.7', '3.0.3' ]
-    runs-on: ubuntu-18.04
+  # upload_coverage:
+  #   strategy:
+  #     fail-fast: false
+  #     matrix:
+  #       ruby: [ '2.7', '3.0.3' ]
+  #   runs-on: ubuntu-18.04
 
-    env:
-      CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
-      CC_TEST_REPORTER_URL: https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64
+  #   env:
+  #     CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
+  #     CC_TEST_REPORTER_URL: https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64
 
-    needs: test
+  #   needs: test
 
-    steps:
-      - name: Download test coverage reporter
-        run: curl -L $CC_TEST_REPORTER_URL > cc-test-reporter
+  #   steps:
+  #     - name: Download test coverage reporter
+  #       run: curl -L $CC_TEST_REPORTER_URL > cc-test-reporter
 
-      - name: Give test coverage reporter executable permissions
-        run: chmod +x cc-test-reporter
+  #     - name: Give test coverage reporter executable permissions
+  #       run: chmod +x cc-test-reporter
 
-      - uses: actions/download-artifact@v3.0.2
-        with:
-          name: coverage-${{ matrix.ruby }}
-          path: coverage
+  #     - uses: actions/download-artifact@v3.0.2
+  #       with:
+  #         name: coverage-${{ matrix.ruby }}
+  #         path: coverage
 
-      - name: Aggregate & upload results to Code Climate
-        run: |
-          ./cc-test-reporter sum-coverage coverage/codeclimate.*.json
-          ./cc-test-reporter upload-coverage
+  #     - name: Aggregate & upload results to Code Climate
+  #       run: |
+  #         ./cc-test-reporter sum-coverage coverage/codeclimate.*.json
+  #         ./cc-test-reporter upload-coverage
       

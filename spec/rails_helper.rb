@@ -3,6 +3,13 @@ SimpleCov.start 'rails' do
   enable_coverage :branch
   track_files "app/**/*.rb"
   add_filter %r{^/spec/}
+  add_filter %r{^/config/}
+  add_filter %r{^/db/}
+  add_filter %r{^/vendor/}
+  
+  # Specify the correct output format
+  coverage_dir 'coverage'
+  formatter SimpleCov::Formatter::JSONFormatter
 end
 puts "required simplecov"
 
