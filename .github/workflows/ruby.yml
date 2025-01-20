@@ -143,8 +143,8 @@ jobs:
 
       - name: Aggregate & upload results to Code Climate
         run: |
-          ./cc-test-reporter sum-coverage coverage/codeclimate.*.json
-          ./cc-test-reporter upload-coverage
+          ./cc-test-reporter sum-coverage coverage/codeclimate.*.json -p 1
+          ./cc-test-reporter upload-coverage -r ${{ secrets.CC_TEST_REPORTER_ID }}
 
       - name: Dependabot
         if: ${{ github.event.label.name == 'dependencies' }}
