@@ -112,6 +112,9 @@ jobs:
         with:
           name: coverage-${{ matrix.ruby }}
           path: coverage/codeclimate.${{ matrix.ruby }}.json
+      - name: Dependabot
+        if: ${{ github.event.label.name == 'dependencies' }}
+        run: bundle exec rails assets:precompile
 
   upload_coverage:
     strategy:
@@ -142,7 +145,3 @@ jobs:
         run: |
           ./cc-test-reporter sum-coverage coverage/codeclimate.*.json -p 1
           ./cc-test-reporter upload-coverage -r ${{ secrets.CC_TEST_REPORTER_ID }}
-
-      - name: Dependabot
-        if: ${{ github.event.label.name == 'dependencies' }}
-        run: bundle exec rails assets:precompile
