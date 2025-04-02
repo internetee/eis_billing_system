@@ -65,12 +65,25 @@ class PaymentLhvConnectJob < ApplicationJob
 
   def parse_reference_number(credit_transaction)
     reference = ref_number_from_description(credit_transaction.payment_description)
-    return unless valid_ref_no?(reference)
+    if reference && valid_ref_no?(reference)
+      Rails.logger.info "Found reference number #{reference} in payment description"
+      ref = Reference.find_by(reference_number: reference)
+      return reference if ref.present?
+    end
 
-    ref = Reference.find_by(reference_number: reference)
-    inform_admin(reference:, body: credit_transaction) and return nil if ref.nil?
+    if credit_transaction.end_to_end_id.present?
+      reference = credit_transaction.end_to_end_id
+      Rails.logger.info "Checking end_to_end_id field for reference number: #{reference}"
+      ref = Reference.find_by(reference_number: reference)
+      if ref.present?
+        Rails.logger.info "Found valid reference number in end_to_end_id field: #{reference}"
+        return reference
+      end
+    end
 
-    reference
+    Rails.logger.info "Reference number not found in database: #{reference}"
+    inform_admin(reference:, body: credit_transaction)
+    nil
   end
 
   def ref_number_from_description(description)
