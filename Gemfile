@@ -15,7 +15,7 @@ gem 'money'
 gem 'countries', :require => 'countries/global'
 gem 'e_invoice', github: 'internetee/e_invoice', branch: :master
 gem 'directo', github: 'internetee/directo', branch: :master
-gem 'lhv', github: 'internetee/lhv', branch: 'end-to-end-id-field-parsing'
+gem 'lhv', github: 'internetee/lhv', branch: :master
 gem 'strong_migrations'
 gem 'figaro'
 gem 'capistrano'

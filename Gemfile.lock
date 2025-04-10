@@ -19,8 +19,8 @@ GIT
 
 GIT
   remote: https://github.com/internetee/lhv.git
-  revision: 103d15c0b8d4df0ee4d7ce9828459a105656b2a7
-  branch: end-to-end-id-field-parsing
+  revision: f1e383152dffbe00b10328abc5a2eefcf6c58dfd
+  branch: master
   specs:
     lhv (0.1.0)
       logger
@@ -278,7 +278,7 @@ GEM
     listen (3.8.0)
       rb-fsevent (~> 0.10, >= 0.10.3)
       rb-inotify (~> 0.9, >= 0.9.10)
-    logger (1.5.3)
+    logger (1.7.0)
     loofah (2.23.1)
       crass (~> 1.0.2)
       nokogiri (>= 1.12.0)
