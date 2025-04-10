@@ -19,8 +19,8 @@ GIT
 
 GIT
   remote: https://github.com/internetee/lhv.git
-  revision: e38afe4095e367b41151c0f14e391f6f8dcf6316
-  branch: master
+  revision: 103d15c0b8d4df0ee4d7ce9828459a105656b2a7
+  branch: end-to-end-id-field-parsing
   specs:
     lhv (0.1.0)
       logger
