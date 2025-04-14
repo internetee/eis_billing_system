@@ -30,7 +30,7 @@ gem 'pg_search'
 gem "pagy", "~> 9.0"
 gem 'simpleidn', '0.2.3'
 gem 'faraday'
-gem 'dry-initializer', '~> 3.1.0'
+gem 'dry-initializer', '~> 3.2.0'
 gem 'dry-validation'
 gem 'net-smtp', require: false
 gem 'net-imap', require: false
