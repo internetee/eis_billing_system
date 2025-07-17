@@ -33,7 +33,7 @@ gem 'faraday'
 gem 'dry-initializer', '~> 3.2.0'
 gem 'dry-validation'
 gem 'net-smtp', require: false
-gem 'net-imap', require: false
+gem 'net-imap', '>= 0.5.7', require: false
 gem 'net-pop', require: false
 gem "apipie-rails", "~> 1.4.0"
 gem 'omniauth', '>=2.0.0'

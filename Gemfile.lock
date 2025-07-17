@@ -297,7 +297,7 @@ GEM
     mutex_m (0.3.0)
     net-http (0.4.1)
       uri
-    net-imap (0.5.6)
+    net-imap (0.5.9)
       date
       net-protocol
     net-pop (0.1.2)
@@ -568,7 +568,7 @@ DEPENDENCIES
   lhv!
   listen (~> 3.3)
   money
-  net-imap
+  net-imap (>= 0.5.7)
   net-pop
   net-smtp
   omniauth (>= 2.0.0)
