@@ -1,4 +1,6 @@
 require 'rails_helper'
+require 'httpi'   # HTTPI::Response
+require 'nori'    # Nori для парсинга SOAP
 
 RSpec.describe "SendEInvoiceJob", type: :job do
   let!(:admin) { create(:user) }
@@ -67,5 +69,42 @@ RSpec.describe "SendEInvoiceJob", type: :job do
 
       expect { SendEInvoiceJob.perform_now(params) }.to change { ActionMailer::Base.deliveries.count }.by(1)
     end
+
+    it 'retries the job when Savon::SOAPFault is raised' do
+      params = {
+        invoice_data: {
+          id: '2',
+          number: invoice.invoice_number,
+        }
+      }
+
+      fault_xml = <<~XML
+        <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+          <soap:Body>
+            <soap:Fault>
+              <faultcode>Server</faultcode>
+              <faultstring>Something went wrong</faultstring>
+            </soap:Fault>
+          </soap:Body>
+        </soap:Envelope>
+      XML
+
+      real_response = HTTPI::Response.new(500, {}, fault_xml)
+      soap_fault    = Savon::SOAPFault.new(real_response, Nori.new)
+
+      allow_any_instance_of(SendEInvoiceJob)
+        .to receive(:process)
+        .and_raise(soap_fault)
+
+      job = SendEInvoiceJob.new
+
+      expect(job)
+        .to receive(:retry_job)
+        .with(wait: 1.minute, attempts: 3)
+
+      # просто запускаем – никаких SOAPFault наружу не уходит
+      expect { job.perform(params) }.not_to raise_error
+    end
+
   end
 end
