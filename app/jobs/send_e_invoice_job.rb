@@ -4,6 +4,9 @@ class SendEInvoiceJob < ApplicationJob
   def perform(e_invoice_data)
     Rails.logger.info "Started to process e-invoice for invoice_id #{e_invoice_data[:invoice_data][:id]}"
     process(e_invoice_data)
+  rescue Savon::SOAPFault => e
+    log_error(invoice: e_invoice_data[:invoice_data][:id], error: e)
+    retry_job wait: 1.minute, attempts: 3
   rescue StandardError => e
     log_error(invoice: e_invoice_data[:invoice_data][:id], error: e)
     raise e
@@ -19,9 +22,9 @@ class SendEInvoiceJob < ApplicationJob
     message = data.to_hash[:e_invoice_response][:message]
 
     if message.include? 'Success'
-      EInvoiceResponseSender.send_request(invoice_number: invoice_number,
+      EInvoiceResponseSender.send_request(invoice_number:,
                                           initiator: e_invoice_data[:initiator])
-      invoice = Invoice.find_by(invoice_number: invoice_number)
+      invoice = Invoice.find_by(invoice_number:)
       invoice&.update(sent_at_omniva: Time.zone.now)
     else
       Rails.logger.info 'FAILED IN EINVOICE OMNIVA TRANSFER'
