@@ -1,6 +1,10 @@
 name: Github Testing
 on: [push]
 
+permissions:
+  contents: read
+  id-token: write
+
 jobs:
   bundle_audit:
     runs-on: ubuntu-24.04
@@ -8,12 +12,12 @@ jobs:
       - uses: actions/checkout@v4
       - uses: ruby/setup-ruby@v1
         with:
-          ruby-version: 3.2.0
-          bundler-cache: true # runs 'bundle install' and caches installed gems automatically
+          ruby-version: 3.2.2
+          bundler-cache: true
       - name: config bundler
-        run:  |
+        run: |
           bundle config set without 'development staging production'
-          bundle config set deployment '[secure]'
+          bundle config set deployment 'true'
           bundle env
           head -n1 $(which bundle)
       - name: Bundle Audit Check
@@ -25,12 +29,12 @@ jobs:
       - uses: actions/checkout@v4
       - uses: ruby/setup-ruby@v1
         with:
-          ruby-version: 3.2.0
-          bundler-cache: true # runs 'bundle install' and caches installed gems automatically
+          ruby-version: 3.2.2
+          bundler-cache: true
       - name: config bundler
-        run:  |
+        run: |
           bundle config set without 'development staging production'
-          bundle config set deployment '[secure]'
+          bundle config set deployment 'true'
           bundle env
           head -n1 $(which bundle)
       - name: Run Brakeman
@@ -50,98 +54,52 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-24.04]
-        ruby: ['3.2.0']
+        ruby: ['3.2.2']
     runs-on: ${{ matrix.os }}
-    continue-on-error: ${{ endsWith(matrix.ruby, 'head') || matrix.ruby == 'debug' }}
-    steps:
+    env:
+      PG_DATABASE: postgres
+      PG_HOST: localhost
+      PG_USER: postgres
+      PG_PASSWORD: password
+      PG_PORT: 5432
+      RAILS_ENV: test
+      COVERAGE: true
+      DISABLE_SPRING: 1
 
+    steps:
       - uses: actions/checkout@v4
+
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: ${{ matrix.ruby }}
-          bundler-cache: true # runs 'bundle install' and caches installed gems automatically
+          bundler-cache: true
+
       - name: config bundler
-        run:  |
+        run: |
           bundle config set without 'development staging production'
-          bundle config set deployment '[secure]'
+          bundle config set deployment 'true'
           bundle env
           head -n1 $(which bundle)
 
-      - name: Set ENV for codeclimate (pull_request)
+      - name: Prepare configs
         run: |
-          git fetch --no-tags --prune --depth=1 origin +refs/heads/$GITHUB_HEAD_REF:refs/remotes/origin/$GITHUB_HEAD_REF
-          echo "GIT_BRANCH=$GITHUB_HEAD_REF" >> $GITHUB_ENV
-          echo "GIT_COMMIT_SHA=$(git rev-parse origin/$GITHUB_HEAD_REF)" >> $GITHUB_ENV
-        if: github.event_name == 'pull_request'
-
-      - name: Set ENV for codeclimate (push)
-        run: |
-          echo "GIT_BRANCH=$GITHUB_REF" >> $GITHUB_ENV
-          echo "GIT_COMMIT_SHA=$GITHUB_SHA" >> $GITHUB_ENV
-        if: github.event_name == 'push'
-
-      - name: Prepare CodeClimate
-        env:
-          CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
-        run: |
-          curl -LSs 'https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64' >./cc-test-reporter;
-          chmod +x ./cc-test-reporter
-          ./cc-test-reporter before-build
-
-      - name: Run Tests
-        env:
-          PG_DATABASE: postgres
-          PG_HOST: localhost
-          PG_USER: postgres
-          PG_PORT: ${{ job.services.postgres.ports[5432] }}
-          RAILS_ENV: test
-          COVERAGE: true
-          DISABLE_SPRING: 1
-        run: |
-          cp config/application.yml.sample config/application.yml
+          cp config/application.yml.sample config/application.yml || true
           cp config/database_ci.yml config/database.yml
-          bundle exec rake db:create
-          bundle exec rake db:migrate
-          bundle exec rake db:schema:load
-          bundle exec rake db:seed
-          bundle exec rspec spec
-      - name: Save coverage
-        run: ./cc-test-reporter format-coverage --output coverage/codeclimate.${{ matrix.ruby }}.json
 
-      - uses: actions/upload-artifact@v4.6.2
-        with:
-          name: coverage-${{ matrix.ruby }}
-          path: coverage/codeclimate.${{ matrix.ruby }}.json
-      - name: Dependabot
-        if: ${{ github.event.label.name == 'dependencies' }}
-        run: bundle exec rails assets:precompile
-
-  upload_coverage:
-    strategy:
-      fail-fast: false
-      matrix:
-        ruby: [ '3.2.0' ]
-    runs-on: ubuntu-24.04
-
-    env:
-      CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
-      CC_TEST_REPORTER_URL: https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64
-
-    needs: test
-
-    steps:
-      - name: Download test coverage reporter
-        run: curl -L $CC_TEST_REPORTER_URL > cc-test-reporter
-
-      - name: Give test coverage reporter executable permissions
-        run: chmod +x cc-test-reporter
-
-      - uses: actions/download-artifact@v4.2.1
-        with:
-          name: coverage-${{ matrix.ruby }}
-          path: coverage
-
-      - name: Aggregate & upload results to Code Climate
+      - name: Prepare database
         run: |
-          ./cc-test-reporter sum-coverage coverage/codeclimate.*.json -p 1
-          ./cc-test-reporter upload-coverage -r ${{ secrets.CC_TEST_REPORTER_ID }}
+          bundle exec rake db:create
+          bundle exec rake db:schema:load
+
+      - name: Run RSpec with coverage
+        run: bundle exec rspec spec
+
+      - uses: qltysh/qlty-action/coverage@v1
+        with:
+          oidc: true
+          files: coverage/.resultset.json
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: coverage
+          path: coverage/
