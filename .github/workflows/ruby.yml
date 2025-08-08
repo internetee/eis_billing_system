@@ -94,7 +94,7 @@ jobs:
       - name: Run RSpec with coverage
         run: bundle exec rspec spec
 
-      - uses: qltysh/qlty-action/coverage@v1
+      - uses: qltysh/qlty-action/coverage@v2
         with:
           oidc: true
           files: coverage/.resultset.json
