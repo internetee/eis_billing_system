@@ -1,7 +1,7 @@
 source 'https://rubygems.org'
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails', branch: 'main'
-gem 'rails', '~> 7.1.5.1'
+gem 'rails', '~> 7.1.5.2'
 gem 'pg', '~> 1.1'
 gem 'puma', '~> 6.6.0'
 gem 'redis', '~> 5.0'
@@ -16,7 +16,7 @@ gem 'countries', :require => 'countries/global'
 gem 'e_invoice', github: 'internetee/e_invoice', branch: :master
 gem 'directo', github: 'internetee/directo', branch: :master
 gem 'lhv', github: 'internetee/lhv', branch: :master
-gem 'strong_migrations'
+gem 'strong_migrations', '>= 1.7.0'
 gem 'figaro'
 gem 'capistrano'
 gem 'capistrano-rails'
@@ -26,7 +26,7 @@ gem 'jwt'
 gem "hotwire-rails"
 gem 'importmap-rails'
 gem 'sprockets-rails'
-gem 'pg_search'
+gem 'pg_search', '>= 2.3.7'
 gem "pagy", "~> 9.0"
 gem 'simpleidn', '0.2.3'
 gem 'faraday'
@@ -35,7 +35,7 @@ gem 'dry-validation'
 gem 'net-smtp', require: false
 gem 'net-imap', require: false
 gem 'net-pop', require: false
-gem "apipie-rails", "~> 1.4.0"
+gem "apipie-rails", "~> 1.5.0"
 gem 'omniauth', '>=2.0.0'
 gem 'omniauth-rails_csrf_protection'
 gem 'omniauth-tara', github: 'internetee/omniauth-tara'
@@ -65,6 +65,6 @@ group :test do
   gem 'simplecov', '0.17.1', require: false
   gem 'webdrivers'
   gem 'webmock'
-  gem 'database_cleaner'
-  gem 'database_cleaner-active_record'
+  gem 'database_cleaner', '>= 2.1.0'
+  gem 'database_cleaner-active_record', '>= 2.2.0'
 end
