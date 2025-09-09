@@ -22,8 +22,7 @@ jobs:
       - name: Auto approve PR
         if: |
           github.actor == 'dependabot[bot]' ||
-          github.actor == 'renovate[bot]' ||
-          github.actor == 'snyk-bot'
+          github.actor == 'renovate[bot]'
         uses: hmarr/auto-approve-action@v3
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
@@ -52,9 +51,6 @@ jobs:
             else
               echo "auto_merge=false" >> $GITHUB_OUTPUT
             fi
-          elif [ "${{ github.actor }}" == "snyk-bot" ]; then
-            # Snyk action tuvastab patch uuenduse automaatselt
-            echo "auto_merge=true" >> $GITHUB_OUTPUT
           else
             echo "auto_merge=false" >> $GITHUB_OUTPUT
           fi
@@ -75,11 +71,3 @@ jobs:
           gh pr merge --auto --merge ${{ github.event.pull_request.number }}
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Snyk PR Action
-        if: github.actor == 'snyk-bot'
-        uses: snyk/actions/github-automerge@v2
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          merge-patch: true
-          approve-patch: true
