@@ -1,0 +1,85 @@
+name: Auto approve & merge patch PRs
+
+on:
+  pull_request:
+    types: [opened, edited, synchronize, reopened, labeled]
+    branches: [main]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  auto-approve-merge:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Setup GitHub CLI
+        uses: actions/setup-gh@v1
+
+      - name: Auto approve PR
+        if: |
+          github.actor == 'dependabot[bot]' ||
+          github.actor == 'renovate[bot]' ||
+          github.actor == 'snyk-bot'
+        uses: hmarr/auto-approve-action@v3
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Fetch Dependabot metadata
+        if: github.actor == 'dependabot[bot]'
+        id: metadata
+        uses: dependabot/fetch-metadata@v7267f607e9d3fb96fc2fbe83e0af444713e90b7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Check if PR should be auto-merged
+        id: check_auto_merge
+        run: |
+          if [ "${{ github.actor }}" == "dependabot[bot]" ]; then
+            UPDATE_TYPE="${{ steps.metadata.outputs.update-type }}"
+            if [[ "$UPDATE_TYPE" == "version-update:semver-patch" ]]; then
+              echo "auto_merge=true" >> $GITHUB_OUTPUT
+            else
+              echo "auto_merge=false" >> $GITHUB_OUTPUT
+            fi
+          elif [ "${{ github.actor }}" == "renovate[bot]" ]; then
+            # Patch label kontroll
+            if contains(github.event.pull_request.labels.*.name, 'patch'); then
+              echo "auto_merge=true" >> $GITHUB_OUTPUT
+            else
+              echo "auto_merge=false" >> $GITHUB_OUTPUT
+            fi
+          elif [ "${{ github.actor }}" == "snyk-bot" ]; then
+            # Snyk action tuvastab patch uuenduse automaatselt
+            echo "auto_merge=true" >> $GITHUB_OUTPUT
+          else
+            echo "auto_merge=false" >> $GITHUB_OUTPUT
+          fi
+        shell: bash
+
+      - name: Wait for CI checks
+        if: steps.check_auto_merge.outputs.auto_merge == 'true'
+        uses: lewagon/wait-on-check-action@v1.3.4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          wait-interval: 30
+          running-workflow-name: 'auto-approve-merge'
+
+      - name: Auto-merge PR
+        if: steps.check_auto_merge.outputs.auto_merge == 'true' && github.event.pull_request.mergeable_state == 'clean'
+        run: |
+          gh pr merge --auto --merge ${{ github.event.pull_request.number }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Snyk PR Action
+        if: github.actor == 'snyk-bot'
+        uses: snyk/actions/github-automerge@v2
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          merge-patch: true
+          approve-patch: true
