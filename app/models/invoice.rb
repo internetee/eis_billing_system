@@ -14,8 +14,8 @@ class Invoice < ApplicationRecord
                                        }
                                      }
 
-  enum affiliation: { regular: 0, auction_deposit: 1, linkpay: 2 }
-  enum status: { unpaid: 0, paid: 1, cancelled: 2, failed: 3, refunded: 4, overdue: 5 }
+  enum :affiliation, { regular: 0, auction_deposit: 1, linkpay: 2 }
+  enum :status, { unpaid: 0, paid: 1, cancelled: 2, failed: 3, refunded: 4, overdue: 5 }
 
   scope :with_status, lambda { |status|
     where(status:) if status.present?
