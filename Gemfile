@@ -7,7 +7,7 @@ gem 'puma', '~> 6.6.0'
 gem 'redis', '~> 5.0'
 gem 'bcrypt', '~> 3.1.7'
 gem 'bootsnap', '>= 1.4.4', require: false
-gem 'rexml', '~> 3.4.0'
+gem 'rexml', '~> 3.4.2'
 gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 gem 'wkhtmltopdf-binary'
 gem 'pdfkit'
@@ -48,7 +48,7 @@ group :development, :test do
   gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]
   gem 'rspec-rails'
   gem 'factory_bot_rails'
-  gem 'rubocop-rails', require: false
+  gem 'rubocop-rails', '>= 2.22.2', require: false
   gem 'bundle-audit', require: false
   gem 'brakeman', require: false
 end
@@ -60,11 +60,11 @@ end
 
 group :test do
   gem 'faker'
-  gem 'selenium-webdriver'
+  gem 'selenium-webdriver', '>= 4.11.0'
 
   gem 'simplecov', '0.17.1', require: false
   gem 'webdrivers'
-  gem 'webmock'
+  gem 'webmock', '>= 3.20.0'
   gem 'database_cleaner'
   gem 'database_cleaner-active_record'
 end
