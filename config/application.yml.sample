@@ -12,7 +12,7 @@
 
 action_mailer_default_protocol: 'https' # default: http
 action_mailer_default_host: 'registry.test'
-action_mailer_default_port: 80 #default: no port (80)
+action_mailer_default_port: '80' #default: no port (80)
 action_mailer_default_from: 'no-reply@example.com'
 action_mailer_force_delete_from: # `From` header for `DomainDeleteMailer#forced` email
 
@@ -51,7 +51,7 @@ api_username: ''
 everypay_base: https://igw-demo.every-pay.com/api/v4
 account_name: ''
 
-timeout_is_sec: 3
+timeout_is_sec: '3'
 
 lhv_keystore: './eestiInternetiSa/eestiInternetiSa.p12'
 lhv_keystore_password: 'changeit'
@@ -67,8 +67,8 @@ secret_word: ''
 e_invoice_provider_test_mode: 'true'
 
 
-deposit_min_num: 10001
-deposit_max_num: 14001
+deposit_min_num: '10001'
+deposit_max_num: '14001'
 
 development:
   allowed_base_urls: 'https://registry.test, https://registrar_center.test, https://eeid.test, https://auction_center.test, https://auction.test'
