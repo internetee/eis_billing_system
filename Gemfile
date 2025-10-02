@@ -1,7 +1,7 @@
 source 'https://rubygems.org'
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails', branch: 'main'
-gem 'rails', '~> 7.1.5.2'
+gem 'rails', '~> 7.2.0.0'
 gem 'pg', '~> 1.1'
 gem 'puma', '~> 6.6.0'
 gem 'redis', '~> 5.0'
@@ -24,8 +24,8 @@ gem 'capistrano-passenger'
 gem 'capistrano-rbenv'
 gem 'jwt'
 gem "hotwire-rails"
-gem 'importmap-rails'
-gem 'sprockets-rails'
+gem 'importmap-rails', '>= 2.0.0'
+gem 'sprockets-rails', '>= 3.5.0'
 gem 'pg_search'
 gem "pagy", "~> 9.0"
 gem 'simpleidn', '0.2.3'
@@ -35,20 +35,20 @@ gem 'dry-validation'
 gem 'net-smtp', require: false
 gem 'net-imap', require: false
 gem 'net-pop', require: false
-gem "apipie-rails", "~> 1.4.0"
-gem 'omniauth', '>=2.0.0'
-gem 'omniauth-rails_csrf_protection'
+gem "apipie-rails", "~> 1.5.0"
+gem 'omniauth', '>= 2.1.2'
+gem 'omniauth-rails_csrf_protection', '>= 1.0.2'
 gem 'omniauth-tara', github: 'internetee/omniauth-tara'
-gem 'i18n-tasks', '~> 1.0.12'
+gem 'i18n-tasks', '~> 1.0.14'
 
 # Use Rack CORS for handling Cross-Origin Resource Sharing (CORS), making cross-origin AJAX possible
 # gem 'rack-cors'
 
 group :development, :test do
   gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]
-  gem 'rspec-rails'
-  gem 'factory_bot_rails'
-  gem 'rubocop-rails', require: false
+  gem 'rspec-rails', '>= 6.0.4'
+  gem 'factory_bot_rails', '>= 6.3.0'
+  gem 'rubocop-rails', '>= 2.22.2', require: false
   gem 'bundle-audit', require: false
   gem 'brakeman', require: false
 end
