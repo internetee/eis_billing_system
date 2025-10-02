@@ -238,5 +238,105 @@ RSpec.describe 'PaymentLhvConnectJob', type: :job do
       )
       PaymentLhvConnectJob.perform_now
     end
+
+    it 'should find reference number in end_to_end_id when not found in payment description' do
+      ref = Billing::ReferenceNo.generate
+      Reference.create(reference_number: ref, initiator: 'registry')
+
+      date = Time.zone.now - 4.hours
+      params_for_sending = OpenStruct.new(
+        amount: '10.0', 
+        currency: 'EUR', 
+        date: date, 
+        payment_reference_number: ref,
+        payment_description: 'Money transfer without reference',
+        end_to_end_id: ref
+      )
+
+      Lhv::ConnectApi.class_eval do
+        define_method :credit_debit_notification_messages do
+          transaction = OpenStruct.new(
+            amount: '10.0',
+            currency: 'EUR',
+            date: date,
+            payment_reference_number: nil,
+            payment_description: 'Money transfer without reference',
+            end_to_end_id: ref
+          )
+          message = OpenStruct.new(
+            bank_account_iban: Setting.registry_bank_account_iban_lhv || 'EE177700771001155322',
+            credit_transactions: [transaction]
+          )
+          [message]
+        end
+      end
+
+      expect_any_instance_of(PaymentLhvConnectJob).to receive(:send_transactions).with(
+        params: [params_for_sending], 
+        payment_reference_number: ref
+      )
+      PaymentLhvConnectJob.perform_now
+    end
+
+    it 'should not process transaction when end_to_end_id is present but not in database' do
+      invalid_ref = '12345678'
+      date = Time.zone.now - 4.hours
+
+      Lhv::ConnectApi.class_eval do
+        define_method :credit_debit_notification_messages do
+          transaction = OpenStruct.new(
+            amount: '10.0',
+            currency: 'EUR',
+            date: date,
+            payment_reference_number: nil,
+            payment_description: 'Money transfer without valid reference',
+            end_to_end_id: invalid_ref
+          )
+          message = OpenStruct.new(
+            bank_account_iban: Setting.registry_bank_account_iban_lhv || 'EE177700771001155322',
+            credit_transactions: [transaction]
+          )
+          [message]
+        end
+      end
+
+      expect_any_instance_of(BillingMailer).to receive(:inform_admin).with(
+        reference_number: invalid_ref, 
+        body: an_instance_of(OpenStruct)
+      ).and_return(double("mailer", deliver_now: true))
+      
+      expect_any_instance_of(PaymentLhvConnectJob).not_to receive(:send_transactions)
+      PaymentLhvConnectJob.perform_now
+    end
+
+    it 'should not process transaction when neither payment description nor end_to_end_id contain valid reference' do
+      date = Time.zone.now - 4.hours
+
+      Lhv::ConnectApi.class_eval do
+        define_method :credit_debit_notification_messages do
+          transaction = OpenStruct.new(
+            amount: '10.0',
+            currency: 'EUR',
+            date: date,
+            payment_reference_number: nil,
+            payment_description: 'Money transfer without any reference',
+            end_to_end_id: nil
+          )
+          message = OpenStruct.new(
+            bank_account_iban: Setting.registry_bank_account_iban_lhv || 'EE177700771001155322',
+            credit_transactions: [transaction]
+          )
+          [message]
+        end
+      end
+
+      expect_any_instance_of(BillingMailer).to receive(:inform_admin).with(
+        reference_number: nil, 
+        body: an_instance_of(OpenStruct)
+      ).and_return(double("mailer", deliver_now: true))
+      
+      expect_any_instance_of(PaymentLhvConnectJob).not_to receive(:send_transactions)
+      PaymentLhvConnectJob.perform_now
+    end
   end
 end

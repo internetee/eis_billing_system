@@ -1,0 +1,97 @@
+name: Auto approve & merge patch PRs
+
+on:
+  pull_request:
+    types: [opened, edited, synchronize, reopened, labeled]
+    branches: [main]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  auto-approve-merge:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Setup GitHub CLI
+        uses: cli/gh-action@v3
+
+      - name: Auto approve PR
+        if: github.actor == 'dependabot[bot]' || github.actor == 'renovate[bot]'
+        uses: hmarr/auto-approve-action@v3
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Fetch Dependabot metadata
+        if: github.actor == 'dependabot[bot]'
+        id: metadata
+        uses: dependabot/fetch-metadata@v1
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Determine if PR should be auto-merged
+        id: check_auto_merge
+        run: |
+          AUTO_MERGE=false
+          UPDATE_TYPE="unknown"
+
+          if [ "${{ github.actor }}" == "dependabot[bot]" ]; then
+            UPDATE_TYPE="${{ steps.metadata.outputs.update-type }}"
+            if [[ "$UPDATE_TYPE" == "version-update:semver-patch" ]]; then
+              AUTO_MERGE=true
+            fi
+          elif [ "${{ github.actor }}" == "renovate[bot]" ]; then
+            LABELS=$(echo '${{ toJson(github.event.pull_request.labels) }}' | jq -r '.[].name')
+            UPDATE_TYPE="renovate-patch"
+            for LABEL in $LABELS; do
+              if [[ "$LABEL" == "patch" || "$LABEL" == "bundler" || "$LABEL" == "ruby-version" || "$LABEL" == "github-actions" ]]; then
+                AUTO_MERGE=true
+                break
+              fi
+            done
+          fi
+
+          echo "auto_merge=$AUTO_MERGE" >> $GITHUB_OUTPUT
+          echo "update_type=$UPDATE_TYPE" >> $GITHUB_OUTPUT
+
+      - name: Wait for CI checks
+        if: steps.check_auto_merge.outputs.auto_merge == 'true'
+        uses: lewagon/wait-on-check-action@v1.3.4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          wait-interval: 30
+          running-workflow-name: 'auto-approve-merge'
+        continue-on-error: true
+
+      - name: Auto-merge PR
+        if: steps.check_auto_merge.outputs.auto_merge == 'true'
+        id: merge_pr
+        run: |
+          set +e
+          gh pr merge --auto --merge ${{ github.event.pull_request.number }}
+          set -e
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Send Mattermost notification
+        if: steps.check_auto_merge.outputs.auto_merge == 'true'
+        run: |
+          MERGED=$(gh pr view ${{ github.event.pull_request.number }} --json merged -q .merged)
+          if [ "$MERGED" = "true" ]; then
+            TIMESTAMP=$(date -u +"%Y-%m-%d %H:%M UTC")
+            MESSAGE="[${{ github.repository }}] PR #${{ github.event.pull_request.number }}: \"${{ github.event.pull_request.title }}\" was auto-merged by ${{ github.actor }}. Update type: ${{ steps.check_auto_merge.outputs.update_type }} Merged at: $TIMESTAMP Link: ${{ github.event.pull_request.html_url }}"
+
+            curl -X POST \
+              -H "Authorization: Bearer ${{ secrets.MATTERMOST_BOT_TOKEN }}" \
+              -H "Content-Type: application/json" \
+              -d "{\"channel_id\":\"${{ secrets.MATTERMOST_CHANNEL_ID }}\",\"message\":\"$MESSAGE\"}" \
+              https://mattermost.example.com/api/v4/posts
+          fi
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
