@@ -1,3 +1,6 @@
+[![Maintainability](https://qlty.sh/gh/internetee/projects/eis_billing_system/maintainability.svg)](https://qlty.sh/gh/internetee/projects/eis_billing_system)
+[![Code Coverage](https://qlty.sh/gh/internetee/projects/eis_billing_system/coverage.svg)](https://qlty.sh/gh/internetee/projects/eis_billing_system)
+
 # README
 
 This README would normally document whatever steps are necessary to get the
