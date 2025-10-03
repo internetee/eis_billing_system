@@ -363,7 +363,7 @@ GEM
       date
       stringio
     public_suffix (6.0.2)
-    puma (6.6.0)
+    puma (7.0.4)
       nio4r (~> 2.0)
     racc (1.8.1)
     rack (2.2.18)
@@ -596,7 +596,7 @@ DEPENDENCIES
   pdfkit
   pg (~> 1.1)
   pg_search
-  puma (~> 6.6.0)
+  puma (~> 7.0.0)
   rails (~> 7.1.5.2)
   redis (~> 5.0)
   rexml (~> 3.4.0)
