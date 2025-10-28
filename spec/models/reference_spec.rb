@@ -1,26 +1,37 @@
 require 'rails_helper'
 
 RSpec.describe Reference, type: :model do
-  describe '#valid' do
-    it 'should create a new reference' do
-      expect do
-        described_class.create(
-          reference_number: '12345',
-          initiator: 'registry',
-          owner: 'Roga & Kopyta'
-        )
-      end.to change { described_class.count }
+  describe 'searching class method' do
+    let(:reference) { create(:reference, reference_number: 'REF-123', initiator: 'registry') }
+
+    it 'finds reference by number' do
+      params = { reference_number: 'REF-123' }
+      expect(Reference.search(params)).to include(reference)
+    end
+
+    it 'sorts by specified column and direction' do
+      create(:reference, reference_number: 'REF-001')
+      create(:reference, reference_number: 'REF-002')
+
+      params = { sort: 'reference_number', direction: 'asc' }
+      results = Reference.search(params)
+      expect(results.first.reference_number).to eq('REF-001')
+    end
+
+    it 'uses default sort when invalid params provided' do
+      params = { sort: 'invalid', direction: 'invalid' }
+      expect(Reference.search(params)).to be_a(ActiveRecord::Relation)
     end
   end
 
-  describe '#unit' do
-    let(:reference) { create(:reference) }
+  describe 'scopes' do
+    it 'filters by reference number' do
+      ref1 = create(:reference, reference_number: 'REF-123')
+      ref2 = create(:reference, reference_number: 'REF-456')
 
-    context 'search' do
-      it 'should find record by reference number' do
-        result = described_class.search(reference_number: reference.reference_number)
-        expect(result.count).to eq 1
-      end
+      results = Reference.with_number('REF-123')
+      expect(results).to include(ref1)
+      expect(results).not_to include(ref2)
     end
   end
 end

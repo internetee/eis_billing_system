@@ -48,4 +48,39 @@ RSpec.describe Invoice, type: :model do
       expect(response.result?).to eq false
     end
   end
+
+  describe 'predicate methods' do
+    let(:invoice) { create(:invoice) }
+
+    it 'checks auction_deposit_prepayment correctly' do
+      invoice.update(description: 'auction_deposit domain example.com')
+      expect(invoice.auction_deposit_prepayment?).to be true
+
+      invoice.update(description: 'regular payment')
+      expect(invoice.auction_deposit_prepayment?).to be false
+
+      invoice.update(description: nil)
+      expect(invoice.auction_deposit_prepayment?).to be false
+    end
+
+    it 'checks initiator types' do
+      invoice.update(initiator: 'registry')
+      expect(invoice.registry?).to be true
+      expect(invoice.billing_system?).to be false
+
+      invoice.update(initiator: 'billing_system')
+      expect(invoice.billing_system?).to be true
+      expect(invoice.registry?).to be false
+    end
+  end
+
+  describe '#to_h' do
+    it 'returns hash with all attributes' do
+      invoice = create(:invoice, invoice_number: '123', initiator: 'registry', status: :paid)
+      hash = invoice.to_h
+      expect(hash[:invoice_number].to_s).to eq('123')
+      expect(hash[:initiator]).to eq('registry')
+      expect(hash[:status]).to eq('paid')
+    end
+  end
 end
