@@ -366,7 +366,7 @@ GEM
     puma (6.6.0)
       nio4r (~> 2.0)
     racc (1.8.1)
-    rack (2.2.18)
+    rack (2.2.20)
     rack-oauth2 (2.2.0)
       activesupport
       attr_required
@@ -521,7 +521,7 @@ GEM
       concurrent-ruby (~> 1.0)
     unaccent (0.4.0)
     unicode-display_width (2.5.0)
-    uri (1.0.3)
+    uri (1.0.4)
     validate_email (0.1.6)
       activemodel (>= 3.0)
       mail (>= 2.2.5)
@@ -599,7 +599,7 @@ DEPENDENCIES
   puma (~> 6.6.0)
   rails (~> 7.1.5.2)
   redis (~> 5.0)
-  rexml (~> 3.4.0)
+  rexml (~> 3.4.2)
   rspec-rails
   rubocop-rails
   selenium-webdriver
