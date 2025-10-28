@@ -524,6 +524,9 @@ GEM
     unicode-display_width (2.5.0)
     uri (1.0.4)
     useragent (0.16.11)
+    validate_email (0.1.6)
+      activemodel (>= 3.0)
+      mail (>= 2.2.5)
     validate_url (1.0.15)
       activemodel (>= 3.0.0)
       public_suffix
@@ -600,7 +603,7 @@ DEPENDENCIES
   puma (~> 7.1.0)
   rails (~> 7.2.2.0)
   redis (~> 5.0)
-  rexml (~> 3.4.0)
+  rexml (~> 3.4.2)
   rspec-rails
   rubocop-rails
   selenium-webdriver
