@@ -295,7 +295,7 @@ GEM
       net-imap
       net-pop
       net-smtp
-    marcel (1.0.4)
+    marcel (1.1.0)
     mini_mime (1.1.5)
     mini_portile2 (2.8.9)
     minitest (5.25.5)
@@ -600,7 +600,7 @@ DEPENDENCIES
   rack (~> 2.2.20)
   rails (~> 7.1.5.2)
   redis (~> 5.0)
-  rexml (~> 3.4.0)
+  rexml (~> 3.4.2)
   rspec-rails
   rubocop-rails
   selenium-webdriver

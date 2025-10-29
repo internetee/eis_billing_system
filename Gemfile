@@ -7,7 +7,7 @@ gem 'puma', '~> 6.6.0'
 gem 'redis', '~> 5.0'
 gem 'bcrypt', '~> 3.1.7'
 gem 'bootsnap', '>= 1.4.4', require: false
-gem 'rexml', '~> 3.4.0'
+gem 'rexml', '~> 3.4.2'
 gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 gem 'wkhtmltopdf-binary'
 gem 'pdfkit'
