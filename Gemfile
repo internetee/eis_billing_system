@@ -56,7 +56,8 @@ group :development, :test do
   gem 'rubocop-rails', require: false
   gem 'bundle-audit', require: false
   gem 'brakeman', require: false
-  gem 'observer'
+  gem 'observer' # Required for Ruby 3.4+
+  gem 'abbrev' # Required for Ruby 3.4+ (brakeman dependency)
 end
 
 group :development do
