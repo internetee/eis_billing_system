@@ -318,7 +318,7 @@ GEM
     net-smtp (0.5.1)
       net-protocol
     net-ssh (7.2.0)
-    nio4r (2.7.4)
+    nio4r (2.7.5)
     nkf (0.2.0)
     nokogiri (1.18.9)
       mini_portile2 (~> 2.8.2)
@@ -365,7 +365,7 @@ GEM
       date
       stringio
     public_suffix (6.0.2)
-    puma (6.6.0)
+    puma (7.1.0)
       nio4r (~> 2.0)
     racc (1.8.1)
     rack (2.2.20)
@@ -600,7 +600,7 @@ DEPENDENCIES
   pdfkit
   pg (~> 1.1)
   pg_search
-  puma (~> 6.6.0)
+  puma (~> 7.1.0)
   rack (~> 2.2.20)
   rails (~> 7.1.5.2)
   redis (~> 5.0)
