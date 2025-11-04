@@ -38,7 +38,7 @@ gem 'dry-validation'
 gem 'net-smtp', require: false
 gem 'net-imap', require: false
 gem 'net-pop', require: false
-gem "apipie-rails", "~> 1.4.0"
+gem "apipie-rails", "~> 1.5.0"
 gem 'omniauth', '>=2.0.0'
 gem 'omniauth-rails_csrf_protection'
 gem 'omniauth-tara', github: 'internetee/omniauth-tara'
