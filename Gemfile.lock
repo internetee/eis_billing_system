@@ -37,6 +37,7 @@ GIT
 GEM
   remote: https://rubygems.org/
   specs:
+    abbrev (0.1.2)
     actioncable (7.1.5.2)
       actionpack (= 7.1.5.2)
       activesupport (= 7.1.5.2)
@@ -326,6 +327,7 @@ GEM
       racc (~> 1.4)
     nori (2.7.1)
       bigdecimal
+    observer (0.1.2)
     omniauth (2.1.1)
       hashie (>= 3.4.6)
       rack (>= 2.2.3)
@@ -558,6 +560,7 @@ PLATFORMS
   x86_64-linux
 
 DEPENDENCIES
+  abbrev
   apipie-rails (~> 1.4.0)
   bcrypt (~> 3.1.7)
   bootsnap (>= 1.4.4)
@@ -589,6 +592,7 @@ DEPENDENCIES
   net-imap
   net-pop
   net-smtp
+  observer
   omniauth (>= 2.0.0)
   omniauth-rails_csrf_protection
   omniauth-tara!
@@ -614,6 +618,9 @@ DEPENDENCIES
   webdrivers
   webmock
   wkhtmltopdf-binary
+
+RUBY VERSION
+   ruby 3.4.5p51
 
 BUNDLED WITH
    2.4.10
