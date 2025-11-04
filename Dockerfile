@@ -1,4 +1,4 @@
-FROM --platform=linux/amd64 internetee/ruby:3.2.2-bullseye
+FROM --platform=linux/amd64 internetee/ruby:3.4.5-node-18-dev
 
 
 RUN npm install -g yarn@latest
