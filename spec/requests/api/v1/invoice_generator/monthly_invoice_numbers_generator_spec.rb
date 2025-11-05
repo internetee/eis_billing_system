@@ -1,11 +1,13 @@
 require 'rails_helper'
 
 RSpec.describe 'Api::V1::InvoiceGenerator::MonthlyInvoiceNumbersGeneratorController', type: :request do
-  let(:auth_headers) { { 'Authorization' => "Bearer #{JWT.encode({ initiator: 'registry' }, ENV['billing_secret'] || 'test_secret')}" } }
+  let(:secret_key) { 'test_secret' }
+  let(:token) { JWT.encode({ initiator: 'registry' }, secret_key, 'HS256') }
+  let(:auth_headers) { { 'Authorization' => "Bearer #{token}", 'Content-Type' => 'application/json' } }
 
   before do
     allow_any_instance_of(Api::V1::InvoiceGenerator::MonthlyInvoiceNumbersGeneratorController)
-      .to receive(:billing_secret_key).and_return('test_secret')
+      .to receive(:billing_secret_key).and_return(secret_key)
     
     create(:setting_entry, code: 'directo_monthly_number_last', value: '309901', format: 'integer', group: 'directo')
     create(:setting_entry, code: 'directo_monthly_number_min', value: '309901', format: 'integer', group: 'directo')
@@ -21,7 +23,7 @@ RSpec.describe 'Api::V1::InvoiceGenerator::MonthlyInvoiceNumbersGeneratorControl
       it 'generates monthly invoice numbers and returns success' do
         post api_v1_invoice_generator_monthly_invoice_numbers_generator_index_path,
              params: { count: 5 }.to_json,
-             headers: auth_headers.merge('CONTENT_TYPE' => 'application/json')
+             headers: auth_headers
 
         expect(response).to have_http_status(:created)
         json = JSON.parse(response.body)
@@ -38,7 +40,7 @@ RSpec.describe 'Api::V1::InvoiceGenerator::MonthlyInvoiceNumbersGeneratorControl
       it 'returns error when count exceeds range' do
         post api_v1_invoice_generator_monthly_invoice_numbers_generator_index_path,
              params: { count: 10 }.to_json,
-             headers: auth_headers.merge('CONTENT_TYPE' => 'application/json')
+             headers: auth_headers
 
         expect(response).to have_http_status(:not_implemented)
         json = JSON.parse(response.body)
@@ -61,7 +63,7 @@ RSpec.describe 'Api::V1::InvoiceGenerator::MonthlyInvoiceNumbersGeneratorControl
         expect {
           post api_v1_invoice_generator_monthly_invoice_numbers_generator_index_path,
                params: {}.to_json,
-               headers: auth_headers.merge('CONTENT_TYPE' => 'application/json')
+               headers: auth_headers
         }.to raise_error(TypeError)
       end
     end
