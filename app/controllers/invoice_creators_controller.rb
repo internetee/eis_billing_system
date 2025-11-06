@@ -1,7 +1,11 @@
 class InvoiceCreatorsController < ParentController
   def index
+    page = params[:page].presence || 1
+    per_page = params[:per_page].presence || 25
+
     @pagy, @invoices = pagy(Invoice.search(params).where(initiator: 'billing_system').order(created_at: :desc),
-                            items: params[:per_page] ||= 25,
+                            page: page,
+                            items: per_page,
                             link_extra: 'data-turbo-action="advance"')
     @min_amount = 0
     @max_amount = 200_000
