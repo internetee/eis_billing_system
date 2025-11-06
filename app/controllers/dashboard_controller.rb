@@ -1,9 +1,12 @@
 class DashboardController < ParentController
   def index
-    page = [params[:page].to_i, 1].max
+    page = params[:page].presence&.to_i || 1
+    page = [page, 1].max
+    per_page = params[:per_page].presence || 25
+
     @pagy, @invoices = pagy(Invoice.search(params),
-                            items: params[:per_page] ||= 25,
-                            page:,
+                            page: page,
+                            items: per_page,
                             link_extra: 'data-turbo-action="advance"')
 
     @min_amount = 0
