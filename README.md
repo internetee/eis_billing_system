@@ -3,6 +3,8 @@
 
 # EIS Billing System
 
+📚 **[API Documentation](https://internetee.github.io/eis_billing_system/)** | [GitHub Repository](https://github.com/internetee/eis_billing_system)
+
 Centralized invoice management and payment processing system for Estonian Internet Services infrastructure. Provides invoice generation, payment processing, and integration with external payment systems for Registry, Auction, and EEID services.
 
 ## Table of Contents
