@@ -67,7 +67,17 @@ jobs:
         run: |
           bundle exec rake apipie:static
           mkdir -p _site
-          cp -r public/apipie/* _site/
+          # Apipie generates to doc/apipie by default
+          if [ -d "doc/apipie" ]; then
+            cp -r doc/apipie/* _site/
+          elif [ -d "public/apipie" ]; then
+            cp -r public/apipie/* _site/
+          else
+            echo "Error: Documentation not generated. Checking directories..."
+            ls -la doc/ || echo "doc/ directory not found"
+            ls -la public/ || echo "public/ directory not found"
+            exit 1
+          fi
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
