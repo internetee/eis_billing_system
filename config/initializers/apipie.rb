@@ -25,7 +25,6 @@ Apipie.configure do |config|
 
   # Layout and styling
   config.layout = 'apipie/apipie'
-  config.markup = Apipie::Markup::Markdown.new
 
   # Static files configuration
   config.api_routes = Rails.application.routes
