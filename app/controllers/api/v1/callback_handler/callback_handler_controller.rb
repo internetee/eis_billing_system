@@ -45,7 +45,7 @@ module Api
 
           result = Notify.call(response: response)
 
-          render status: :ok, json: { message: result, user_unique_id: response['linkpay_customer_data']['custom_field_1'] }
+          render status: :ok, json: { message: result, user_unique_id: response.dig('linkpay_customer_data', 'custom_field_1') }
         end
 
         private
