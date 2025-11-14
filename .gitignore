@@ -9,6 +9,7 @@
 /.idea
 /eestiInternetiSa
 /coverage
+.DS_Store
 
 # Ignore all logfiles and tempfiles.
 /log/*

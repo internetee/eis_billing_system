@@ -6,6 +6,7 @@ Rails.application.routes.draw do
   delete 'logout', to: 'sessions#destroy'
   resources :white_codes
   resources :invoice_creators, only: %i[new create index show]
+  resources :invoices, only: %i[edit update]
 
   resources :dashboard do
     collection do
@@ -64,6 +65,9 @@ Rails.application.routes.draw do
       namespace :invoice do
         resource :invoice_synchronize, only: :update
         resource :update_invoice_data, only: :update
+        resource :reserved_domain_invoice_statuses, only: :show # deprecated
+        resource :reserved_domains_invoice_statuses, only: :show
+        resource :reserved_domain_cancellation_statuses, only: :update
       end
 
       namespace :invoice_generator do

@@ -17,7 +17,7 @@
 # EXPOSE 3000
 
 
-FROM ruby:3.2.0-slim-buster
+FROM ruby:3.2.2-slim-buster
 
 ARG RAILS_ENV
 ARG SECRET_KEY_BASE
