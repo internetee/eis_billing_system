@@ -40,7 +40,7 @@ gem 'net-imap', require: false
 gem 'net-pop', require: false
 gem "apipie-rails", "~> 1.5.0"
 gem 'omniauth', '>=2.0.0'
-gem 'omniauth-rails_csrf_protection'
+gem 'omniauth-rails_csrf_protection', '>= 2.0.0'
 gem 'omniauth-tara', github: 'internetee/omniauth-tara'
 gem 'i18n-tasks', '~> 1.0.12'
 gem 'uri', '>= 1.0.4'
