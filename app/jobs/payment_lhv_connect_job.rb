@@ -72,12 +72,15 @@ class PaymentLhvConnectJob < ApplicationJob
     end
 
     if credit_transaction.end_to_end_id.present?
-      reference = credit_transaction.end_to_end_id
-      Rails.logger.info "Checking end_to_end_id field for reference number: #{reference}"
-      ref = Reference.find_by(reference_number: reference)
-      if ref.present?
-        Rails.logger.info "Found valid reference number in end_to_end_id field: #{reference}"
-        return reference
+      end_to_end_reference = extract_reference_from_text(credit_transaction.end_to_end_id)
+      if end_to_end_reference
+        Rails.logger.info "Checking end_to_end_id field for reference number: #{end_to_end_reference}"
+        ref = Reference.find_by(reference_number: end_to_end_reference)
+        if ref.present?
+          Rails.logger.info "Found valid reference number in end_to_end_id field: #{end_to_end_reference}"
+          return end_to_end_reference
+        end
+        reference = end_to_end_reference
       end
     end
 
@@ -88,6 +91,13 @@ class PaymentLhvConnectJob < ApplicationJob
 
   def ref_number_from_description(description)
     matches = description.to_s.scan(Billing::ReferenceNo::MULTI_REGEXP).flatten
+    matches.detect { |m| break m if m.length == 7 || valid_ref_no?(m) }
+  end
+
+  def extract_reference_from_text(text)
+    return text if text.to_s.match?(Billing::ReferenceNo::REGEXP)
+
+    matches = text.to_s.scan(Billing::ReferenceNo::MULTI_REGEXP).flatten
     matches.detect { |m| break m if m.length == 7 || valid_ref_no?(m) }
   end
 
