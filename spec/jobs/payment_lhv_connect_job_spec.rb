@@ -331,12 +331,146 @@ RSpec.describe 'PaymentLhvConnectJob', type: :job do
       end
 
       expect_any_instance_of(BillingMailer).to receive(:inform_admin).with(
-        reference_number: nil, 
+        reference_number: nil,
         body: an_instance_of(OpenStruct)
       ).and_return(double("mailer", deliver_now: true))
-      
+
       expect_any_instance_of(PaymentLhvConnectJob).not_to receive(:send_transactions)
       PaymentLhvConnectJob.perform_now
+    end
+
+    it 'should parse reference number from end_to_end_id with text prefix like "Ref 1234567"' do
+      ref = Billing::ReferenceNo.generate
+      Reference.create(reference_number: ref, initiator: 'registry')
+
+      date = Time.zone.now - 4.hours
+      end_to_end_with_text = "Ref #{ref}"
+
+      params_for_sending = OpenStruct.new(
+        amount: '10.0',
+        currency: 'EUR',
+        date: date,
+        payment_reference_number: ref,
+        payment_description: 'Money transfer',
+        end_to_end_id: end_to_end_with_text
+      )
+
+      Lhv::ConnectApi.class_eval do
+        define_method :credit_debit_notification_messages do
+          transaction = OpenStruct.new(
+            amount: '10.0',
+            currency: 'EUR',
+            date: date,
+            payment_reference_number: nil,
+            payment_description: 'Money transfer',
+            end_to_end_id: end_to_end_with_text
+          )
+          message = OpenStruct.new(
+            bank_account_iban: Setting.registry_bank_account_iban_lhv || 'EE177700771001155322',
+            credit_transactions: [transaction]
+          )
+          [message]
+        end
+      end
+
+      expect_any_instance_of(PaymentLhvConnectJob).to receive(:send_transactions).with(
+        params: [params_for_sending],
+        payment_reference_number: ref
+      )
+      PaymentLhvConnectJob.perform_now
+    end
+
+    it 'should parse reference number from end_to_end_id with various text formats' do
+      ref = Billing::ReferenceNo.generate
+      Reference.create(reference_number: ref, initiator: 'registry')
+
+      date = Time.zone.now - 4.hours
+      end_to_end_with_text = "Reference: #{ref} payment"
+
+      params_for_sending = OpenStruct.new(
+        amount: '10.0',
+        currency: 'EUR',
+        date: date,
+        payment_reference_number: ref,
+        payment_description: 'Money transfer',
+        end_to_end_id: end_to_end_with_text
+      )
+
+      Lhv::ConnectApi.class_eval do
+        define_method :credit_debit_notification_messages do
+          transaction = OpenStruct.new(
+            amount: '10.0',
+            currency: 'EUR',
+            date: date,
+            payment_reference_number: nil,
+            payment_description: 'Money transfer',
+            end_to_end_id: end_to_end_with_text
+          )
+          message = OpenStruct.new(
+            bank_account_iban: Setting.registry_bank_account_iban_lhv || 'EE177700771001155322',
+            credit_transactions: [transaction]
+          )
+          [message]
+        end
+      end
+
+      expect_any_instance_of(PaymentLhvConnectJob).to receive(:send_transactions).with(
+        params: [params_for_sending],
+        payment_reference_number: ref
+      )
+      PaymentLhvConnectJob.perform_now
+    end
+  end
+
+  describe '#extract_reference_from_text' do
+    let(:job) { PaymentLhvConnectJob.new }
+
+    before do
+      allow(Billing::ReferenceNo).to receive(:valid?).and_call_original
+    end
+
+    it 'returns text as-is when it is already a pure reference number' do
+      ref = Billing::ReferenceNo.generate
+      result = job.send(:extract_reference_from_text, ref)
+      expect(result).to eq(ref)
+    end
+
+    it 'extracts reference number from "Ref 1234567" format' do
+      ref = Billing::ReferenceNo.generate
+      result = job.send(:extract_reference_from_text, "Ref #{ref}")
+      expect(result).to eq(ref)
+    end
+
+    it 'extracts reference number from text with prefix and suffix' do
+      ref = Billing::ReferenceNo.generate
+      result = job.send(:extract_reference_from_text, "Reference: #{ref} payment")
+      expect(result).to eq(ref)
+    end
+
+    it 'returns nil for text without any numbers' do
+      result = job.send(:extract_reference_from_text, 'No numbers here')
+      expect(result).to be_nil
+    end
+
+    it 'returns nil for empty string' do
+      result = job.send(:extract_reference_from_text, '')
+      expect(result).to be_nil
+    end
+
+    it 'returns nil for nil input' do
+      result = job.send(:extract_reference_from_text, nil)
+      expect(result).to be_nil
+    end
+
+    it 'extracts 7-digit reference number from text' do
+      result = job.send(:extract_reference_from_text, 'Ref 1234567')
+      expect(result).to eq('1234567')
+    end
+
+    it 'finds valid reference number among multiple numbers in text' do
+      ref = Billing::ReferenceNo.generate
+      result = job.send(:extract_reference_from_text, "Invoice 99 ref #{ref} amount 100")
+      expect(result).to eq(ref)
     end
   end
 end

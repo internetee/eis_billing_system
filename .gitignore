@@ -50,3 +50,5 @@ vendor/gems
 /public/assets/
 
 .DS_Store
+.cursorindexingignore
+.specstory/
