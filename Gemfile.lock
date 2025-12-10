@@ -508,6 +508,8 @@ GEM
       attr_required (>= 0.0.5)
       faraday (~> 2.0)
       faraday-follow_redirects
+    syslog (0.3.0)
+      logger
     terminal-table (3.0.2)
       unicode-display_width (>= 1.1.1, < 3)
     thor (1.4.0)
@@ -606,6 +608,7 @@ DEPENDENCIES
   simpleidn (= 0.2.3)
   sprockets-rails
   strong_migrations
+  syslog
   tzinfo-data
   uri (>= 1.0.4)
   webdrivers
