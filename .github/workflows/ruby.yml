@@ -99,7 +99,7 @@ jobs:
           oidc: true
           files: coverage/.resultset.json
 
-      - uses: actions/upload-artifact@v5
+      - uses: actions/upload-artifact@v6
         with:
           name: coverage
           path: coverage/
