@@ -74,7 +74,7 @@ jobs:
           event-type: deploy-service-staging
           client-payload: |
             {
-              "app_name": "${{ env.APP_NAME }}",
+              "app_name": "billing",
               "image_tag": "${{ steps.docker_build.outputs.IMAGE_TAG }}",
               "namespace": "${{ env.APP_NAME }}",
               "pr_number": "${{ inputs.pr_number }}"
