@@ -52,3 +52,4 @@ vendor/gems
 .DS_Store
 .cursorindexingignore
 .specstory/
+Dockerfile.dev.v2
