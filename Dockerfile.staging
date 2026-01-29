@@ -17,25 +17,26 @@
 # EXPOSE 3000
 
 
-FROM ruby:3.2.2-slim-buster
+FROM ruby:3.4.5-slim-bookworm
 
 ARG RAILS_ENV
 ARG SECRET_KEY_BASE
 ARG APP_DBHOST
 
-ENV RAILS_ENV "$RAILS_ENV"
-ENV SECRET_KEY_BASE "$SECRET_KEY_BASE"
-ENV APP_DBHOST "$APP_DBHOST"
+ENV RAILS_ENV="$RAILS_ENV"
+ENV SECRET_KEY_BASE="$SECRET_KEY_BASE"
+ENV APP_DBHOST="$APP_DBHOST"
 
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN apt-get update > /dev/null && apt-get install -y --no-install-recommends > /dev/null \
-    build-essential=* \
+    build-essential \
     curl \
     wget \
     gnupg2 \
     git \
     apt-utils \
-    && apt-get dist-upgrade -yf\
+    ca-certificates \
+    && apt-get dist-upgrade -yf \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
@@ -45,47 +46,40 @@ RUN sed -i -e 's/# et_EE.UTF-8 UTF-8/et_EE.UTF-8 UTF-8/' /etc/locale.gen && \
     dpkg-reconfigure --frontend=noninteractive locales && \
     update-locale LANG=et_EE.UTF-8
 
-ENV LANG et_EE.UTF-8
-RUN curl https://www.postgresql.org/media/keys/ACCC4CF8.asc -s | apt-key add -
-RUN sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt/ buster-pgdg main" > /etc/apt/sources.list.d/pgdg.list'
+ENV LANG=et_EE.UTF-8
+RUN curl -fsSL https://www.postgresql.org/media/keys/ACCC4CF8.asc | gpg --dearmor -o /usr/share/keyrings/postgresql-keyring.gpg
+RUN sh -c 'echo "deb [signed-by=/usr/share/keyrings/postgresql-keyring.gpg] http://apt.postgresql.org/pub/repos/apt/ bookworm-pgdg main" > /etc/apt/sources.list.d/pgdg.list'
 RUN apt-get update > /dev/null && apt-get install -y --no-install-recommends > /dev/null \
-    postgresql-client-13=* \
+    postgresql-client-13 \
     libpq-dev \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-# add repository for Node.js in the LTS version
-RUN curl -sL https://deb.nodesource.com/setup_14.x | bash -
+# add repository for Node.js LTS (18.x)
+RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash -
 
 RUN apt-get install -y --no-install-recommends > /dev/null \
-  nodejs=* \
-  qt5-default=* \
-  libqt5webkit5-dev=* \
-  gstreamer1.0-plugins-base=* \
-  libappindicator3-1=* \
-  gstreamer1.0-tools=* \
-  qtdeclarative5-dev=* \
-  fonts-liberation=* \
-  gstreamer1.0-x=* \
-  libasound2=* \
-  libnspr4=* \
-  libnss3=* \
-  libxss1=* \
-  libxtst6=* \
-  xdg-utils=* \
-  qtdeclarative5-dev=* \
-  fonts-liberation=* \
-  gstreamer1.0-x=* \
+  nodejs \
+  gstreamer1.0-plugins-base \
+  gstreamer1.0-tools \
+  fonts-liberation \
+  gstreamer1.0-x \
+  libasound2 \
+  libnspr4 \
+  libnss3 \
+  libxss1 \
+  libxtst6 \
+  xdg-utils \
   wkhtmltopdf \
   libxslt1-dev \
   libxml2-dev \
-  python-dev \
+  python3-dev \
   && apt-get clean \
   && rm -rf /var/lib/apt/lists/*
 
 RUN curl https://chromedriver.storage.googleapis.com/2.46/chromedriver_linux64.zip -o /chromedriver_linux64.zip
 RUN apt-get update > /dev/null \
-    && apt-get install -yf --no-install-recommends > /dev/null unzip=* \
+    && apt-get install -yf --no-install-recommends > /dev/null unzip \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 RUN unzip chromedriver_linux64.zip -d /usr/local/bin
