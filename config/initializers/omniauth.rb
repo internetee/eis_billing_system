@@ -27,15 +27,15 @@ Rails.application.config.middleware.use OmniAuth::Builder do
     send_scope_to_token_endpoint: false,
     send_nonce: true,
     issuer: tara_issuer,
-    discovery: ENV.fetch('tara_discovery', 'true') == 'true',
+    discovery: true,
 
     client_options: {
       scheme: 'https',
       host: tara_host,
       port: nil,
-      authorization_endpoint: ENV.fetch('tara_authorization_endpoint', '/auth/:provider'),
-      token_endpoint: ENV.fetch('tara_token_endpoint', '/auth/token'),
-      userinfo_endpoint: ENV['tara_userinfo_endpoint'],
+      authorization_endpoint: '/auth/:provider',
+      token_endpoint: '/auth/token',
+      userinfo_endpoint: nil, # Not implemented
       jwks_uri: tara_jwks_uri,
       identifier: tara_identifier,
       secret: tara_secret,

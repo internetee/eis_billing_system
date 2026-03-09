@@ -65,8 +65,8 @@ Rails.application.routes.draw do
       namespace :invoice do
         resource :invoice_synchronize, only: :update
         resource :update_invoice_data, only: :update
-        resource :reserved_domain_invoice_statuses, only: :show # deprecated
-        resource :reserved_domains_invoice_statuses, only: :show
+        get 'reserved_domain_invoice_statuses', to: 'reserved_domain_invoice_statuses#show' # deprecated
+        get 'reserved_domains_invoice_statuses', to: 'reserved_domains_invoice_statuses#show'
         resource :reserved_domain_cancellation_statuses, only: :update
       end
 
