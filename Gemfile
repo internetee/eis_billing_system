@@ -42,7 +42,7 @@ gem "apipie-rails", "~> 1.5.0"
 gem 'omniauth', '>=2.0.0'
 gem 'omniauth-rails_csrf_protection'
 gem 'omniauth-tara', github: 'internetee/omniauth-tara'
-gem 'i18n-tasks', '~> 1.0.12'
+gem 'i18n-tasks', '~> 1.1.0'
 gem 'uri', '>= 1.0.4'
 gem 'syslog'
 # Use Rack CORS for handling Cross-Origin Resource Sharing (CORS), making cross-origin AJAX possible
