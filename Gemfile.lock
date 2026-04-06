@@ -342,7 +342,10 @@ GEM
       tzinfo
       validate_url
       webfinger (~> 2.0)
-    pagy (9.3.3)
+    pagy (43.4.4)
+      json
+      uri
+      yaml
     parallel (1.23.0)
     parser (3.3.10.0)
       ast (~> 2.4.1)
@@ -550,6 +553,7 @@ GEM
       websocket-extensions (>= 0.1.0)
     websocket-extensions (0.1.5)
     wkhtmltopdf-binary (0.12.6.6)
+    yaml (0.4.0)
     zeitwerk (2.7.3)
 
 PLATFORMS
@@ -593,7 +597,7 @@ DEPENDENCIES
   omniauth (>= 2.0.0)
   omniauth-rails_csrf_protection
   omniauth-tara!
-  pagy (~> 9.0)
+  pagy (~> 43.0)
   pdfkit
   pg (~> 1.1)
   pg_search
