@@ -21,7 +21,7 @@ tara_discovery = ENV['tara_discovery']
 Rails.application.config.middleware.use OmniAuth::Builder do
   provider 'tara', {
     name: 'tara',
-    scope: tara_scope,
+    scope: tara_scope.split(' ') || ['openid'],
     state: SecureRandom.hex(10),
     client_signing_alg: :RS256,
     client_jwk_signing_key: tara_keys,
@@ -34,10 +34,10 @@ Rails.application.config.middleware.use OmniAuth::Builder do
       scheme: 'https',
       host: tara_host,
       port: nil,
-      authorization_endpoint: '/auth/:provider',
-      token_endpoint: '/auth/token',
+      authorization_endpoint: '/oidc/authorize',
+      token_endpoint: '/oidc/token',
       userinfo_endpoint: nil, # Not implemented
-      jwks_uri: tara_jwks_uri,
+      jwks_uri: tara_jwks_uri || '/oidc/jwks',
       identifier: tara_identifier,
       secret: tara_secret,
       redirect_uri: tara_redirect_uri,

@@ -72,16 +72,12 @@ deposit_max_num: '14001'
 
 development:
   allowed_base_urls: 'https://registry.test, https://registrar_center.test, https://eeid.test, https://auction_center.test, https://auction.test'
-  tara_redirect_uri: 'https://eis_billing_system.test/auth/tara/callback'
-  tara_identifier: ''
-  tara_secret: ''
 
-staging:
-  tara_redirect_uri: 'https://st-billing.infra.tld.ee/auth/tara/callback'
-  tara_identifier: ''
-  tara_secret: ''
-  tara_scope: ['openid']
-  tara_discovery: true
+tara_redirect_uri: 'https://eis_billing_system.test/auth/tara/callback'
+tara_identifier: ''
+tara_secret: ''
+tara_scope: 'openid'
+tara_discovery: true
 
 
 apipie_login: test
