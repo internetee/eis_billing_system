@@ -2,6 +2,8 @@ Rails.application.routes.draw do
   apipie
   root 'dashboard#index'
 
+  get 'health' => 'rails/health#show', as: :rails_health_check
+
   get 'sign_in', to: 'sessions#new'
   delete 'logout', to: 'sessions#destroy'
   resources :white_codes

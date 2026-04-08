@@ -88,5 +88,4 @@ staging:
 production:
   <<: *default
   database: eis_billing_system_production
-  username: eis_billing_system
   password: <%= ENV['EIS_BILLING_SYSTEM_DATABASE_PASSWORD'] %>

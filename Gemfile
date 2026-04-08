@@ -18,10 +18,6 @@ gem 'directo', github: 'internetee/directo', branch: :master
 gem 'lhv', github: 'internetee/lhv', branch: :master
 gem 'strong_migrations'
 gem 'figaro'
-gem 'capistrano'
-gem 'capistrano-rails'
-gem 'capistrano-passenger'
-gem 'capistrano-rbenv'
 gem 'jwt'
 gem "hotwire-rails"
 gem 'importmap-rails'

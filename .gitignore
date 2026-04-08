@@ -49,3 +49,4 @@ vendor/gems
 /public/assets/
 
 .DS_Store
+Dockerfile.dev
