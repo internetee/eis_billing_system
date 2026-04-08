@@ -80,6 +80,8 @@ staging:
   tara_redirect_uri: 'https://st-billing.infra.tld.ee/auth/tara/callback'
   tara_identifier: ''
   tara_secret: ''
+  tara_scope: ['openid']
+  tara_discovery: true
 
 
 apipie_login: test
