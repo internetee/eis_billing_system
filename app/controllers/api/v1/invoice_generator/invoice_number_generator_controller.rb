@@ -4,6 +4,12 @@ class Api::V1::InvoiceGenerator::InvoiceNumberGeneratorController < Api::V1::Inv
   def create
     invoice_number = InvoiceNumberService.call
 
+    Rails.logger.info(
+      "[BILLING-NUMBER] generated=#{invoice_number.inspect} " \
+      "min=#{InvoiceNumberService::INVOICE_NUMBER_MIN} max=#{InvoiceNumberService::INVOICE_NUMBER_MAX} " \
+      "db_max=#{Invoice.maximum(:invoice_number).inspect} request_id=#{request.request_id}"
+    )
+
     if invoice_number == 'out of range'
       return render json: { 'message' => "Number create failed. #{invoice_number}",
                             'error' => invoice_number }, status: :not_implemented
