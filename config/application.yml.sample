@@ -76,7 +76,7 @@ development:
 tara_redirect_uri: 'https://eis_billing_system.test/auth/tara/callback'
 tara_identifier: ''
 tara_secret: ''
-tara_scope: 'openid'
+tara_scope: 'openid webauthn'
 tara_discovery: true
 
 
