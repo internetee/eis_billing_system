@@ -55,3 +55,4 @@ vendor/gems
 Dockerfile.dev.v2
 
 /docs
+.repowise
