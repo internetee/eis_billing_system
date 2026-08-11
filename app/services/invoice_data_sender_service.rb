@@ -29,7 +29,7 @@ class InvoiceDataSenderService
     when 'registry'
       "#{GlobalVariable::BASE_REGISTRY}/eis_billing/invoices"
     when 'eeid'
-      "#{GlobalVariable::BASE_EEID}/#"
+      "#{GlobalVariable::BASE_EEID}/eis_billing/invoices"
     when 'auction'
       "#{GlobalVariable::BASE_AUCTION}/eis_billing/invoices"
     else
