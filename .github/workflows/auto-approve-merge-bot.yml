@@ -3,7 +3,7 @@ name: Auto approve & merge patch PRs
 on:
   pull_request:
     types: [opened, edited, synchronize, reopened, labeled]
-    branches: [main]
+    branches: [master]
 
 permissions:
   contents: write
@@ -47,10 +47,11 @@ jobs:
             fi
           elif [ "${{ github.actor }}" == "renovate[bot]" ]; then
             LABELS=$(echo '${{ toJson(github.event.pull_request.labels) }}' | jq -r '.[].name')
-            UPDATE_TYPE="renovate-patch"
+            UPDATE_TYPE="renovate-non-patch"
             for LABEL in $LABELS; do
-              if [[ "$LABEL" == "patch" || "$LABEL" == "bundler" || "$LABEL" == "ruby-version" || "$LABEL" == "github-actions" ]]; then
+              if [[ "$LABEL" == "patch" ]]; then
                 AUTO_MERGE=true
+                UPDATE_TYPE="renovate-patch"
                 break
               fi
             done
