@@ -1,13 +1,20 @@
 version: 2
 updates:
-  - package-ecosystem: "npm" 
+  - package-ecosystem: "npm"
     directory: "/"
+    schedule:
+      interval: "weekly"
     allow:
       - dependency-type: "direct"
-        update-type: "version-update:semver-patch"
+        update-types:
+          - "version-update:semver-patch"
+          - "version-update:semver-minor"
   - package-ecosystem: "bundler"
     directory: "/"
+    schedule:
+      interval: "weekly"
     allow:
       - dependency-type: "direct"
-        update-type: "version-update:semver-patch"
-        
+        update-types:
+          - "version-update:semver-patch"
+          - "version-update:semver-minor"
