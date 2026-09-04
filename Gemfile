@@ -7,7 +7,7 @@ ruby '3.4.5'
 gem 'rails', '~> 7.2.2.0'
 gem 'pg', '~> 1.6'
 gem 'puma', '~> 7.1.0'
-gem 'redis', '~> 5.0'
+gem 'redis', '~> 5.4'
 gem 'bcrypt', '~> 3.1.22'
 gem 'bootsnap', '>= 1.4.4', require: false
 gem 'rexml', '~> 3.4.0'

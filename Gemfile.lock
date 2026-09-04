@@ -427,9 +427,9 @@ GEM
     rdoc (6.14.2)
       erb
       psych (>= 4.0.0)
-    redis (5.0.8)
-      redis-client (>= 0.17.0)
-    redis-client (0.18.0)
+    redis (5.4.1)
+      redis-client (>= 0.22.0)
+    redis-client (0.30.1)
       connection_pool
     regexp_parser (2.8.2)
     reline (0.6.2)
@@ -607,7 +607,7 @@ DEPENDENCIES
   pg_search
   puma (~> 7.1.0)
   rails (~> 7.2.2.0)
-  redis (~> 5.0)
+  redis (~> 5.4)
   rexml (~> 3.4.0)
   rspec-rails
   rubocop-rails
