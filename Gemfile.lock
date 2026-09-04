@@ -549,7 +549,7 @@ GEM
       base64
       websocket-extensions (>= 0.1.0)
     websocket-extensions (0.1.5)
-    wkhtmltopdf-binary (0.12.6.6)
+    wkhtmltopdf-binary (0.12.6.10)
     zeitwerk (2.7.3)
 
 PLATFORMS
