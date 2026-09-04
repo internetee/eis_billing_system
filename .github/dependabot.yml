@@ -6,15 +6,15 @@ updates:
       interval: "weekly"
     allow:
       - dependency-type: "direct"
-        update-type: "version-update:semver-patch"
-      - dependency-type: "direct"
-        update-type: "version-update:semver-minor"
+        update-types:
+          - "version-update:semver-patch"
+          - "version-update:semver-minor"
   - package-ecosystem: "bundler"
     directory: "/"
     schedule:
       interval: "weekly"
     allow:
       - dependency-type: "direct"
-        update-type: "version-update:semver-patch"
-      - dependency-type: "direct"
-        update-type: "version-update:semver-minor"
+        update-types:
+          - "version-update:semver-patch"
+          - "version-update:semver-minor"
