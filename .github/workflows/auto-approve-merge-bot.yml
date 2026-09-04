@@ -1,4 +1,4 @@
-name: Auto approve & merge patch PRs
+name: Auto approve & merge patch/minor PRs
 
 on:
   pull_request:
@@ -39,16 +39,16 @@ jobs:
 
           if [ "${{ github.actor }}" == "dependabot[bot]" ]; then
             UPDATE_TYPE="${{ steps.metadata.outputs.update-type }}"
-            if [[ "$UPDATE_TYPE" == "version-update:semver-patch" ]]; then
+            if [[ "$UPDATE_TYPE" == "version-update:semver-patch" || "$UPDATE_TYPE" == "version-update:semver-minor" ]]; then
               AUTO_MERGE=true
             fi
           elif [ "${{ github.actor }}" == "renovate[bot]" ]; then
             LABELS=$(echo '${{ toJson(github.event.pull_request.labels) }}' | jq -r '.[].name')
-            UPDATE_TYPE="renovate-non-patch"
+            UPDATE_TYPE="renovate-other"
             for LABEL in $LABELS; do
-              if [[ "$LABEL" == "patch" ]]; then
+              if [[ "$LABEL" == "patch" || "$LABEL" == "minor" ]]; then
                 AUTO_MERGE=true
-                UPDATE_TYPE="renovate-patch"
+                UPDATE_TYPE="renovate-$LABEL"
                 break
               fi
             done
