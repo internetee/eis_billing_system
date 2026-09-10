@@ -9,7 +9,7 @@ GIT
 
 GIT
   remote: https://github.com/internetee/e_invoice.git
-  revision: 0930cadeb00ed3d1e13d80065a6c743e374e14bc
+  revision: b10c1b30f0487c2c4182c6656b1843813968dc2c
   branch: master
   specs:
     e_invoice (0.1.5)
@@ -324,14 +324,15 @@ GEM
       net-protocol
     net-ssh (7.3.3)
     nio4r (2.7.5)
-    nkf (0.2.0)
+    nkf (0.3.0)
     nokogiri (1.19.4)
       mini_portile2 (~> 2.8.2)
       racc (~> 1.4)
     nokogiri (1.19.4-x86_64-linux-gnu)
       racc (~> 1.4)
-    nori (2.7.1)
+    nori (2.9.1)
       bigdecimal
+      stringio
     observer (0.1.2)
     omniauth (2.1.1)
       hashie (>= 3.4.6)
@@ -486,15 +487,15 @@ GEM
       rubocop-ast (>= 1.31.1, < 2.0)
     ruby-progressbar (1.13.0)
     rubyzip (2.3.2)
-    savon (2.15.1)
+    savon (2.17.5)
       akami (~> 1.2)
       builder (>= 2.1.2)
       gyoku (~> 1.2)
       httpi (>= 4, < 5)
       mail (~> 2.5)
       nokogiri (>= 1.8.1)
-      nori (~> 2.4)
-      wasabi (>= 3.7, < 6)
+      nori (~> 2.7)
+      wasabi (>= 5.1.0, < 6)
     securerandom (0.4.1)
     selenium-webdriver (4.10.0)
       rexml (~> 3.2, >= 3.2.5)
@@ -524,6 +525,7 @@ GEM
       ostruct
     stimulus-rails (1.3.3)
       railties (>= 6.0.0)
+    stringio (3.2.0)
     strong_migrations (1.8.0)
       activerecord (>= 5.2)
     swd (2.0.2)
