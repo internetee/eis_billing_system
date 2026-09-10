@@ -28,7 +28,7 @@ GIT
 
 GIT
   remote: https://github.com/internetee/omniauth-tara.git
-  revision: d7babe56fe666739a0aca4bc94ddc8629641d220
+  revision: 984d36868089ba6196b91ba61ab2d8c5b6d67a93
   specs:
     omniauth-tara (0.7.1)
       omniauth (>= 1.9, < 3)
@@ -124,12 +124,12 @@ GEM
       actionpack (>= 5.0)
       activesupport (>= 5.0)
     ast (2.4.3)
-    attr_required (1.0.1)
+    attr_required (1.0.2)
     base64 (0.3.0)
     bcrypt (3.1.22)
     benchmark (0.5.0)
     bigdecimal (4.1.2)
-    bindata (2.5.0)
+    bindata (3.0.0)
     bootsnap (1.26.0)
       msgpack (~> 1.5)
     brakeman (6.2.2)
@@ -210,8 +210,6 @@ GEM
       dry-initializer (~> 3.2)
       dry-schema (~> 1.14)
       zeitwerk (~> 2.6)
-    email_validator (2.2.4)
-      activemodel
     erb (6.0.7)
     erubi (1.13.1)
     factory_bot (6.5.6)
@@ -225,7 +223,7 @@ GEM
       faraday-net_http (>= 2.0, < 3.5)
       json
       logger
-    faraday-follow_redirects (0.3.0)
+    faraday-follow_redirects (0.5.0)
       faraday (>= 1, < 3)
     faraday-net_http (3.4.4)
       net-http (~> 0.5)
@@ -238,7 +236,8 @@ GEM
       builder (>= 2.1.2)
       rexml (~> 3.0)
     hashdiff (1.2.1)
-    hashie (5.0.0)
+    hashie (5.1.0)
+      logger
     highline (3.1.2)
       reline
     hotwire-rails (0.1.3)
@@ -275,7 +274,7 @@ GEM
       rdoc (>= 4.0.0)
       reline (>= 0.4.2)
     json (3.0.2)
-    json-jwt (1.16.6)
+    json-jwt (1.17.2)
       activesupport (>= 4.2)
       aes_key_wrap
       base64
@@ -342,10 +341,9 @@ GEM
     omniauth-rails_csrf_protection (1.0.2)
       actionpack (>= 4.2)
       omniauth (~> 2.0)
-    openid_connect (2.3.0)
+    openid_connect (2.5.0)
       activemodel
       attr_required (>= 1.0.0)
-      email_validator
       faraday (~> 2.0)
       faraday-follow_redirects
       json-jwt (>= 1.16)
@@ -376,7 +374,7 @@ GEM
       nio4r (~> 2.0)
     racc (1.8.1)
     rack (3.2.7)
-    rack-oauth2 (2.2.0)
+    rack-oauth2 (2.3.0)
       activesupport
       attr_required
       faraday (~> 2.0)
@@ -528,7 +526,7 @@ GEM
       railties (>= 6.0.0)
     strong_migrations (1.8.0)
       activerecord (>= 5.2)
-    swd (2.0.2)
+    swd (2.0.3)
       activesupport (>= 3)
       attr_required (>= 0.0.5)
       faraday (~> 2.0)
