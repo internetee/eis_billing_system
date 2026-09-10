@@ -19,7 +19,7 @@ GIT
 
 GIT
   remote: https://github.com/internetee/lhv.git
-  revision: f1e383152dffbe00b10328abc5a2eefcf6c58dfd
+  revision: 9ce6aef44df75f0fbcab411205609763b74eb1d7
   branch: master
   specs:
     lhv (0.1.0)
