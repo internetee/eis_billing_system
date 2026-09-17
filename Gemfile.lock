@@ -285,7 +285,7 @@ GEM
       faraday-follow_redirects
     jwt (2.10.3)
       base64
-    language_server-protocol (3.17.0.3)
+    language_server-protocol (3.17.0.6)
     lint_roller (1.1.0)
     listen (3.10.0)
       logger
@@ -359,7 +359,7 @@ GEM
       webfinger (~> 2.0)
     ostruct (0.6.3)
     pagy (9.4.0)
-    parallel (1.23.0)
+    parallel (2.2.0)
     parser (3.3.12.0)
       ast (~> 2.4.1)
       racc
@@ -483,11 +483,12 @@ GEM
     rubocop-ast (1.50.0)
       parser (>= 3.3.7.2)
       prism (~> 1.7)
-    rubocop-rails (2.25.1)
+    rubocop-rails (2.37.0)
       activesupport (>= 4.2.0)
+      lint_roller (~> 1.1)
       rack (>= 1.1)
-      rubocop (>= 1.33.0, < 2.0)
-      rubocop-ast (>= 1.31.1, < 2.0)
+      rubocop (>= 1.89.0, < 2.0)
+      rubocop-ast (>= 1.44.0, < 2.0)
     ruby-progressbar (1.13.0)
     rubyzip (2.3.2)
     savon (2.15.1)
