@@ -53,3 +53,6 @@ vendor/gems
 .cursorindexingignore
 .specstory/
 Dockerfile.dev.v2
+
+/docs
+.repowise

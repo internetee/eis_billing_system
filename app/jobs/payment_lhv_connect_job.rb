@@ -120,7 +120,14 @@ class PaymentLhvConnectJob < ApplicationJob
   def send_transactions(params:, payment_reference_number:)
     reference = Reference.find_by(reference_number: payment_reference_number)
 
-    uri = URI.parse(url[reference.initiator.to_sym])
+    target_url = url[reference&.initiator&.to_sym]
+    if target_url.nil?
+      Rails.logger.error "No transaction endpoint for initiator #{reference&.initiator.inspect} " \
+                         "(reference #{payment_reference_number}); skipping"
+      return
+    end
+
+    uri = URI.parse(target_url)
     http = Net::HTTP.new(uri.host, uri.port)
 
     http.use_ssl = true
@@ -130,7 +137,7 @@ class PaymentLhvConnectJob < ApplicationJob
                          OpenSSL::SSL::VERIFY_PEER
                        end
 
-    res = http.post(url[reference.initiator.to_sym], params.to_json, headers)
+    res = http.post(target_url, params.to_json, headers)
 
     Rails.logger.info '>>>>>>'
     Rails.logger.info res.body
@@ -155,7 +162,8 @@ class PaymentLhvConnectJob < ApplicationJob
   def url
     {
       registry: registry_url_transaction,
-      auction: auction_url_transaction
+      auction: auction_url_transaction,
+      eeid: eeid_url_transaction
     }
   end
 
@@ -165,6 +173,10 @@ class PaymentLhvConnectJob < ApplicationJob
 
   def auction_url_transaction
     "#{ENV['base_auction']}/eis_billing/lhv_connect_transactions"
+  end
+
+  def eeid_url_transaction
+    "#{ENV['base_eeid']}/eis_billing/lhv_connect_transactions"
   end
 
   def billing_secret
