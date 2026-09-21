@@ -31,12 +31,27 @@ module Api
         param :invoice_number, String, required: true
 
         def create
-          InvoiceInstanceGenerator.create(params:)
+          Rails.logger.info(
+            "[BILLING-GENERATE] start invoice_number=#{params[:invoice_number].inspect} " \
+            "initiator=#{params[:custom_field2].inspect} amount=#{params[:transaction_amount].inspect} " \
+            "request_id=#{request.request_id}"
+          )
+
+          invoice = InvoiceInstanceGenerator.create(params:)
           link = EverypayLinkGenerator.create(params:)
+
+          Rails.logger.info(
+            "[BILLING-GENERATE] saved id=#{invoice&.id} invoice_number=#{invoice&.invoice_number} " \
+            "request_id=#{request.request_id}"
+          )
 
           render json: { 'message' => 'Link created', 'everypay_link' => link }, status: :created
         rescue StandardError => e
-          Rails.logger.info e
+          Rails.logger.error(
+            "[BILLING-GENERATE] FAILED invoice_number=#{params[:invoice_number].inspect} " \
+            "request_id=#{request.request_id} -> #{e.class}: #{e.message}"
+          )
+          Rails.logger.error(e.backtrace.join("\n")) if e.backtrace
         end
       end
     end

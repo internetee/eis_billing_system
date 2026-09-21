@@ -1,5 +1,15 @@
 class ApplicationController < ActionController::API
+  prepend_before_action :log_api_request
   before_action :authorized
+
+  def log_api_request
+    Rails.logger.info(
+      "[BILLING-API] #{request.request_method} #{request.original_fullpath} " \
+      "host=#{request.host} request_id=#{request.request_id} " \
+      "initiator=#{(decoded_token && decoded_token[0]['initiator']).inspect} " \
+      "params=#{request.filtered_parameters.except('controller', 'action', 'format').inspect}"
+    )
+  end
 
   def encode_token(payload)
     JWT.encode(payload, ENV['secret_word'])
