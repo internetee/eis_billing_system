@@ -51,6 +51,15 @@ api_username: ''
 everypay_base: https://igw-demo.every-pay.com/api/v4
 account_name: ''
 
+# Montonio payment links (used for auction invoices, which need an expiring link).
+# Sandbox: https://sandbox-stargate.montonio.com/api
+# Production: https://stargate.montonio.com/api
+montonio_base: 'https://sandbox-stargate.montonio.com/api'
+montonio_access_key: ''
+montonio_secret_key: ''
+# Publicly reachable url of this application's Montonio webhook
+montonio_notification_url: 'https://eis_billing_system.test/api/v1/callback_handler/montonio'
+
 timeout_is_sec: '3'
 
 lhv_keystore: './eestiInternetiSa/eestiInternetiSa.p12'

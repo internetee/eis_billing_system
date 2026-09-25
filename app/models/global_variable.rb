@@ -25,4 +25,11 @@ class GlobalVariable
   ALLOWED_DEV_BASE_URLS = ENV['allowed_base_urls']
 
   REFUND_ENDPOINT = '/payments/refund'.freeze
+
+  # Montonio payment links - used for auction invoices, because the link can be
+  # given an expiry date (EveryPay LinkPay cannot).
+  MONTONIO_BASE = ENV['montonio_base'] || 'https://sandbox-stargate.montonio.com/api'
+  MONTONIO_ACCESS_KEY = ENV['montonio_access_key']
+  MONTONIO_SECRET_KEY = ENV['montonio_secret_key']
+  MONTONIO_NOTIFICATION_URL = ENV['montonio_notification_url']
 end
