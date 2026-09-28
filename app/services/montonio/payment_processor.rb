@@ -5,6 +5,11 @@ module Montonio
   # may deliver the same webhook more than once, so everything here is
   # idempotent and every business level problem is reported to the
   # administrators instead of being turned into an error response.
+  #
+  # The one exception is a paid invoice whose initiator (auction, ...) could not
+  # be told about the payment: that answers :notification_failed, the controller
+  # turns it into an error response, and Montonio's retry delivers the
+  # notification again.
   class PaymentProcessor
     include Request
 
@@ -16,7 +21,11 @@ module Montonio
     ORDERS_KEY = 'montonio_orders'.freeze
     DISCREPANCIES_KEY = 'montonio_discrepancies'.freeze
 
-    Result = Struct.new(:state, :message, :invoice, keyword_init: true)
+    Result = Struct.new(:state, :message, :invoice, keyword_init: true) do
+      def notification_failed?
+        state == :notification_failed
+      end
+    end
 
     attr_reader :order_token
 
@@ -72,15 +81,29 @@ module Montonio
                         linkpay_info: linkpay_info_with_order(invoice, payload, 'processed'))
       end
 
-      notify_client_service(invoice: invoice, payload: payload)
-
-      Result.new(state: :processed, message: 'Payment processed', invoice: invoice)
+      deliver_notification(invoice: invoice, payload: payload, processed_message: 'Payment processed')
     end
 
     def already_processed(invoice, payload)
       Rails.logger.info("Montonio webhook replay for order #{payload['uuid']}, invoice #{invoice.invoice_number}")
 
+      if notification_pending?(invoice, payload)
+        return deliver_notification(invoice: invoice, payload: payload,
+                                    processed_message: 'Payment already processed, client notified')
+      end
+
       Result.new(state: :already_processed, message: 'Payment already processed', invoice: invoice)
+    end
+
+    def deliver_notification(invoice:, payload:, processed_message:)
+      if notify_client_service(invoice: invoice, payload: payload)
+        update_order(invoice, payload, 'client_notified_at' => Time.zone.now.iso8601)
+        return Result.new(state: :processed, message: processed_message, invoice: invoice)
+      end
+
+      Result.new(state: :notification_failed,
+                 message: "Payment processed, but #{invoice.initiator} could not be notified",
+                 invoice: invoice)
     end
 
     def ignored(invoice, status)
@@ -134,6 +157,14 @@ module Montonio
       processed_orders(invoice).key?(uuid)
     end
 
+    # Orders settled before client_notified_at existed have no failure mark
+    # either, so only an explicit failure makes a replay notify again.
+    def notification_pending?(invoice, payload)
+      order = processed_orders(invoice)[payload['uuid'].to_s]
+      order.is_a?(Hash) && order['state'] == 'processed' &&
+        order['client_notified_at'].blank? && order['client_notify_failed_at'].present?
+    end
+
     def processed_orders(invoice)
       info = invoice.linkpay_info || {}
       info[ORDERS_KEY].is_a?(Hash) ? info[ORDERS_KEY] : {}
@@ -171,6 +202,16 @@ module Montonio
       info
     end
 
+    def update_order(invoice, payload, attributes)
+      info = (invoice.linkpay_info || {}).dup
+      orders = processed_orders(invoice).dup
+      uuid = payload['uuid'].to_s
+      orders[uuid] = (orders[uuid] || {}).merge(attributes)
+      info[ORDERS_KEY] = orders
+
+      invoice.update!(linkpay_info: info)
+    end
+
     def record_discrepancy(invoice, payload, reason)
       info = (invoice.linkpay_info || {}).dup
       discrepancies = info[DISCREPANCIES_KEY].is_a?(Array) ? info[DISCREPANCIES_KEY].dup : []
@@ -193,22 +234,37 @@ module Montonio
 
     # --- outbound -----------------------------------------------------------
 
+    # Returns true when the initiator accepted the notification (or there is
+    # nobody to notify), false otherwise. Administrators hear about the first
+    # failure only; Montonio retries up to 13 times.
     def notify_client_service(invoice:, payload:)
-      return if invoice.billing_system?
+      return true if invoice.billing_system?
 
       url = update_payment_url[invoice.initiator.to_s.to_sym]
-      if url.blank?
-        Rails.logger.error("No payment status url for initiator #{invoice.initiator}, invoice #{invoice.invoice_number}")
-        return
-      end
+      raise ArgumentError, "no payment status url for initiator #{invoice.initiator}" if url.blank?
 
-      put_request(direction: 'services', path: url, params: notification_params(invoice: invoice, payload: payload))
+      response = put_raw(direction: 'services', path: url,
+                         params: notification_params(invoice: invoice, payload: payload))
+      return true if response.success?
+
+      raise "#{url} answered #{response.status}"
     rescue StandardError => e
+      notification_failed(invoice: invoice, payload: payload, error: e)
+      false
+    end
+
+    def notification_failed(invoice:, payload:, error:)
       Rails.logger.error("Could not notify #{invoice.initiator} about Montonio payment of invoice " \
-                         "#{invoice.invoice_number}: #{e.class}: #{e.message}")
+                         "#{invoice.invoice_number}: #{error.class}: #{error.message}")
+
+      first_failure = processed_orders(invoice).dig(payload['uuid'].to_s, 'client_notify_failed_at').blank?
+      update_order(invoice, payload, 'client_notify_failed_at' => Time.zone.now.iso8601)
+      return unless first_failure
+
       report(title: "Montonio payment notification failed for invoice #{invoice.invoice_number}",
              message: "Invoice #{invoice.invoice_number} was marked as paid, but #{invoice.initiator} " \
-                      "could not be notified: #{e.class}: #{e.message}")
+                      "could not be notified: #{error.class}: #{error.message}. " \
+                      'Montonio retries the webhook for 48 hours, each retry notifies again.')
     end
 
     def notification_params(invoice:, payload:)

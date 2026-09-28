@@ -81,6 +81,48 @@ RSpec.describe 'Api::V1::CallbackHandler::MontonioController', type: :request do
       expect(json['state']).to eq('already_processed')
       expect(WebMock).to have_requested(:put, auction_url).once
     end
+
+    context 'when the auction cannot be notified' do
+      it 'keeps the invoice paid and answers 503 so montonio retries' do
+        stub_request(:put, auction_url).to_return(status: 502, body: '<html><body><h1>502</h1></body></html>')
+
+        post_webhook(orderToken: order_token)
+
+        expect(response).to have_http_status(:service_unavailable)
+        expect(json['state']).to eq('notification_failed')
+        expect(invoice.reload.status).to eq('paid')
+        expect(ActionMailer::Base.deliveries.size).to eq(1)
+      end
+
+      it 'notifies the auction again on the retry and then answers 200' do
+        token = order_token
+        stub_request(:put, auction_url)
+          .to_return({ status: 502, body: 'bad gateway' },
+                     { status: 200, body: { message: 'ok' }.to_json })
+
+        post_webhook(orderToken: token)
+        post_webhook(orderToken: token)
+
+        expect(response).to have_http_status(:ok)
+        expect(json['state']).to eq('processed')
+        expect(WebMock).to have_requested(:put, auction_url).twice
+
+        post_webhook(orderToken: token)
+
+        expect(json['state']).to eq('already_processed')
+        expect(WebMock).to have_requested(:put, auction_url).twice
+      end
+
+      it 'reports only the first failure to the administrators' do
+        token = order_token
+        stub_request(:put, auction_url).to_timeout
+
+        3.times { post_webhook(orderToken: token) }
+
+        expect(response).to have_http_status(:service_unavailable)
+        expect(ActionMailer::Base.deliveries.size).to eq(1)
+      end
+    end
   end
 
   context 'with a token we cannot trust' do

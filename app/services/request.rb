@@ -20,10 +20,13 @@ module Request
   end
 
   def put_request(direction:, path:, params: {})
+    respond_with(put_raw(direction: direction, path: path, params: params))
+  end
+
+  # Same request as #put_request, but hands back the untouched Faraday response.
+  def put_raw(direction:, path:, params: {})
     options = assign_options_value(direction)
-    respond_with(
-      connection(options: options).put(path, JSON.dump(params))
-    )
+    connection(options: options).put(path, JSON.dump(params))
   end
 
   private

@@ -24,9 +24,12 @@ module Api
 
           result = Montonio::PaymentProcessor.call(order_token: params[:orderToken])
 
-          render status: :ok, json: { message: result.message,
-                                      state: result.state,
-                                      invoice_number: result.invoice&.invoice_number }
+          # A paid invoice whose initiator was not told about the payment answers
+          # with an error, so Montonio retries and the retry notifies again.
+          render status: result.notification_failed? ? :service_unavailable : :ok,
+                 json: { message: result.message,
+                         state: result.state,
+                         invoice_number: result.invoice&.invoice_number }
         rescue Montonio::InvalidTokenError => e
           Rails.logger.error("Montonio webhook rejected: #{e.message}")
           render status: :unauthorized, json: { message: e.message }
