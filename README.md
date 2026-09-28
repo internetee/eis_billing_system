@@ -44,7 +44,7 @@ EIS Billing System is the central component for billing management in the Estoni
 ## Technology Stack
 
 ### Backend
-- **Ruby** 3.4.5
+- **Ruby** 3.4.10
 - **Rails** 7.2.2.0
 - **PostgreSQL** (primary database)
 - **Redis** (caching and background jobs)
@@ -89,7 +89,7 @@ EIS Billing System is the central component for billing management in the Estoni
 ## Requirements
 
 ### System Requirements
-- Ruby 3.4.5
+- Ruby 3.4.10
 - PostgreSQL 12+
 - Redis 5+
 - Docker & Docker Compose (for development)
