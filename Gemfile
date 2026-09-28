@@ -5,6 +5,9 @@ ruby '3.4.10'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails', branch: 'main'
 gem 'rails', '~> 7.2.3'
+# Rails 7.2 calls JSON.generate/parse with quirks_mode:, which json 3.0 removed:
+# with json 3.x every `render json:` and every jsonb write raises ArgumentError.
+gem 'json', '~> 2.21'
 gem 'pg', '~> 1.6'
 gem 'puma', '~> 7.2.0'
 gem 'redis', '~> 5.4'

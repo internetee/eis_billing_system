@@ -88,6 +88,7 @@ Rails.application.routes.draw do
 
       namespace :callback_handler do
         match '/callback', via: %i[get], to: 'callback_handler#callback', as: :callback
+        post '/montonio', to: 'montonio#create', as: :montonio
       end
 
     end

@@ -33,7 +33,7 @@ EIS Billing System is the central component for billing management in the Estoni
 ### Core Features
 
 - Invoice and payment link generation
-- Payment processing via EveryPay
+- Payment processing via EveryPay, and via Montonio for expiring auction payment links
 - Refunds for auction deposits
 - Bulk payments for auction
 - Integration with Directo accounting system
@@ -44,7 +44,7 @@ EIS Billing System is the central component for billing management in the Estoni
 ## Technology Stack
 
 ### Backend
-- **Ruby** 3.4.5
+- **Ruby** 3.4.10
 - **Rails** 7.2.2.0
 - **PostgreSQL** (primary database)
 - **Redis** (caching and background jobs)
@@ -89,7 +89,7 @@ EIS Billing System is the central component for billing management in the Estoni
 ## Requirements
 
 ### System Requirements
-- Ruby 3.4.5
+- Ruby 3.4.10
 - PostgreSQL 12+
 - Redis 5+
 - Docker & Docker Compose (for development)
@@ -295,6 +295,84 @@ Invoices contain `in_directo` (boolean) and `directo_data` (jsonb) fields for sy
 - `AppSession` - active sessions
 - `WhiteCode` - access codes
 
+### 6. Montonio (payment links with an expiry date)
+
+**Purpose**: Payment links for **auction** invoices that stop accepting payments at the invoice due date
+
+**Why**: EveryPay LinkPay links never expire (the expiry can only be set by hand in the EveryPay
+dashboard), so an auction invoice could still be paid long after it was due. Montonio payment links
+accept an `expiresAt` timestamp, so the link dies at the end of the due date in Estonian time
+(`Europe/Tallinn`): a due date of `2026-07-09` means `2026-07-09T23:59:59+03:00` (`2026-07-09T20:59:59Z`).
+
+**Scope**: Montonio is used **only** for the payment link of invoices whose initiator is `auction`
+and that carry a `due_date`. Every other initiator (registry, eeid, business_registry,
+billing_system), all one-off payments, bulk payments, auction deposits and refunds keep using
+EveryPay exactly as before. **EveryPay LinkPay is also the fallback**: if Montonio is not configured
+or the API call fails, the invoice gets the EveryPay link (without an expiry), the failure is logged
+at `error` level and `payment_link_provider` stays `everypay`, so the fallback rate can be queried
+from the database.
+
+**Prerequisites**:
+- Payment links must be **activated for the Montonio store** - this is a separate feature with its
+  own monthly fee, ask Montonio support to enable it.
+- The webhook url (`montonio_notification_url`) must be **publicly reachable**, and Montonio's
+  webhook source IPs **35.156.245.42** and **35.156.159.169** must be allowlisted in the firewall.
+- Sandbox and production are separate stores with **separate key pairs**; using a production access
+  key against the sandbox base url (or the other way around) answers `401 STORE_NOT_FOUND`.
+
+**Configuration** (`config/application.yml`):
+```yaml
+# Sandbox: https://sandbox-stargate.montonio.com/api
+# Production: https://stargate.montonio.com/api
+montonio_base: 'https://sandbox-stargate.montonio.com/api'
+montonio_access_key: ''   # store Access Key from the Montonio partner system
+montonio_secret_key: ''   # store Secret Key, used to sign and verify the JWTs
+montonio_notification_url: 'https://billing.example.com/api/v1/callback_handler/montonio'
+```
+Montonio is considered configured only when **both** the access key and the secret key are present.
+
+**Endpoints**:
+- `POST /api/v1/invoice_generator/invoice_generator` - creates the Montonio link for auction
+  invoices with a `due_date` (see the API documentation section below)
+- `POST /api/v1/callback_handler/montonio` - webhook for Montonio payment notifications
+
+**Webhook** (`POST /api/v1/callback_handler/montonio`):
+
+Montonio sends `{"orderToken": "<JWT>"}` (or `{"refundToken": "<JWT>"}` for refunds). There is no
+Bearer token - the request is trusted because the JWT is signed (HS256) with our Montonio secret key
+and carries our `accessKey`. The invoice is found by the stored payment link uuid
+(`paymentLinkUuid` -> `invoices.payment_link_uuid`).
+
+```json
+{
+  "uuid": "montonio-order-uuid",
+  "accessKey": "...",
+  "paymentStatus": "PAID",
+  "grandTotal": 100.0,
+  "currency": "EUR",
+  "paymentLinkUuid": "montonio-payment-link-uuid"
+}
+```
+
+| Situation | Invoice | Response |
+| --- | --- | --- |
+| `PAID`, amount and currency match | marked paid, `payment_reference` = Montonio order uuid, auction notified | 200 |
+| same order uuid delivered again | untouched (idempotent) | 200 |
+| `PAID` but amount/currency differ | untouched, discrepancy stored in `linkpay_info`, administrators notified | 200 |
+| another order uuid for an already paid invoice | untouched, possible double payment reported to administrators | 200 |
+| `PENDING`, `ABANDONED`, `AUTHORIZED` | untouched | 200 |
+| `VOIDED`, `REFUNDED`, `PARTIALLY_REFUNDED` | untouched, administrators notified for manual handling | 200 |
+| `refundToken` body | untouched, logged | 200 |
+| unverifiable order token | untouched | 401 |
+| unknown `paymentLinkUuid` | - | 404 |
+
+Everything that is not a broken token or an unknown link answers 200 on purpose: Montonio retries a
+failed delivery for 48 hours.
+
+**Notification to the auction**: when the invoice is marked as paid, the usual
+`PUT /eis_billing/payment_status` request is sent with `"payment_provider": "montonio"` and
+`"payment_reference"` set to the Montonio order uuid.
+
 ## API Documentation
 
 ### Online Documentation
@@ -331,7 +409,7 @@ Generated files will be available in `public/apipie/`
 
 **POST /api/v1/invoice_generator/invoice_generator**
 
-Create linkpay link for payment
+Create the payment link for an invoice
 
 ```json
 {
@@ -343,17 +421,35 @@ Create linkpay link for payment
   "custom_field_1": "Domain renewal",
   "custom_field2": "registry",
   "linkpay_token": "generated_token",
-  "invoice_number": "INV-2025-001"
+  "invoice_number": "INV-2025-001",
+  "due_date": "2026-07-09",
+  "return_url": "https://auction.example.com/invoices/1",
+  "locale": "et"
 }
 ```
+
+Optional parameters:
+- `due_date` (`YYYY-MM-DD`) - invoice due date. For **auction** invoices the payment link is created
+  in Montonio and expires at the end of that day in Estonian time. An unparsable value answers `422`.
+- `return_url` - where Montonio redirects the payer after the payment.
+- `locale` - language of the Montonio payment page (`de`, `en`, `et`, `fi`, `lt`, `lv`, `pl`, `ru`),
+  defaults to `en`.
 
 **Response**:
 ```json
 {
   "message": "Link created",
-  "everypay_link": "https://pay.every-pay.eu/..."
+  "everypay_link": "https://pay.every-pay.eu/...",
+  "payment_link": "https://pay.montonio.com/<uuid>",
+  "payment_link_provider": "montonio",
+  "payment_link_expires_at": "2026-07-09T20:59:59Z"
 }
 ```
+
+`everypay_link` is always the EveryPay LinkPay link, exactly as before. `payment_link` is what the
+payer should use: the Montonio link for auction invoices with a due date, otherwise (and whenever
+Montonio is unavailable) the same value as `everypay_link`, with `payment_link_provider` set to
+`everypay` and `payment_link_expires_at` `null`.
 
 #### One-off Payment
 
@@ -620,13 +716,19 @@ app/
 **Invoices** (main table):
 - `invoice_number` - unique invoice number
 - `initiator` - source (registry/auction/eeid/billing_system)
-- `payment_reference` - EveryPay reference
+- `payment_reference` - payment reference (EveryPay reference or Montonio order uuid)
 - `transaction_amount` - payment amount
 - `status` - status (unpaid/paid/cancelled/failed/refunded/overdue)
 - `affiliation` - type (regular/auction_deposit/linkpay)
 - `everypay_response` - EveryPay response (jsonb)
 - `directo_data` - Directo data (jsonb)
-- `linkpay_info` - linkpay data (jsonb)
+- `linkpay_info` - linkpay data (jsonb), also holds the Montonio link, the processed Montonio orders
+  (`montonio_orders`, used for webhook idempotency) and any payment discrepancies
+  (`montonio_discrepancies`)
+- `due_date` - invoice due date, the payment link expires at the end of that day in Estonian time
+- `payment_link` - the payment link handed to the payer
+- `payment_link_uuid` - Montonio payment link uuid (unique), used to find the invoice from a webhook
+- `payment_link_provider` - `montonio` or `everypay`
 - `in_directo` - sent to Directo flag
 - `transaction_time` - transaction timestamp
 - `sent_at_omniva` - Omniva delivery timestamp
