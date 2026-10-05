@@ -1,7 +1,12 @@
-FROM --platform=linux/amd64 internetee/ruby:3.4.5-node-18-dev
+# The app pins ruby 3.4.10 (.ruby-version + Gemfile), for which there is no
+# internetee/ruby image, so the official image is used directly. The app only
+# needs ruby + libpq: assets are served through importmap, no node build step.
+FROM ruby:3.4.10-bookworm
 
-
-RUN npm install -g yarn@latest
+RUN apt-get update -qq \
+  && apt-get install -y --no-install-recommends libpq-dev postgresql-client \
+  && apt-get clean \
+  && rm -rf /var/lib/apt/lists/*
 
 RUN sed -i 's/SECLEVEL=2/SECLEVEL=1/' /etc/ssl/openssl.cnf
 
@@ -11,8 +16,6 @@ WORKDIR /opt/webapps/app
 COPY Rakefile Gemfile Gemfile.lock ./
 
 RUN bundle config set force_ruby_platform true
-RUN gem install nokogiri --platform=ruby
-
 RUN gem install bundler && bundle install --jobs 20 --retry 5
 # COPY package.json yarn.lock ./
 # RUN yarn install --check-files
