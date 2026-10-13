@@ -4,7 +4,9 @@ git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 ruby '3.4.10'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails', branch: 'main'
-gem 'rails', '~> 7.2.3'
+gem 'rails', '~> 7.2.3', '>= 7.2.3.2'
+# ActiveSupport 7.2 passes quirks_mode to JSON.generate, which json 3 rejects
+gem 'json', '< 3'
 gem 'pg', '~> 1.7'
 gem 'puma', '~> 7.2.0'
 gem 'redis', '~> 5.4'
@@ -69,7 +71,6 @@ group :test do
   gem 'selenium-webdriver'
 
   gem 'simplecov', '0.22.0', require: false
-  gem 'webdrivers'
   gem 'webmock'
   gem 'database_cleaner'
   gem 'database_cleaner-active_record'
