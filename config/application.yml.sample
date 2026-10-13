@@ -63,6 +63,7 @@ directo_invoice_url: 'https://domain/ddddd.asp'
 
 secret_access_word: ''
 secret_word: ''
+billing_secret: 'change-me'
 
 e_invoice_provider_test_mode: 'true'
 
