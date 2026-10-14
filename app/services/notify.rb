@@ -33,6 +33,7 @@ class Notify
     notifier.update_invoice_state(parsed_response:, invoice:)
     return unless invoice.paid?
     return if invoice.billing_system?
+    return if invoice.business_registry?
 
     url = notifier.get_update_payment_url[invoice.initiator.to_sym]
     return notifier.define_for_deposit(invoice, url) if invoice.auction_deposit_prepayment?

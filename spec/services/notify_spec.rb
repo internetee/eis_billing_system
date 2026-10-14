@@ -104,6 +104,88 @@ RSpec.describe Notify do
         expect { described_class.call(response: response_data) }.not_to raise_error
       end
     end
+
+    # EveryPay callback for a reserved-domain invoice created by business registry.
+    # Business registry polls the payment status itself, so there is no callback URL for it;
+    # before the fix Notify sent a PUT to a nil path, which failed with
+    # "undefined method 'include?' for nil" and mailed admins "Error occur in callback handler".
+    context 'when a business registry reservation is paid' do
+      let!(:admin) { create(:user) }
+      let!(:invoice) do
+        create(:invoice, invoice_number: 145_124,
+                         initiator: Invoice::BUSINESS_REGISTRY,
+                         status: :unpaid,
+                         payment_reference: nil,
+                         transaction_amount: '10.0',
+                         description: 'Reserved domain names: example.ee; User unique id: 1a2b3c4d5e')
+      end
+      let(:response_data) do
+        {
+          'account_name' => 'EUR3D2',
+          'order_reference' => '145124',
+          'email' => '',
+          'customer_ip' => '95.153.57.242',
+          'customer_url' => nil,
+          'payment_created_at' => '2026-10-12T10:39:44.898Z',
+          'initial_amount' => 10.0,
+          'standing_amount' => 10.0,
+          'payment_reference' => '4a54a839c2ab3e5282aa4454ffecfcc9dc30c1db16ccf9b65a38b2c0b7ed3b4e',
+          'payment_link' => 'https://payment.lhv.ee/lp/j9wjuj/vgiwggbCZb',
+          'api_username' => '47ca9a3d5d6f85ff',
+          'warnings' => {},
+          'stan' => 295_717,
+          'fraud_score' => 0,
+          'payment_state' => 'settled',
+          'payment_method' => 'swed_ob_ee',
+          'ob_details' => { 'debtor_iban' => 'EE872200221036329835', 'ob_payment_state' => 'ACCC' },
+          'transaction_time' => '2026-10-12T10:40:31.406Z'
+        }
+      end
+      let(:admin_mails) { ActionMailer::Base.deliveries.select { |mail| mail.to&.include?(admin.email) } }
+
+      before { ActionMailer::Base.deliveries.clear }
+
+      it 'marks the invoice as paid so business registry sees it when polling' do
+        call_notifier
+
+        invoice.reload
+        expect(invoice.status).to eq('paid')
+        expect(invoice.payment_reference).to eq(response_data['payment_reference'])
+        expect(invoice.transaction_time).to eq(Time.zone.parse(response_data['transaction_time']))
+      end
+
+      it 'does not alert admins about a callback handler error' do
+        call_notifier
+
+        expect(admin_mails).to be_empty,
+                               -> { admin_mails.map { |mail| "#{mail.subject}: #{mail.body.decoded}" }.join("\n") }
+      end
+
+      # In production something accepts TCP connections on localhost:80, so Net::HTTP with a nil
+      # address connects and then fails in Net::HTTP#addr_port with "undefined method 'include?' for nil".
+      context 'when a host accepts connections on the default port, as in production' do
+        around do |example|
+          WebMock.disable!
+          example.run
+        ensure
+          WebMock.enable!
+        end
+
+        before do
+          allow_any_instance_of(Net::HTTP).to receive(:connect) do |http|
+            http.instance_variable_set(:@socket, Net::BufferedIO.new(StringIO.new("HTTP/1.1 200 OK\r\nContent-Length: 2\r\n\r\n{}")))
+          end
+        end
+
+        it 'marks the invoice as paid without alerting admins' do
+          call_notifier
+
+          expect(invoice.reload.status).to eq('paid')
+          expect(admin_mails).to be_empty,
+                                 -> { admin_mails.map { |mail| "#{mail.subject}: #{mail.body.decoded}" }.join("\n") }
+        end
+      end
+    end
   end
 
   describe '#update_invoice_state' do

@@ -19,14 +19,14 @@ RSpec.describe "ApplicationController", type: :controller do
       expect(instance.billing_secret_key).to eq('secret')
     end
 
-    it 'should encode payload by billing secret' do
-      stub_const('ENV', { 'billing_secret' => 'secret' })
+    it 'should encode payload by secret word' do
+      stub_const('ENV', { 'secret_word' => 'secret' })
       instance = ApplicationController.new
       payload = {
         data: 'test'
       }
 
-      expect(instance.encode_token(payload)).to match('eyJhbGciOiJIUzI1NiJ9.eyJkYXRhIjoidGVzdCJ9.pVzcY2dX8JNM3LzIYeP2B1e1Wcpt1K3TWVvIYSF4x-o')
+      expect(instance.encode_token(payload)).to eq('eyJhbGciOiJIUzI1NiJ9.eyJkYXRhIjoidGVzdCJ9.iR1SrWOhUTSqFK2e_FPr0rGeYNBJa_KTHexv60BT-wk')
     end
 
     it 'should decode incoming token' do
