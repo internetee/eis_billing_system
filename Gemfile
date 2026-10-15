@@ -4,7 +4,7 @@ git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 ruby '3.4.10'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails', branch: 'main'
-gem 'rails', '~> 7.2.3', '>= 7.2.3.2'
+gem 'rails', '~> 8.1.4'
 # ActiveSupport 7.2 passes quirks_mode to JSON.generate, which json 3 rejects
 gem 'json', '< 3'
 gem 'pg', '~> 1.7'
