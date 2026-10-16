@@ -28,6 +28,26 @@ RSpec.describe InvoiceInstanceGenerator do
       expect(invoice.status).to eq('paid')
       expect(invoice.description).to eq('deposit topup')
     end
+
+    it 'stores reference number when provided' do
+      invoice = described_class.create(params: {
+        invoice_number: '102',
+        custom_field2: 'business_registry',
+        transaction_amount: '20.0',
+        reference_number: '1234561'
+      })
+      expect(invoice.reference_number).to eq('1234561')
+    end
+
+    it 'stores nil reference number when blank' do
+      invoice = described_class.create(params: {
+        invoice_number: '103',
+        custom_field2: 'registry',
+        transaction_amount: '10.0',
+        reference_number: ''
+      })
+      expect(invoice.reference_number).to be_nil
+    end
   end
 end
 

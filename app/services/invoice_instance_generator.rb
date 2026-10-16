@@ -13,6 +13,7 @@ class InvoiceInstanceGenerator
                     initiator: params[:custom_field2].to_s,
                     transaction_amount: params[:transaction_amount].to_s,
                     description:,
+                    reference_number: params[:reference_number].presence,
                     affiliation: params.fetch(:affiliation, REGULAR).to_s == AUCTION_DEPOSIT ? 1 : 0,
                     status: params[:transaction_amount].to_s == '0.0' ? :paid : :unpaid)
   end
