@@ -40,11 +40,20 @@ class BusinessRegistryBankPayment
     response = connection(options: service_options)
                .put(GlobalVariable::BUSINESS_REGISTRY_PAYMENT_URL, JSON.dump(payment_params(invoice, transaction)))
     return if response.status == 200
+    return cancel_for_refund(invoice, transaction, response.body) if response.status == 422
 
     inform_admin("Registry rejected business registry payment with status #{response.status}",
                  transaction, invoice, response.body)
   rescue Faraday::Error => e
     inform_admin('Registry is unavailable for business registry payment', transaction, invoice, e.message)
+  end
+
+  # Reservation is first-come-first-served: when the domains can no longer be reserved,
+  # the invoice is cancelled and the received payment has to be refunded to the payer.
+  def cancel_for_refund(invoice, transaction, details)
+    invoice.update!(status: :cancelled)
+    inform_admin('Business registry reservation is not possible, payment must be refunded',
+                 transaction, invoice, details)
   end
 
   def payment_params(invoice, transaction)

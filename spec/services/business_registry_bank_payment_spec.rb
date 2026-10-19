@@ -78,11 +78,24 @@ RSpec.describe BusinessRegistryBankPayment do
     expect(a_request(:put, GlobalVariable::BUSINESS_REGISTRY_PAYMENT_URL)).not_to have_been_made
   end
 
-  it 'informs admin when registry rejects payment but keeps invoice paid' do
+  it 'cancels invoice and asks admin to refund when registry cannot reserve domains' do
     stub_request(:put, GlobalVariable::BUSINESS_REGISTRY_PAYMENT_URL)
       .to_return(status: 422, body: { message: 'Failed to reserve domains' }.to_json)
     expect(NotifierMailer).to receive(:inform_admin)
-      .with('Registry rejected business registry payment with status 422', /Failed to reserve domains/)
+      .with('Business registry reservation is not possible, payment must be refunded',
+            /invoice status: cancelled.*amount: 20.00 EUR.*Failed to reserve domains/)
+      .and_return(mailer)
+
+    call
+
+    expect(invoice.reload).to be_cancelled
+  end
+
+  it 'informs admin and keeps invoice paid when registry fails unexpectedly' do
+    stub_request(:put, GlobalVariable::BUSINESS_REGISTRY_PAYMENT_URL)
+      .to_return(status: 500, body: { message: 'Internal error' }.to_json)
+    expect(NotifierMailer).to receive(:inform_admin)
+      .with('Registry rejected business registry payment with status 500', /Internal error/)
       .and_return(mailer)
 
     call
