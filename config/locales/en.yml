@@ -17,3 +17,41 @@ en:
   white_codes:
     white_code:
       confirm_delete: Confirm delete
+
+  invoice_no: Invoice no. %{no}
+  invoice_number: Invoice no.
+  unpaid: Unpaid
+  cancelled: Cancelled
+  issue_date: Issue date
+  due_date: Due date
+  payment_term: Payment term
+  client: Client
+  name: Name
+  reg_no: Reg. no
+  country: Country
+  phone: Phone
+  url: URL
+  email: E-mail
+  description: Description
+  unit: Unit
+  price: Price
+  total: Total
+  bank: Bank
+  iban: IBAN
+  swift: Swift
+  attributes:
+    receipt_date: Receipt date
+    cancelled_at: Cancelled at
+    reference_no: Reference number
+    subtotal: Subtotal
+    vat_no: VAT number
+    address: Address
+    quantity: Quantity
+  number:
+    currency:
+      format:
+        format: "%n %u"
+        separator: ","
+        delimiter: " "
+        precision: 2
+        unit: "€"

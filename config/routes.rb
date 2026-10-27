@@ -63,6 +63,7 @@ Rails.application.routes.draw do
       end
 
       namespace :invoice do
+        resource :invoice_pdf, only: :create
         resource :invoice_synchronize, only: :update
         resource :update_invoice_data, only: :update
         resource :reserved_domain_invoice_statuses, only: :show # deprecated
