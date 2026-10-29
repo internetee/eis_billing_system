@@ -43,6 +43,7 @@ base_eeid: "http://eeid:3000"
 auction_update_payment_url: "http://auction_center:3000/eis_billing/payment_status"
 eeid_update_payment_url: "http://eeid:3000/eis_billing/payment_status"
 registry_update_payment_url: "http://registry:3000/eis_billing/payment_status"
+business_registry_payment_url: "http://registry:3000/eis_billing/business_registry_payment"
 
 everypay_key: ""
 linkpay_prefix: 'https://igw-demo.every-pay.com/lp'

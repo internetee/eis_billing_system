@@ -21,6 +21,8 @@ class GlobalVariable
   REGISTRY_PAYMENT_URL = ENV['registry_update_payment_url'] || 'http://registry:3000/eis_billing/payment_status'
   AUCTION_PAYMENT_URL = ENV['auction_update_payment_url'] || 'http://auction_center:3000/eis_billing/payment_status'
   EEID_PAYMENT_URL = ENV['eeid_update_payment_url'] || 'http://eeid:3000/eis_billing/payment_status'
+  BUSINESS_REGISTRY_PAYMENT_URL = ENV['business_registry_payment_url'] ||
+                                  'http://registry:3000/eis_billing/business_registry_payment'
 
   ALLOWED_DEV_BASE_URLS = ENV['allowed_base_urls']
 
