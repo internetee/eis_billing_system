@@ -68,7 +68,7 @@ end
 
 group :test do
   gem 'faker'
-  gem 'selenium-webdriver'
+  gem 'selenium-webdriver', '>= 4.35.0'
 
   gem 'simplecov', '0.22.0', require: false
   gem 'webmock'
