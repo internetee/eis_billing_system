@@ -164,7 +164,7 @@ GEM
     crack (1.0.1)
       bigdecimal
       rexml
-    crass (1.0.7)
+    crass (1.0.8)
     database_cleaner (2.1.0)
       database_cleaner-active_record (>= 2, < 3)
     database_cleaner-active_record (2.2.2)
@@ -324,7 +324,8 @@ GEM
       net-ssh (>= 5.0.0, < 8.0.0)
     net-smtp (0.5.2)
       net-protocol
-    net-ssh (7.3.3)
+    net-ssh (7.3.8)
+      logger
     nio4r (2.7.5)
     nkf (0.2.0)
     nokogiri (1.19.4)

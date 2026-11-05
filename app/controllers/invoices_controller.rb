@@ -11,6 +11,15 @@ class InvoicesController < ParentController
     @invoice = Invoice.find(params[:id])
   end
 
+  def pdf
+    generator = InvoicePdfGenerator.new(Invoice.find(params[:id]))
+
+    send_data generator.as_pdf,
+              filename: generator.filename,
+              type: 'application/pdf',
+              disposition: 'attachment'
+  end
+
   private
 
   def invoice_params
