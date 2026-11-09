@@ -48,6 +48,18 @@ RSpec.describe InvoiceInstanceGenerator do
       })
       expect(invoice.reference_number).to be_nil
     end
+
+    it 'does not store the reference number of non business registry invoices' do
+      2.times do |i|
+        invoice = described_class.create(params: {
+          invoice_number: "10#{4 + i}",
+          custom_field2: 'registry',
+          transaction_amount: '10.0',
+          reference_number: '7654321'
+        })
+        expect(invoice.reference_number).to be_nil
+      end
+    end
   end
 end
 
