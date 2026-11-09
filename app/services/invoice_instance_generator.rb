@@ -13,8 +13,17 @@ class InvoiceInstanceGenerator
                     initiator: params[:custom_field2].to_s,
                     transaction_amount: params[:transaction_amount].to_s,
                     description:,
-                    reference_number: params[:reference_number].presence,
+                    reference_number: invoice_reference_number(params),
                     affiliation: params.fetch(:affiliation, REGULAR).to_s == AUCTION_DEPOSIT ? 1 : 0,
                     status: params[:transaction_amount].to_s == '0.0' ? :paid : :unpaid)
+  end
+
+  # Only business registry reservation invoices have a per-invoice reference number
+  # (used to match bank transfers). Registry, auction and EEID send the payer's
+  # reference number, which repeats on every invoice of that payer.
+  def self.invoice_reference_number(params)
+    return unless params[:custom_field2].to_s == Invoice::BUSINESS_REGISTRY
+
+    params[:reference_number].presence
   end
 end
