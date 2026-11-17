@@ -8,7 +8,7 @@ module Invoice::Synchronization
   end
 
   def allow_to_synchronize?
-    initiator == 'registry' || initiator == 'auction'
+    %w[registry auction eeid].include?(initiator)
   end
 
   def restricted_statuses

@@ -474,9 +474,9 @@ RSpec.describe 'PaymentLhvConnectJob', type: :job do
     end
 
     it 'skips references whose initiator has no transactions endpoint' do
-      Reference.create!(reference_number: '3', initiator: 'eeid')
+      Reference.create!(reference_number: '3', initiator: 'unknown_app')
       transaction = OpenStruct.new(amount: '10.0', currency: 'EUR', date:,
-                                   payment_reference_number: '3', payment_description: 'Eeid')
+                                   payment_reference_number: '3', payment_description: 'Unknown app')
       stub_lhv_transactions([transaction])
 
       expect_any_instance_of(PaymentLhvConnectJob).not_to receive(:send_transactions)
@@ -534,6 +534,30 @@ RSpec.describe 'PaymentLhvConnectJob', type: :job do
       ref = Billing::ReferenceNo.generate
       result = job.send(:extract_reference_from_text, "Invoice 99 ref #{ref} amount 100")
       expect(result).to eq(ref)
+    end
+  end
+
+  describe 'routing transactions by initiator' do
+    let(:job) { PaymentLhvConnectJob.new }
+
+    it 'includes the eeid endpoint in the routing table' do
+      expect(job.send(:url)[:eeid]).to eq "#{ENV['base_eeid']}/eis_billing/lhv_connect_transactions"
+    end
+
+    it 'posts eeid transactions to the eeid endpoint without crashing' do
+      Reference.create(reference_number: '778', initiator: 'eeid')
+      allow(job).to receive(:headers).and_return({})
+
+      posted_to = nil
+      allow_any_instance_of(Net::HTTP).to receive(:post) do |_http, path, _body, _headers|
+        posted_to = path
+        OpenStruct.new(body: '200 - ok')
+      end
+
+      params = [OpenStruct.new(amount: '10.0', currency: 'EUR', payment_reference_number: '778')]
+      job.send(:send_transactions, params: params, payment_reference_number: '778')
+
+      expect(posted_to).to eq "#{ENV['base_eeid']}/eis_billing/lhv_connect_transactions"
     end
   end
 end
