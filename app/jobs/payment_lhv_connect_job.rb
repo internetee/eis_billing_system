@@ -140,13 +140,7 @@ class PaymentLhvConnectJob < ApplicationJob
   def send_transactions(params:, payment_reference_number:)
     reference = Reference.find_by(reference_number: payment_reference_number)
 
-    target_url = url[reference&.initiator&.to_sym]
-    if target_url.nil?
-      Rails.logger.error "No transaction endpoint for initiator #{reference&.initiator.inspect} " \
-                         "(reference #{payment_reference_number}); skipping"
-      return
-    end
-
+    target_url = url[reference.initiator.to_sym]
     uri = URI.parse(target_url)
     http = Net::HTTP.new(uri.host, uri.port)
 

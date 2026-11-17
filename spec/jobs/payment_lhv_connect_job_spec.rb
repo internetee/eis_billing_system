@@ -474,9 +474,9 @@ RSpec.describe 'PaymentLhvConnectJob', type: :job do
     end
 
     it 'skips references whose initiator has no transactions endpoint' do
-      Reference.create!(reference_number: '3', initiator: 'eeid')
+      Reference.create!(reference_number: '3', initiator: 'unknown_app')
       transaction = OpenStruct.new(amount: '10.0', currency: 'EUR', date:,
-                                   payment_reference_number: '3', payment_description: 'Eeid')
+                                   payment_reference_number: '3', payment_description: 'Unknown app')
       stub_lhv_transactions([transaction])
 
       expect_any_instance_of(PaymentLhvConnectJob).not_to receive(:send_transactions)
@@ -558,14 +558,6 @@ RSpec.describe 'PaymentLhvConnectJob', type: :job do
       job.send(:send_transactions, params: params, payment_reference_number: '778')
 
       expect(posted_to).to eq "#{ENV['base_eeid']}/eis_billing/lhv_connect_transactions"
-    end
-
-    it 'does not crash the batch for an unknown initiator' do
-      Reference.create(reference_number: '779', initiator: 'unknown_app')
-
-      expect do
-        job.send(:send_transactions, params: [], payment_reference_number: '779')
-      end.not_to raise_error
     end
   end
 end
