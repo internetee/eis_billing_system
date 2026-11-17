@@ -31,6 +31,28 @@ RSpec.describe "Api::V1::CallbackHandler::CallbackHandlers", type: :request do
       get api_v1_callback_handler_callback_path + "?payment_reference=#{payment_reference}"
 
       expect(response.code).to eq "200"
+      expect(JSON.parse(response.body)['payment_state']).to eq 'settled'
+    end
+  end
+
+  context "cancelled payment" do
+    it "returns the EveryPay payment state" do
+      payment_reference = "cancelled_code"
+
+      everypay_response = {
+        payment_state: 'abandoned',
+        transaction_time: Time.zone.now - 1.hour,
+        order_reference: invoice.invoice_number,
+        payment_reference: payment_reference,
+      }
+
+      everypay_url = "#{GlobalVariable::BASE_ENDPOINT}/payments/#{payment_reference}?api_username=#{GlobalVariable::API_USERNAME}"
+      stub_request(:get, everypay_url).to_return(status: 200, body: everypay_response.to_json, headers: {})
+
+      get api_v1_callback_handler_callback_path + "?payment_reference=#{payment_reference}"
+
+      expect(response.code).to eq "200"
+      expect(JSON.parse(response.body)['payment_state']).to eq 'abandoned'
     end
   end
 end

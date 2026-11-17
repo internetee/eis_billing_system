@@ -17,7 +17,7 @@
 # EXPOSE 3000
 
 
-FROM ruby:3.4.5-slim-bookworm
+FROM ruby:3.4.10-slim-bookworm
 
 ARG RAILS_ENV
 ARG SECRET_KEY_BASE

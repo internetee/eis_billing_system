@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2023_11_30_114315) do
+ActiveRecord::Schema[7.2].define(version: 2026_10_16_000000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -66,6 +66,8 @@ ActiveRecord::Schema[7.1].define(version: 2023_11_30_114315) do
     t.datetime "sent_at_omniva", precision: nil
     t.integer "affiliation", default: 0
     t.jsonb "linkpay_info", default: {}
+    t.string "reference_number"
+    t.index ["reference_number"], name: "index_invoices_on_reference_number", unique: true, where: "(reference_number IS NOT NULL)"
     t.index ["status"], name: "index_invoices_on_status"
   end
 

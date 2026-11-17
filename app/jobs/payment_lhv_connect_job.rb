@@ -49,10 +49,30 @@ class PaymentLhvConnectJob < ApplicationJob
       Rails.logger.info s[1]
       Rails.logger.info '==========================================='
 
-      send_transactions(params: s[1], payment_reference_number: s[0])
+      process_reference_transactions(payment_reference_number: s[0], transactions: s[1])
     end
 
     Rails.logger.info "Transactions processed: #{incoming_transactions.size}"
+  end
+
+  def process_reference_transactions(payment_reference_number:, transactions:)
+    reference = Reference.find_by(reference_number: payment_reference_number)
+
+    if reference.nil?
+      Rails.logger.info "Reference #{payment_reference_number} not found, transactions are skipped"
+      return inform_admin(reference: payment_reference_number, body: transactions)
+    end
+
+    if reference.initiator == Invoice::BUSINESS_REGISTRY
+      return BusinessRegistryBankPayment.call(reference:, transactions:)
+    end
+
+    if url[reference.initiator.to_sym].nil?
+      return Rails.logger.info "No transactions endpoint for initiator #{reference.initiator}, " \
+                               "reference #{payment_reference_number} is skipped"
+    end
+
+    send_transactions(params: transactions, payment_reference_number:)
   end
 
   def messages_proccess(message, registry_bank_account_iban, &block)
