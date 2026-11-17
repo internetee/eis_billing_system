@@ -368,9 +368,9 @@ GEM
     pdfkit (0.8.7.3)
     pg (1.7.0)
     pg (1.7.0-x86_64-linux)
-    pg_search (2.3.8)
-      activerecord (>= 7.2)
-      activesupport (>= 7.2)
+    pg_search (2.4.0)
+      activerecord (>= 8.0)
+      activesupport (>= 8.0)
     pp (0.6.4)
       prettyprint
     prettyprint (0.2.1)
