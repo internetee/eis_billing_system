@@ -4,9 +4,9 @@ git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 ruby '3.4.10'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails', branch: 'main'
-gem 'rails', '~> 7.2.3'
-gem 'pg', '~> 1.6'
-gem 'puma', '~> 7.2.0'
+gem 'rails', '~> 8.1.4', '>= 8.1.4.1'
+gem 'pg', '~> 1.7'
+gem 'puma', '~> 7.2.2'
 gem 'redis', '~> 5.4'
 gem 'bcrypt', '~> 3.1.22'
 gem 'bootsnap', '>= 1.4.4', require: false
@@ -69,7 +69,6 @@ group :test do
   gem 'selenium-webdriver'
 
   gem 'simplecov', '0.22.0', require: false
-  gem 'webdrivers'
   gem 'webmock'
   gem 'database_cleaner'
   gem 'database_cleaner-active_record'

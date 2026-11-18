@@ -57,6 +57,26 @@ RSpec.describe EInvoiceGenerator do
     expect(einv.invoice.items.size).to eq(0) # All items used for name
     expect(einv.invoice.name).to eq('Subscription')
   end
+
+  # eeID invoice 564: an IBAN pasted with a trailing space failed Omniva's AccountType pattern.
+  it 'removes whitespace from IBANs and VAT numbers and trims registration numbers' do
+    data[:buyer_e_invoice_iban] = "EE522200221094796536 "
+    data[:invoice_data].merge!(seller_iban: " EE11 1111 1111 1111 1111", buyer_vat_no: "EE 987\u00A0654 321",
+                               buyer_reg_no: "17465832 ", seller_reg_no: " HRB  12345 ")
+
+    einv = described_class.new(data).generate
+
+    expect(einv.invoice.buyer.bank_account.number).to eq('EE522200221094796536')
+    expect(einv.invoice.beneficiary_account_number).to eq('EE111111111111111111')
+    expect(einv.invoice.buyer.vat_number).to eq('EE987654321')
+    expect(einv.invoice.buyer.registration_number).to eq('17465832')
+    expect(einv.invoice.recipient_id_code).to eq('17465832')
+    expect(einv.invoice.seller.registration_number).to eq('HRB 12345')
+  end
+
+  it 'leaves a missing IBAN missing' do
+    data[:buyer_e_invoice_iban] = nil
+
+    expect(described_class.new(data).generate.invoice.buyer.bank_account.number).to be_nil
+  end
 end
-
-

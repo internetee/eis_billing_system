@@ -21,10 +21,10 @@ tara_discovery = ENV['tara_discovery']
 Rails.application.config.middleware.use OmniAuth::Builder do
   provider 'tara', {
     name: 'tara',
-    scope: tara_scope.split(' ') || ['openid'],
+    scope: tara_scope.present? ? tara_scope.split(' ') : ['openid'],
     state: SecureRandom.hex(10),
     client_signing_alg: :RS256,
-    client_jwk_signing_key: tara_keys,
+    # client_jwk_signing_key: tara_keys,
     send_scope_to_token_endpoint: false,
     send_nonce: true,
     issuer: tara_issuer,
