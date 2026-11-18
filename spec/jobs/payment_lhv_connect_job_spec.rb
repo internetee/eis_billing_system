@@ -79,7 +79,7 @@ RSpec.describe 'PaymentLhvConnectJob', type: :job do
       allow_any_instance_of(Net::HTTP).to receive(:post).and_return('200 - ok')
       allow_any_instance_of(PaymentLhvConnectJob).to receive(:open_ssl_keystore).and_return(openssl_struct)
 
-      # reference.reload
+      reference # regular payments in these examples use reference number 123
     end
 
     it 'reference number is missing, but payment description has valid reference number' do
@@ -422,6 +422,69 @@ RSpec.describe 'PaymentLhvConnectJob', type: :job do
     end
   end
 
+  describe 'routing transactions by reference initiator' do
+    let(:date) { Time.zone.now - 4.hours }
+
+    before(:each) do
+      openssl_struct = OpenStruct.new(key: 'key', certificate: 'certificate')
+      allow_any_instance_of(PaymentLhvConnectJob).to receive(:open_ssl_keystore).and_return(openssl_struct)
+    end
+
+    def stub_lhv_transactions(transactions)
+      Lhv::ConnectApi.class_eval do
+        define_method :credit_debit_notification_messages do
+          message = OpenStruct.new(
+            bank_account_iban: Setting.registry_bank_account_iban_lhv || 'EE177700771001155322',
+            credit_transactions: transactions
+          )
+          [message]
+        end
+      end
+    end
+
+    it 'passes business registry transactions to BusinessRegistryBankPayment' do
+      business_reference = Reference.create!(reference_number: '1234561', initiator: 'business_registry',
+                                             owner: 'user-uuid')
+      transaction = OpenStruct.new(amount: '20.0', currency: 'EUR', date:,
+                                   payment_reference_number: '1234561', payment_description: 'Domain reservation')
+      stub_lhv_transactions([transaction])
+
+      expect(BusinessRegistryBankPayment).to receive(:call).with(reference: business_reference,
+                                                                 transactions: [transaction])
+      expect_any_instance_of(PaymentLhvConnectJob).not_to receive(:send_transactions)
+
+      PaymentLhvConnectJob.perform_now
+    end
+
+    it 'informs admin about unknown reference and processes other references' do
+      Reference.create!(reference_number: '2', initiator: 'registry')
+      unknown = OpenStruct.new(amount: '10.0', currency: 'EUR', date:,
+                               payment_reference_number: '999', payment_description: 'Unknown')
+      known = OpenStruct.new(amount: '10.0', currency: 'EUR', date:,
+                             payment_reference_number: '2', payment_description: 'Known')
+      stub_lhv_transactions([unknown, known])
+
+      expect_any_instance_of(BillingMailer).to receive(:inform_admin)
+        .with(reference_number: '999', body: [unknown])
+        .and_return(double('mailer', deliver_now: true))
+      expect_any_instance_of(PaymentLhvConnectJob).to receive(:send_transactions)
+        .with(params: [known], payment_reference_number: '2')
+
+      PaymentLhvConnectJob.perform_now
+    end
+
+    it 'skips references whose initiator has no transactions endpoint' do
+      Reference.create!(reference_number: '3', initiator: 'unknown_app')
+      transaction = OpenStruct.new(amount: '10.0', currency: 'EUR', date:,
+                                   payment_reference_number: '3', payment_description: 'Unknown app')
+      stub_lhv_transactions([transaction])
+
+      expect_any_instance_of(PaymentLhvConnectJob).not_to receive(:send_transactions)
+
+      expect { PaymentLhvConnectJob.perform_now }.not_to raise_error
+    end
+  end
+
   describe '#extract_reference_from_text' do
     let(:job) { PaymentLhvConnectJob.new }
 
@@ -471,6 +534,30 @@ RSpec.describe 'PaymentLhvConnectJob', type: :job do
       ref = Billing::ReferenceNo.generate
       result = job.send(:extract_reference_from_text, "Invoice 99 ref #{ref} amount 100")
       expect(result).to eq(ref)
+    end
+  end
+
+  describe 'routing transactions by initiator' do
+    let(:job) { PaymentLhvConnectJob.new }
+
+    it 'includes the eeid endpoint in the routing table' do
+      expect(job.send(:url)[:eeid]).to eq "#{ENV['base_eeid']}/eis_billing/lhv_connect_transactions"
+    end
+
+    it 'posts eeid transactions to the eeid endpoint without crashing' do
+      Reference.create(reference_number: '778', initiator: 'eeid')
+      allow(job).to receive(:headers).and_return({})
+
+      posted_to = nil
+      allow_any_instance_of(Net::HTTP).to receive(:post) do |_http, path, _body, _headers|
+        posted_to = path
+        OpenStruct.new(body: '200 - ok')
+      end
+
+      params = [OpenStruct.new(amount: '10.0', currency: 'EUR', payment_reference_number: '778')]
+      job.send(:send_transactions, params: params, payment_reference_number: '778')
+
+      expect(posted_to).to eq "#{ENV['base_eeid']}/eis_billing/lhv_connect_transactions"
     end
   end
 end

@@ -25,8 +25,8 @@ class EInvoiceGenerator
   def generate
     seller = EInvoice::Seller.new
     seller.name = invoice[:seller_name]
-    seller.registration_number = invoice[:seller_reg_no]
-    seller.vat_number = invoice[:seller_vat_no]
+    seller.registration_number = trim(invoice[:seller_reg_no])
+    seller.vat_number = compact(invoice[:seller_vat_no])
 
     seller_legal_address = EInvoice::Address.new
     seller_legal_address.line1 = invoice[:seller_street]
@@ -38,12 +38,12 @@ class EInvoiceGenerator
 
     buyer = EInvoice::Buyer.new
     buyer.name = invoice[:buyer_name]
-    buyer.registration_number = invoice[:buyer_reg_no]
-    buyer.vat_number = invoice[:buyer_vat_no]
+    buyer.registration_number = trim(invoice[:buyer_reg_no])
+    buyer.vat_number = compact(invoice[:buyer_vat_no])
     buyer.email = buyer_billing_email
 
     buyer_bank_account = EInvoice::BankAccount.new
-    buyer_bank_account.number = buyer_e_invoice_iban
+    buyer_bank_account.number = compact(buyer_e_invoice_iban)
     buyer.bank_account = buyer_bank_account
 
     buyer_legal_address = EInvoice::Address.new
@@ -69,11 +69,11 @@ class EInvoiceGenerator
       i.items = e_invoice_invoice_items
       i.number = invoice[:number]
       i.date = invoice[:issue_date]
-      i.recipient_id_code = invoice[:buyer_reg_no]
+      i.recipient_id_code = trim(invoice[:buyer_reg_no])
       i.reference_number = invoice[:reference_no]
       i.due_date = invoice[:due_date]
       i.beneficiary_name = invoice[:seller_name]
-      i.beneficiary_account_number = invoice[:seller_iban]
+      i.beneficiary_account_number = compact(invoice[:seller_iban])
       i.payer_name = invoice[:buyer_name]
       i.subtotal = invoice_subtotal
       i.vat_amount = invoice_vat_amount
@@ -111,5 +111,25 @@ class EInvoiceGenerator
         i.total = invoice_item[:total]
       end
     end
+  end
+
+  private
+
+  # The initiators pass on what their customers typed, and an IBAN pasted with a trailing
+  # space fails Omniva's schema (AccountType) for the whole document.
+  #
+  # IBANs and VAT numbers never contain spaces, so every kind goes, non-breaking included.
+  def compact(value)
+    return value if value.nil?
+
+    value.to_s.gsub(/[[:space:]]+/, '').presence
+  end
+
+  # A registration number can (a German "HRB 12345"), so only the ends are trimmed and inner
+  # runs collapsed.
+  def trim(value)
+    return value if value.nil?
+
+    value.to_s.squish.presence
   end
 end
