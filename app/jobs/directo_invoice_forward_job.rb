@@ -27,7 +27,8 @@ class DirectoInvoiceForwardJob < ApplicationJob
       parsed = JSON.parse(@client.invoices.to_json)
       next if parsed['invoices'].any? { |i| i['number'] == invoice['number'] }
 
-      if @initiator == 'auction'
+      # Business registry buyers are one-off customers like auction winners, with the customer in the invoice
+      if %w[auction business_registry].include?(@initiator)
         @client.invoices.add_with_schema(invoice: invoice, schema: 'auction')
       else
         @client.invoices.add_with_schema(invoice: invoice, schema: 'prepayment')
