@@ -37,7 +37,7 @@ RSpec.describe 'InvoiceDataSenderService' do
       invoice_sender = InvoiceDataSenderService.new(invoice: invoice, status: 'paid')
       initiator = invoice_sender.send(:to_whom)
 
-      expect(initiator).to eq "#{GlobalVariable::BASE_EEID}/#"
+      expect(initiator).to eq "#{GlobalVariable::BASE_EEID}/eis_billing/invoices"
     end
   end
 
