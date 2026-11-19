@@ -46,9 +46,10 @@ class Api::V1::EInvoice::EInvoiceController < ApplicationController
       initiator: invoice_params[:initiator],
     }
 
-    SendEInvoiceJob.perform_now(e_invoice_data)
+    # Omniva delivery can take over a minute; clients time out and roll back while the e-invoice still goes out
+    SendEInvoiceJob.perform_later(e_invoice_data)
 
-    render json: { 'message' => 'Invoice data received', status: :created }
+    render json: { 'message' => 'Invoice data received' }, status: :accepted
   end
 
   private
