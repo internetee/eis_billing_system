@@ -36,6 +36,7 @@ class DirectoResponseSender
       registry: "#{GlobalVariable::BASE_REGISTRY}#{DIRECTO_SERVICE_ENDPOINT}",
       auction: "#{GlobalVariable::BASE_AUCTION}#{DIRECTO_SERVICE_ENDPOINT}",
       eeid: "#{GlobalVariable::BASE_EEID}#{DIRECTO_SERVICE_ENDPOINT}",
+      business_registry: "#{GlobalVariable::BASE_REGISTRY}#{DIRECTO_SERVICE_ENDPOINT}",
     }
   end
 end

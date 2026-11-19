@@ -127,4 +127,39 @@ RSpec.describe 'DirectoInvoiceForwardJob', type: :job do
       DirectoInvoiceForwardJob.perform_now(invoice_data: directo_invoice_json, initiator: 'eeid')
     end
   end
+
+  # Same JSON as registry ReserveDomainInvoice#as_directo_json produces
+  describe '#perform - business registry reservation invoice' do
+    let(:directo_url) { 'https://directo.test/xmlcore.asp' }
+    let(:invoice_json) do
+      { 'number' => 555_001, 'issue_date' => '2026-11-01', 'transaction_date' => '2026-11-02',
+        'language' => '', 'currency' => 'EUR', 'total_wo_vat' => '8.06', 'vat_amount' => '1.94',
+        'customer' => { 'name' => 'Future Company OÜ', 'code' => 'ERA', 'destination' => 'EE', 'vat_reg_no' => nil },
+        'invoice_lines' => [{ 'product_id' => 'BRONEERING', 'description' => 'reserved.ee', 'quantity' => 1,
+                              'unit' => 1, 'price' => '8.06' }] }
+    end
+    let(:directo_result) do
+      "<?xml version='1.0' encoding='UTF-8'?><results><Result Type='0' Desc='OK' docid='555001' doctype='ARVE' submit='Invoices'/></results>"
+    end
+
+    before do
+      create(:invoice, invoice_number: 555_001, initiator: Invoice::BUSINESS_REGISTRY)
+      allow(ENV).to receive(:[]).and_call_original
+      allow(ENV).to receive(:[]).with('directo_invoice_url').and_return(directo_url)
+      stub_request(:post, directo_url).to_return(status: 200, body: directo_result)
+      stub_request(:put, "#{GlobalVariable::BASE_REGISTRY}/eis_billing/directo_response").to_return(status: 200, body: '{}')
+    end
+
+    it 'sends the buyer as a one-off customer and reports back to registry' do
+      DirectoInvoiceForwardJob.perform_now(invoice_data: [invoice_json], initiator: 'business_registry')
+
+      expect(WebMock).to(have_requested(:post, directo_url).with do |request|
+        xml = URI.decode_www_form(request.body).to_h['xmldata']
+        xml.include?('CustomerName="Future Company OÜ"') && xml.include?('CustomerCode="ERA"') &&
+          xml.include?('ProductID="BRONEERING"')
+      end)
+      expect(WebMock).to have_requested(:put, "#{GlobalVariable::BASE_REGISTRY}/eis_billing/directo_response")
+      expect(Invoice.find_by(invoice_number: 555_001).in_directo).to be(true)
+    end
+  end
 end
